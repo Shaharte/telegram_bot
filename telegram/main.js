@@ -1872,7 +1872,7 @@ module.exports.telegram = async function () {
 
                 })
                 if (str === 'Live Results:\n\n') {
-                    str = 'Live Results: No Results So Far...'
+                    str = 'Live Results: No results so far...'
 
                 }
 
