@@ -13,6 +13,12 @@ const puppeteer = require('puppeteer');
 
 
 const TelegramBot = require('node-telegram-bot-api');
+
+const cerdentials = {
+    "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
+    "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
+    "useQueryString": true
+}
 const teamsIds = [
     {
         name: 'Maccabi Haifa',
@@ -1402,18 +1408,8 @@ module.exports.telegram = async function () {
     //     })
     // });
 
-    botTest.onText(/\/highlights/, (msg, match) => {
-        const chatId = msg.chat.id;
-        const { text } = msg
-        if (text === '/highlights') {
-            let str = 'Your Options Are:\n\n/Mahzor15\n/Mahzor14\n/Mahzor13\n/Mahzor12\n'
 
-            botTest.sendMessage(chatId, str);
-
-        }
-
-
-    });
+    // getting next fixtsure - ligat HaAl
     botTest.onText(/\/next/, (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
@@ -1427,6 +1423,22 @@ module.exports.telegram = async function () {
             botTest.sendMessage(chatId, str)
         }
     });
+
+    // hightlight of ligat HaAl
+    botTest.onText(/\/highlights/, (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/highlights') {
+            let str = 'Your Options Are:\n\n/Mahzor15\n/Mahzor14\n/Mahzor13\n/Mahzor12\n'
+
+            botTest.sendMessage(chatId, str);
+
+        }
+
+
+    });
+
+    // getiing each mahzor results
     botTest.onText(/\/Mahzor(.+)/, (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
@@ -1468,22 +1480,10 @@ module.exports.telegram = async function () {
         var unirest = require("unirest");
         if (text === '/Lior_Refaelov') {
 
-
-            var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/players/player/8461/2020-2021");
-            var req2 = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2660");
-
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
-
-            req2.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
-
+            const req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/players/player/8461/2020-2021");
+            const req2 = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2660");
+            req.headers(cerdentials);
+            req2.headers(cerdentials);
             let str = ''
 
             req2.end(function (res2) {
@@ -1537,17 +1537,9 @@ module.exports.telegram = async function () {
             var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/players/player/12943/2020-2021");
             var req2 = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2673");
 
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req.headers(cerdentials);
 
-            req2.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req2.headers(cerdentials);
 
             let str = ''
             req2.end(function (res2) {
@@ -1600,17 +1592,9 @@ module.exports.telegram = async function () {
             var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/players/player/70339/2020-2021");
             var req2 = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2833");
 
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req.headers(cerdentials);
 
-            req2.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req2.headers(cerdentials);
 
             let str = ''
 
@@ -1665,17 +1649,9 @@ module.exports.telegram = async function () {
             var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/players/player/697/2020-2021");
             var req2 = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2762");
 
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req.headers(cerdentials);
 
-            req2.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req2.headers(cerdentials);
 
             let str = ''
             req2.end(function (res2) {
@@ -1741,7 +1717,7 @@ module.exports.telegram = async function () {
         if (text === '/help') {
 
 
-            let str = 'Your Options Are:\n\n/live \n/tables \n/next \n/stats \n/last \n/teams \n/mahzorim \n/highlights \n/ligyoners'
+            let str = 'Your Options Are:\n\n/live \n/tables \n/stats \n/last \n/teams \n/mahzorim \n/highlights \n/ligyoners'
 
 
             botTest.sendMessage(chatId, str);
@@ -1770,11 +1746,7 @@ module.exports.telegram = async function () {
         const chatId = msg.chat.id;
         const { text } = msg
         if (text === '/liga_leumit') {
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req.headers(cerdentials);
 
             req.end(function (res) {
                 if (res.error) throw new Error(res.error);
@@ -1802,11 +1774,7 @@ module.exports.telegram = async function () {
         const chatId = msg.chat.id;
         const { text } = msg
         if (text === '/ligat_haAl') {
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req.headers(cerdentials);
 
             req.end(function (res) {
                 if (res.error) throw new Error(res.error);
@@ -1844,11 +1812,7 @@ module.exports.telegram = async function () {
         const chatId = msg.chat.id;
         const { text } = msg
         if (text === '/live') {
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req.headers(cerdentials);
 
             req.end(function (res) {
                 if (res.error) throw new Error(res.error);
@@ -1861,6 +1825,7 @@ module.exports.telegram = async function () {
 
                     }
                     leagueArr.forEach(game => {
+                        console.log('game', game)
                         const { goalsAwayTeam, goalsHomeTeam, homeTeam, awayTeam, elapsed, score, league } = game
                         const { name, country } = league
                         const { halftime } = score
@@ -1872,7 +1837,7 @@ module.exports.telegram = async function () {
 
                 })
                 if (str === 'Live Results:\n\n') {
-                    str = 'Live Results: No results so far...'
+                    str = 'Live Results: No Results So Far...'
 
                 }
 
@@ -1970,11 +1935,7 @@ module.exports.telegram = async function () {
         const chatId = msg.chat.id;
         const { text } = msg
         if (text === '/last') {
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req.headers(cerdentials);
 
 
             req.end(function (res) {
@@ -2018,11 +1979,7 @@ module.exports.telegram = async function () {
         const chatId = msg.chat.id;
         const { text } = msg
         if (text === '/beitar') {
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req.headers(cerdentials);
 
             req.end(function (res) {
                 if (res.error) throw new Error(res.error);
@@ -2048,11 +2005,7 @@ module.exports.telegram = async function () {
         const chatId = msg.chat.id;
         const { text } = msg
         if (text === '/ashdod') {
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req.headers(cerdentials);
 
             req.end(function (res) {
                 if (res.error) throw new Error(res.error);
@@ -2080,11 +2033,7 @@ module.exports.telegram = async function () {
         const { text } = msg
         if (text === '/haifa') {
 
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req.headers(cerdentials);
 
             req.end(function (res) {
                 if (res.error) throw new Error(res.error);
@@ -2112,11 +2061,7 @@ module.exports.telegram = async function () {
         const chatId = msg.chat.id;
         const { text } = msg
         if (text === '/telaviv') {
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req.headers(cerdentials);
 
             req.end(function (res) {
                 if (res.error) throw new Error(res.error);
@@ -2577,85 +2522,7 @@ module.exports.telegramTest = async function () {
 
 
 
-    botTest.onText(/\/livetest/, (msg, match) => {
-        const chatId = msg.chat.id;
-        const { text } = msg
-        if (text === '/livetest') {
-            //initiating Puppeteer
-            puppeteer
-                .launch()
-                .then(async browser => {
 
-                    //opening a new page and navigating to Fleshscore
-                    const page = await browser.newPage();
-                    await page.goto('https://www.flashscore.com/');
-                    await page.waitForSelector('body');
-
-                    //manipulating the page's content
-                    let grabMatches = await page.evaluate(() => {
-                        let allLiveMatches = document.body.querySelectorAll('.event__match--oneLine');
-                        let allteams = document.body.querySelectorAll('.event__header');
-                        //storing the post items in an array then selecting for retrieving content
-                        scrapeItems = [];
-                        allLiveMatches.forEach(item => {
-                            let postDescription = '';
-                            try {
-                                // let min = item.querySelector('.event__stage--block').innerText;
-                                let homeTeam = item.querySelector('.event__participant--home').innerText;
-                                let awayTeam = item.querySelector('.event__participant--away').innerText;
-                                let score = item.querySelector('.event__scores').innerText;
-                                let min;
-                                let time;
-                                try {
-                                    time = item.querySelector('.event__time').innerText;
-                                    time = time.replace('\nFRO', '')
-                                    min = ''
-
-                                } catch (errr) {
-                                    min = item.querySelector('.event__stage--block').innerText;
-                                    time = ''
-                                }
-                                score = score.replaceAll('\n', '')
-                                scrapeItems.push({
-                                    score,
-                                    time,
-                                    min,
-                                    homeTeam,
-                                    awayTeam,
-
-                                });
-                            } catch (err) { }
-
-                        });
-                        // for (let i = 0; i < allteams.length; i++) {
-
-
-                        //     let postDescription = '';
-                        //     try {
-                        //         let country = allteams[i].querySelector('.event__title--type').innerText;
-                        //         let name = allteams[i].querySelector('.event__title--name').innerText;
-
-                        //         scrapeItems[i]['name'] = name
-                        //         scrapeItems[i]['country'] = country
-                        //     } catch (err) { }
-
-                        // };
-                        let items = {
-                            "liveMatches": scrapeItems,
-                        };
-                        return items;
-                    });
-                    //outputting the scraped data
-                    console.log(grabMatches);
-                    //closing the browser
-                    await browser.close();
-                })
-                //handling any errors
-                .catch(function (err) {
-                    console.error(err);
-                });
-        }
-    });
 
 
     // var unirest = require("unirest");
@@ -2708,7 +2575,7 @@ module.exports.telegramTest = async function () {
 
 
 
-
+    // getting next fixtsure - ligat HaAl
     botTest.onText(/\/next/, (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
@@ -2722,23 +2589,8 @@ module.exports.telegramTest = async function () {
             botTest.sendMessage(chatId, str)
         }
     });
-    botTest.onText(/\/poll/, (msg, match) => {
-        const chatId = msg.chat.id;
-        const { text } = msg
-        if (text === '/poll') {
-            nextMatch.forEach(match => {
-                const { game, home, draw, away, time } = match
-                const question = `${game}, ${time}`
-                const options = [home, draw, away]
-                const isAnonymous = false
 
-                botTest.sendPoll(chatId, question, options, isAnonymous)
-            })
-
-
-        }
-    });
-
+    // hightlight of ligat HaAl
     botTest.onText(/\/highlights/, (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
@@ -2751,6 +2603,8 @@ module.exports.telegramTest = async function () {
 
 
     });
+
+    // getiing each mahzor results
     botTest.onText(/\/Mahzor(.+)/, (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
@@ -2792,22 +2646,10 @@ module.exports.telegramTest = async function () {
         var unirest = require("unirest");
         if (text === '/Lior_Refaelov') {
 
-
-            var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/players/player/8461/2020-2021");
-            var req2 = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2660");
-
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
-
-            req2.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
-
+            const req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/players/player/8461/2020-2021");
+            const req2 = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2660");
+            req.headers(cerdentials);
+            req2.headers(cerdentials);
             let str = ''
 
             req2.end(function (res2) {
@@ -2861,17 +2703,9 @@ module.exports.telegramTest = async function () {
             var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/players/player/12943/2020-2021");
             var req2 = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2673");
 
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req.headers(cerdentials);
 
-            req2.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req2.headers(cerdentials);
 
             let str = ''
             req2.end(function (res2) {
@@ -2924,17 +2758,9 @@ module.exports.telegramTest = async function () {
             var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/players/player/70339/2020-2021");
             var req2 = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2833");
 
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req.headers(cerdentials);
 
-            req2.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req2.headers(cerdentials);
 
             let str = ''
 
@@ -2989,17 +2815,9 @@ module.exports.telegramTest = async function () {
             var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/players/player/697/2020-2021");
             var req2 = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2762");
 
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req.headers(cerdentials);
 
-            req2.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req2.headers(cerdentials);
 
             let str = ''
             req2.end(function (res2) {
@@ -3094,11 +2912,7 @@ module.exports.telegramTest = async function () {
         const chatId = msg.chat.id;
         const { text } = msg
         if (text === '/liga_leumit') {
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req.headers(cerdentials);
 
             req.end(function (res) {
                 if (res.error) throw new Error(res.error);
@@ -3126,11 +2940,7 @@ module.exports.telegramTest = async function () {
         const chatId = msg.chat.id;
         const { text } = msg
         if (text === '/ligat_haAl') {
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req.headers(cerdentials);
 
             req.end(function (res) {
                 if (res.error) throw new Error(res.error);
@@ -3168,11 +2978,7 @@ module.exports.telegramTest = async function () {
         const chatId = msg.chat.id;
         const { text } = msg
         if (text === '/live') {
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req.headers(cerdentials);
 
             req.end(function (res) {
                 if (res.error) throw new Error(res.error);
@@ -3295,11 +3101,7 @@ module.exports.telegramTest = async function () {
         const chatId = msg.chat.id;
         const { text } = msg
         if (text === '/last') {
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req.headers(cerdentials);
 
 
             req.end(function (res) {
@@ -3343,11 +3145,7 @@ module.exports.telegramTest = async function () {
         const chatId = msg.chat.id;
         const { text } = msg
         if (text === '/beitar') {
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req.headers(cerdentials);
 
             req.end(function (res) {
                 if (res.error) throw new Error(res.error);
@@ -3373,11 +3171,7 @@ module.exports.telegramTest = async function () {
         const chatId = msg.chat.id;
         const { text } = msg
         if (text === '/ashdod') {
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req.headers(cerdentials);
 
             req.end(function (res) {
                 if (res.error) throw new Error(res.error);
@@ -3405,11 +3199,7 @@ module.exports.telegramTest = async function () {
         const { text } = msg
         if (text === '/haifa') {
 
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req.headers(cerdentials);
 
             req.end(function (res) {
                 if (res.error) throw new Error(res.error);
@@ -3437,11 +3227,7 @@ module.exports.telegramTest = async function () {
         const chatId = msg.chat.id;
         const { text } = msg
         if (text === '/telaviv') {
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
+            req.headers(cerdentials);
 
             req.end(function (res) {
                 if (res.error) throw new Error(res.error);
