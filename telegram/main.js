@@ -188,24 +188,9 @@ const leagueIds = [
         country: 'Ukraine'
     },
     {
-        name: 'Bundesliga',
-        id: '2779',
-        country: 'Austria'
-    },
-    {
         name: 'Jupiler Pro League',
         id: '2660',
         country: 'Belgium'
-    },
-    {
-        name: 'Primeira Liga',
-        id: '2826',
-        country: 'Portugal'
-    },
-    {
-        name: 'Primeira Liga',
-        id: '2826',
-        country: 'Portugal'
     },
     {
         name: 'UEFA Europa League',
