@@ -1045,12 +1045,12 @@ const topTackles = [
 const highlights = {
     '15': [
         {
-            id: '/15_Hapoel_Haifa_Vs_Ironi_Kiryat_Shmona',
+            id: 'Hapoel Haifa vs Ironi Kiryat Shmona',
             url: 'https://www.youtube.com/watch?v=D54bnzL2xdI',
             score: '0-2'
         },
         {
-            id: '/15_Hapoel_Beer_Sheva_Vs_Maccabi_Haifa',
+            id: 'Hapoel Beer Sheva vs Maccabi Haifa',
             url: 'https://www.youtube.com/watch?v=-e0OEKfCaaE&t=7s',
             score: '1-1'
         },
@@ -1058,32 +1058,32 @@ const highlights = {
     ],
     '14': [
         {
-            id: '/14_Maccabi_Petah_Tikva_Vs_Maccabi_Tel_Aviv',
+            id: 'Maccabi Petah Tikva vs Maccabi Tel Aviv',
             url: 'https://www.youtube.com/watch?v=lNIVyeJ46Gg',
             score: '0-1'
         },
         {
-            id: '/14_Bnei_Yehuda_Vs_Bnei Sakhnin',
+            id: 'Bnei Yehuda vs Bnei Sakhnin',
             url: 'https://www.youtube.com/watch?v=h8IHeQaaDHY',
             score: '1-1'
         },
         {
-            id: '/14_Beitar_Jerusalem_Vs_Hapoel_Haifa',
+            id: 'Beitar Jerusalem vs Hapoel Haifa',
             url: 'https://www.youtube.com/watch?v=tcKvRHEL_eA',
             score: '3-3'
         },
         {
-            id: '/14_Maccabi_Netania_Vs_Hapoel_Beer_Sheva',
+            id: 'Maccabi Netanya vs Hapoel Beer Sheva',
             url: 'https://www.youtube.com/watch?v=8aEP_YlQeEE',
             score: '0-1'
         },
         {
-            id: '/14_Maccabi_Haifa_Vs_Hapoel_Hadera',
+            id: 'Maccabi Haifa vs Hapoel Hadera',
             url: 'https://www.youtube.com/watch?v=dHWFcGXIkls',
             score: '1-0'
         },
         {
-            id: '/14_Hapoel_Tel_Aviv_Vs_Hapoel_Kfar_Saba',
+            id: 'Hapoel Tel Aviv vs Hapoel Kfar Saba',
             url: 'https://www.youtube.com/watch?v=pqT30vX_kCk',
             score: '1-1'
         },
@@ -1091,32 +1091,32 @@ const highlights = {
     ],
     '13': [
         {
-            id: '/13_Hapoel_Haifa_Vs_Hapoel_Hadera',
+            id: 'Hapoel Haifa vs Hapoel Hadera',
             url: 'https://www.youtube.com/watch?v=tSS1VcMVOXY',
             score: '0-0'
         },
         {
-            id: '/13_Ironi_Kiryat_Shmona_Vs_Hapoel_Kfar_Saba',
+            id: 'Ironi Kiryat Shmona vs Hapoel Kfar Saba',
             url: 'https://www.youtube.com/watch?v=YJA_AqxSGBs',
-            score: '0-1'
+            score: '1-0'
         },
         {
-            id: '/13_Maccabi_Netanya_Vs_Maccabi_Haifa',
+            id: 'Maccabi Netanya vs Maccabi Haifa',
             url: 'https://www.youtube.com/watch?v=3BCGQo4g83U',
             score: '0-2'
         },
         {
-            id: '/13_Bnei_Yehuda_Vs_Hapoel_Beer_Sheva',
+            id: 'Bnei Yehuda vs Hapoel Beer Sheva',
             url: 'https://www.youtube.com/watch?v=d2rweAQP-aE',
             score: '0-2'
         },
         {
-            id: '/13_MS_Ashdod_Vs_Beitar_Jerusalem',
+            id: 'Beitar Jerusalem vs Ashdod',
             url: 'https://www.youtube.com/watch?v=t2xss9remD8',
-            score: '2-1'
+            score: '1-2'
         },
         {
-            id: '/13_Hapoel_Tel_Aviv_Vs_Maccabi_Tel_Aviv',
+            id: 'Hapoel Tel Aviv vs Maccabi Tel Aviv',
             url: 'https://www.youtube.com/watch?v=01QGg5dcsCg',
             score: '0-4'
         },
@@ -1124,76 +1124,37 @@ const highlights = {
     ],
     '12': [
         {
-            id: '/12_Beitar_Jerusalem_Vs_Hapoel_Kfar_Saba',
+            id: 'Hapoel Kfar Saba vs Beitar Jerusalem',
             url: 'https://www.youtube.com/watch?v=k32dJLnagng',
             score: '1-1'
         },
         {
-            id: '/12_Bnei_Sakhnin_Vs_Hapoel_Tel_Aviv',
+            id: 'Bnei Sakhnin vs Hapoel Tel Aviv',
             url: 'https://www.youtube.com/watch?v=_iME8Jom55c',
             score: '0-1'
         },
         {
-            id: '/12_Maccabi_Tel_Aviv_Vs_Ironi_Kiryat_Shmona',
+            id: 'Maccabi Tel Aviv vs Ironi Kiryat Shmona',
             url: 'https://www.youtube.com/watch?v=hpe4FjIPiak',
             score: '0-2'
         },
         {
-            id: '/12_Hapoel_Beer_Sheva_Vs_Maccabi_Petah_Tikva',
+            id: 'Hapoel Beer Sheva vs Maccabi Petah Tikva',
             url: 'https://www.youtube.com/watch?v=uxnFWXUSAZk',
             score: '1-2'
         },
         {
-            id: '/12_Maccabi_Haifa_Vs_Bnei_Yehuda',
+            id: 'Maccabi Haifa vs Bnei Yehuda',
             url: 'https://www.youtube.com/watch?v=TBDFb8r9Qe0',
             score: '3-0'
         },
         {
-            id: '/12_Hapoel_Hadera_Vs_Maccabi_Netanya',
+            id: 'Hapoel Hadera vs Maccabi Netanya',
             url: 'https://www.youtube.com/watch?v=AQwrhff1O9A',
             score: '2-1'
         },
         {
-            id: '/12_MS_Ashdod_Vs_Hapoel_Haifa',
-            url: 'https://www.youtube.com/watch?v=stCNijtviAs',
-            score: '0-1'
-        },
-
-
-    ],
-    '12': [
-        {
-            id: '/12_Beitar_Jerusalem_Vs_Hapoel_Kfar_Saba',
-            url: 'https://www.youtube.com/watch?v=k32dJLnagng',
-            score: '1-1'
-        },
-        {
-            id: '/12_Bnei_Sakhnin_Vs_Hapoel_Tel_Aviv',
-            url: 'https://www.youtube.com/watch?v=_iME8Jom55c',
-            score: '0-1'
-        },
-        {
-            id: '/12_Maccabi_Tel_Aviv_Vs_Ironi_Kiryat_Shmona',
-            url: 'https://www.youtube.com/watch?v=hpe4FjIPiak',
-            score: '0-2'
-        },
-        {
-            id: '/12_Hapoel_Beer_Sheva_Vs_Maccabi_Petah_Tikva',
-            url: 'https://www.youtube.com/watch?v=uxnFWXUSAZk',
-            score: '1-2'
-        },
-        {
-            id: '/12_Maccabi_Haifa_Vs_Bnei_Yehuda',
-            url: 'https://www.youtube.com/watch?v=TBDFb8r9Qe0',
-            score: '3-0'
-        },
-        {
-            id: '/12_Hapoel_Hadera_Vs_Maccabi_Netanya',
-            url: 'https://www.youtube.com/watch?v=AQwrhff1O9A',
-            score: '2-1'
-        },
-        {
-            id: '/12_MS_Ashdod_Vs_Hapoel_Haifa',
+            id: 'Ashdod vs Hapoel Haifa',
             url: 'https://www.youtube.com/watch?v=stCNijtviAs',
             score: '0-1'
         },
@@ -1202,48 +1163,38 @@ const highlights = {
     ],
     '11': [
         {
-            id: '/11_Hapoel_Hadera_Vs_MS_Ashdod',
+            id: 'Hapoel Hadera vs Ashdod',
             url: 'https://www.youtube.com/watch?v=tnDqHfkton8',
             score: '1-1'
         },
         {
-            id: '/11_Hapoel_Tel_Aviv_Vs_Hapoel_Beer_Sheva',
+            id: 'Maccabi Petah Tikva vs Maccabi Haifa',
+            url: 'https://www.youtube.com/watch?v=kgTEyiEfoS8',
+            score: '1-2'
+        },
+        {
+            id: 'Hapoel Haifa vs Hapoel Kfar Saba',
+            url: 'https://www.youtube.com/watch?v=3r8iImTOPuQ',
+            score: '2-1'
+        },
+        {
+            id: 'Hapoel Tel Aviv vs Hapoel Beer Sheva',
             url: 'https://www.youtube.com/watch?v=IBvfUC_GACM',
             score: '0-2'
         },
         {
-            id: '/12_Beitar_Jerusalem_Vs_Hapoel_Kfar_Saba',
-            url: 'https://www.youtube.com/watch?v=k32dJLnagng',
+            id: 'Beitar Jerusalem vs Maccabi Tel Aviv',
+            url: 'https://www.youtube.com/watch?v=DnRZNSQ_iC0',
+            score: '0-0'
+        },
+        {
+            id: 'Bnei Yehuda vs Maccabi Netanya',
+            url: 'https://www.youtube.com/watch?v=AQwrhff1O9A',
             score: '1-1'
         },
         {
-            id: '/12_Bnei_Sakhnin_Vs_',
-            url: 'https://www.youtube.com/watch?v=_iME8Jom55c',
-            score: '0-1'
-        },
-        {
-            id: '/12_Maccabi_Tel_Aviv_Vs_Ironi_Kiryat_Shmona',
-            url: 'https://www.youtube.com/watch?v=hpe4FjIPiak',
-            score: '0-2'
-        },
-        {
-            id: '/12__Vs_Maccabi_Petah_Tikva',
-            url: 'https://www.youtube.com/watch?v=uxnFWXUSAZk',
-            score: '1-2'
-        },
-        {
-            id: '/12_Maccabi_Haifa_Vs_Bnei_Yehuda',
-            url: 'https://www.youtube.com/watch?v=TBDFb8r9Qe0',
-            score: '3-0'
-        },
-        {
-            id: '/12__Vs_Maccabi_Netanya',
-            url: 'https://www.youtube.com/watch?v=AQwrhff1O9A',
-            score: '2-1'
-        },
-        {
-            id: '/12_MS_Ashdod_Vs_Hapoel_Haifa',
-            url: 'https://www.youtube.com/watch?v=stCNijtviAs',
+            id: 'Ironi Kiryat Shmona vs Bnei Sakhnin',
+            url: 'https://www.youtube.com/watch?v=glB2GfxdVOI',
             score: '0-1'
         },
 
@@ -1424,39 +1375,7 @@ module.exports.telegram = async function () {
         }
     });
 
-    // hightlight of ligat HaAl
-    botTest.onText(/\/highlights/, (msg, match) => {
-        const chatId = msg.chat.id;
-        const { text } = msg
-        if (text === '/highlights') {
-            let str = 'Your Options Are:\n\n/Mahzor15\n/Mahzor14\n/Mahzor13\n/Mahzor12\n'
 
-            botTest.sendMessage(chatId, str);
-
-        }
-
-
-    });
-
-    // getiing each mahzor results
-    botTest.onText(/\/Mahzor(.+)/, (msg, match) => {
-        const chatId = msg.chat.id;
-        const { text } = msg
-        let str = ``
-        const mahzor = match[1].toLowerCase()
-
-        if (text.includes('Mahzor')) {
-            const games = highlights[mahzor]
-
-            games.forEach(game => {
-                str += `${game.id} score:${game.score} \n`
-            })
-            botTest.sendMessage(chatId, str)
-
-        }
-
-
-    });
     botTest.onText(/\/ligyoners/, (msg, match) => {
 
 
@@ -1901,13 +1820,7 @@ module.exports.telegram = async function () {
         var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/fixtures/league/2708");
         const mahzor = match[1];
         const chatId = msg.chat.id;
-
-        req.headers({
-            "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-            "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-            "useQueryString": true
-        });
-
+        req.headers(cerdentials);
 
         req.end(function (res) {
             if (res.error) throw new Error(res.error);
@@ -1919,7 +1832,14 @@ module.exports.telegram = async function () {
                 const { team_name: away } = awayTeam
                 const { fulltime = 'No Result Yet' } = score
                 const finalScore = fulltime === null ? 'No Result Yet' : fulltime
+                const id = `${home} vs ${away}`
+                const takzir = highlights[mahzor].find(o=>{return o.id === id})
+
                 str += `${home} vs ${away}: ${finalScore}\n`
+                if (takzir){
+                    str += `Highlights: ${takzir.url}\n\n`
+
+                }
             })
             // console.log(str)
             botTest.sendMessage(chatId, str);
@@ -2386,23 +2306,22 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\//, (msg, match) => {
-        const chatId = msg.chat.id;
-        const { text } = msg
+    // botTest.onText(/\//, (msg, match) => {
+    //     const chatId = msg.chat.id;
+    //     const { text } = msg
+    //     const mahzor = text.substring(1, 3)
+    //     const highlight = highlights[mahzor].find(game => {
+    //         return game.id === text
+    //     })
 
-        const mahzor = text.substring(1, 3)
-        const highlight = highlights[mahzor].find(game => {
-            return game.id === text
-        })
+    //     if (highlight) {
+    //         const { url } = highlight
+    //         botTest.sendMessage(chatId, url)
 
-        if (highlight) {
-            const { url } = highlight
-            botTest.sendMessage(chatId, url)
-
-        }
+    //     }
 
 
-    });
+    // });
 
 };
 module.exports.telegramTest = async function () {
@@ -2591,38 +2510,38 @@ module.exports.telegramTest = async function () {
     });
 
     // hightlight of ligat HaAl
-    botTest.onText(/\/highlights/, (msg, match) => {
-        const chatId = msg.chat.id;
-        const { text } = msg
-        if (text === '/highlights') {
-            let str = 'Your Options Are:\n\n/Mahzor15\n/Mahzor14\n/Mahzor13\n/Mahzor12\n'
+    // botTest.onText(/\/highlights/, (msg, match) => {
+    //     const chatId = msg.chat.id;
+    //     const { text } = msg
+    //     if (text === '/highlights') {
+    //         let str = 'Your Options Are:\n\n/Mahzor15\n/Mahzor14\n/Mahzor13\n/Mahzor12\n'
 
-            botTest.sendMessage(chatId, str);
+    //         botTest.sendMessage(chatId, str);
 
-        }
+    //     }
 
 
-    });
+    // });
 
     // getiing each mahzor results
-    botTest.onText(/\/Mahzor(.+)/, (msg, match) => {
-        const chatId = msg.chat.id;
-        const { text } = msg
-        let str = ``
-        const mahzor = match[1].toLowerCase()
+    // botTest.onText(/\/Mahzor(.+)/, (msg, match) => {
+    //     const chatId = msg.chat.id;
+    //     const { text } = msg
+    //     let str = ``
+    //     const mahzor = match[1].toLowerCase()
 
-        if (text.includes('Mahzor')) {
-            const games = highlights[mahzor]
+    //     if (text.includes('Mahzor')) {
+    //         const games = highlights[mahzor]
 
-            games.forEach(game => {
-                str += `${game.id} score:${game.score} \n`
-            })
-            botTest.sendMessage(chatId, str)
+    //         games.forEach(game => {
+    //             str += `${game.id} score:${game.score} \n`
+    //         })
+    //         botTest.sendMessage(chatId, str)
 
-        }
+    //     }
 
 
-    });
+    // });
     botTest.onText(/\/ligyoners/, (msg, match) => {
 
 
@@ -3067,13 +2986,7 @@ module.exports.telegramTest = async function () {
         var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/fixtures/league/2708");
         const mahzor = match[1];
         const chatId = msg.chat.id;
-
-        req.headers({
-            "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-            "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-            "useQueryString": true
-        });
-
+        req.headers(cerdentials);
 
         req.end(function (res) {
             if (res.error) throw new Error(res.error);
@@ -3085,7 +2998,14 @@ module.exports.telegramTest = async function () {
                 const { team_name: away } = awayTeam
                 const { fulltime = 'No Result Yet' } = score
                 const finalScore = fulltime === null ? 'No Result Yet' : fulltime
+                const id = `${home} vs ${away}`
+                const takzir = highlights[mahzor].find(o=>{return o.id === id})
+
                 str += `${home} vs ${away}: ${finalScore}\n`
+                if (takzir){
+                    str += `Highlights: ${takzir.url}\n\n`
+
+                }
             })
             // console.log(str)
             botTest.sendMessage(chatId, str);
@@ -3552,23 +3472,26 @@ module.exports.telegramTest = async function () {
         }
 
     });
-    botTest.onText(/\//, (msg, match) => {
-        const chatId = msg.chat.id;
-        const { text } = msg
+    // botTest.onText(/\//, (msg, match) => {
+    //     const chatId = msg.chat.id;
+    //     const { text } = msg
 
-        const mahzor = text.substring(1, 3)
-        const highlight = highlights[mahzor].find(game => {
-            return game.id === text
-        })
+    //     const mahzor = text.substring(1, 3)
 
-        if (highlight) {
-            const { url } = highlight
-            botTest.sendMessage(chatId, url)
+    //     const highlight = highlights[mahzor].find(game => {
+    //         return game.id === text
+    //     })
 
-        }
+    //     if (highlight) {
+    //         console.log('mahzor',mahzor)
+
+    //         const { url } = highlight
+    //         botTest.sendMessage(chatId, url)
+
+    //     }
 
 
-    });
+    // });
 
 };
 
