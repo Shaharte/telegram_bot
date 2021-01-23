@@ -1301,8 +1301,11 @@ const nextMatch = [
 module.exports.telegram = async function () {
 
     const botTest = new TelegramBot(token, { polling: true });
-    nodeSchedule.scheduleJob('30 12 * * 6', () => {
+    nodeSchedule.scheduleJob('45 12 * * 6', () => {
+        console.log('start sending poll')
         nextMatch.forEach(match => {
+            console.log('match',match)
+
             const { game, home, draw, away, time } = match
             const question = `${game}, ${time}`
             const options = [home, draw, away]
@@ -1317,7 +1320,7 @@ module.exports.telegram = async function () {
         console.log('starting to run scrapper')
         const gamesScrapper = await games.find({ updateTo })
         const oldGames = gamesScrapper.length ? gamesScrapper[0].games : []
-        await puppeteer.launch({ args: ['--no-sandbox'] })
+        const browser = await puppeteer.launch({ignoreDefaultArgs: ['--disable-extensions']});
 
         puppeteer
             .launch()
