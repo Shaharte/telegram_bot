@@ -1321,7 +1321,7 @@ module.exports.telegram = async function () {
         const gamesScrapper = await games.find({ updateTo })
         const oldGames = gamesScrapper.length ? gamesScrapper[0].games : []
         puppeteer
-            .launch({ args: ['--no-sandbox'] })
+            .launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
             .then(async browser => {
 
                 //opening a new page and navigating to Fleshscore
