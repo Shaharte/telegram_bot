@@ -1307,7 +1307,7 @@ module.exports.telegram = async function () {
             const question = `${game}, ${time}`
             const options = [home, draw, away]
             const is_anonymous = false
-            botTest.sendPoll('404011627', question, options)
+            botTest.sendPoll('471015035', question, options)
         })
 
     });
@@ -1458,15 +1458,15 @@ module.exports.telegram = async function () {
                             str += `${country} - ${name}: \n`
                             if (min === 'Finished') {
                                 str += `${min}: ${homeTeam} ${score} ${awayTeam}\n`
-                                botTest.sendMessage('404011627', str)
+                                botTest.sendMessage('471015035', str)
 
                             } else if (oldGame.score === '-') {
                                 str += `Match Started! ${min}: ${homeTeam} ${score} ${awayTeam}\n`
-                                botTest.sendMessage('404011627', str)
+                                botTest.sendMessage('471015035', str)
 
                             } else {
                                 str += `GOALLL! ${min}: ${homeTeam} ${score} ${awayTeam}\n`
-                                botTest.sendMessage('404011627', str)
+                                botTest.sendMessage('471015035', str)
                             }
                             str=``
                         }
