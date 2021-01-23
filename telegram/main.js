@@ -10,6 +10,7 @@ process.env.NTBA_FIX_319 = 1
 const moment = require('moment');
 const nodeSchedule = require('node-schedule');
 const puppeteer = require('puppeteer');
+await puppeteer.launch({ args: ['--no-sandbox'] })
 
 
 const TelegramBot = require('node-telegram-bot-api');
