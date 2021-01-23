@@ -1301,7 +1301,7 @@ const nextMatch = [
 module.exports.telegram = async function () {
 
     const botTest = new TelegramBot(token, { polling: true });
-    nodeSchedule.scheduleJob('10 12 * * 6', () => {
+    nodeSchedule.scheduleJob('30 12 * * 6', () => {
         nextMatch.forEach(match => {
             const { game, home, draw, away, time } = match
             const question = `${game}, ${time}`
@@ -1486,6 +1486,7 @@ module.exports.telegram = async function () {
     // getting next fixtsure - ligat HaAl
     botTest.onText(/\/next/, (msg, match) => {
         const chatId = msg.chat.id;
+        console.log('chatId:',chatId)
         const { text } = msg
         if (text === '/next') {
             let str = 'Next Fixtures Are:\n\n'
