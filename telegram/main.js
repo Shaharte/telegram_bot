@@ -1301,7 +1301,7 @@ const nextMatch = [
 module.exports.telegram = async function () {
 
     const botTest = new TelegramBot(token, { polling: true });
-    nodeSchedule.scheduleJob('45 12 * * 6', () => {
+    nodeSchedule.scheduleJob('30 12 * * 6', () => {
         console.log('start sending poll')
         nextMatch.forEach(match => {
             console.log('match',match)
