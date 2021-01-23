@@ -1457,9 +1457,9 @@ module.exports.telegram = async function () {
                     const { score, time, min, homeTeam, awayTeam } = game
                     const oldGame = findOld.games.find(old => { return old.homeTeam === homeTeam && old.awayTeam === awayTeam })
                     if (oldGame) {
-                        if (oldGame.score !== score || (oldGame.min !== min  || min === 'Finished') ) {
+                        if (oldGame.score !== score || (oldGame.min !== min && min!=='' || min === 'Finished') ) {
                             str += `${country} - ${name}: \n`
-                            if (min === 'Finished') {
+                            if (min === 'Finished' && oldGame.score !== score) {
                                 str += `${min}: ${homeTeam} ${score} ${awayTeam}\n`
                                 botTest.sendMessage('-471015035', str)
 
