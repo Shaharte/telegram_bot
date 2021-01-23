@@ -12,6 +12,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "express": "^4.17.1",
+    "heroku": "^7.47.11",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
     "mongoose": "^5.11.13",
