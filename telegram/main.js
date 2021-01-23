@@ -1301,13 +1301,13 @@ const nextMatch = [
 module.exports.telegram = async function () {
 
     const botTest = new TelegramBot(token, { polling: true });
-    nodeSchedule.scheduleJob('00 12 * * 6', () => {
+    nodeSchedule.scheduleJob('10 12 * * 6', () => {
         nextMatch.forEach(match => {
             const { game, home, draw, away, time } = match
             const question = `${game}, ${time}`
             const options = [home, draw, away]
             const is_anonymous = false
-            botTest.sendPoll('471015035', question, options)
+            botTest.sendPoll('-471015035', question, options)
         })
 
     });
@@ -1458,15 +1458,15 @@ module.exports.telegram = async function () {
                             str += `${country} - ${name}: \n`
                             if (min === 'Finished') {
                                 str += `${min}: ${homeTeam} ${score} ${awayTeam}\n`
-                                botTest.sendMessage('471015035', str)
+                                botTest.sendMessage('-471015035', str)
 
                             } else if (oldGame.score === '-') {
                                 str += `Match Started! ${min}: ${homeTeam} ${score} ${awayTeam}\n`
-                                botTest.sendMessage('471015035', str)
+                                botTest.sendMessage('-471015035', str)
 
                             } else {
                                 str += `GOALLL! ${min}: ${homeTeam} ${score} ${awayTeam}\n`
-                                botTest.sendMessage('471015035', str)
+                                botTest.sendMessage('-471015035', str)
                             }
                             str=``
                         }
