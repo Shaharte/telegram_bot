@@ -1320,10 +1320,8 @@ module.exports.telegram = async function () {
         console.log('starting to run scrapper')
         const gamesScrapper = await games.find({ updateTo })
         const oldGames = gamesScrapper.length ? gamesScrapper[0].games : []
-        const browser = await puppeteer.launch({ignoreDefaultArgs: ['--disable-extensions']});
-
         puppeteer
-            .launch()
+            .launch({ args: ['--no-sandbox'] })
             .then(async browser => {
 
                 //opening a new page and navigating to Fleshscore
