@@ -10,7 +10,6 @@ process.env.NTBA_FIX_319 = 1
 const moment = require('moment');
 const nodeSchedule = require('node-schedule');
 const puppeteer = require('puppeteer');
-await puppeteer.launch({ args: ['--no-sandbox'] })
 
 
 const TelegramBot = require('node-telegram-bot-api');
@@ -1318,6 +1317,8 @@ module.exports.telegram = async function () {
         console.log('starting to run scrapper')
         const gamesScrapper = await games.find({ updateTo })
         const oldGames = gamesScrapper.length ? gamesScrapper[0].games : []
+        await puppeteer.launch({ args: ['--no-sandbox'] })
+
         puppeteer
             .launch()
             .then(async browser => {
