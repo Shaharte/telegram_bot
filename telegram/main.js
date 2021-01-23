@@ -1400,7 +1400,7 @@ module.exports.telegram = async function () {
 
                         } else {
                             allGames[j].games.push(scrapeItems[i])
-                        }
+                        } 
 
 
                     };
@@ -1457,7 +1457,7 @@ module.exports.telegram = async function () {
                     const { score, time, min, homeTeam, awayTeam } = game
                     const oldGame = findOld.games.find(old => { return old.homeTeam === homeTeam && old.awayTeam === awayTeam })
                     if (oldGame) {
-                        if (oldGame.score !== score || (oldGame.min !== min && min!=='' || min === 'Finished') ) {
+                        if (oldGame.score !== score || (oldGame.min !== min  || min === 'Finished') ) {
                             str += `${country} - ${name}: \n`
                             if (min === 'Finished') {
                                 str += `${min}: ${homeTeam} ${score} ${awayTeam}\n`
