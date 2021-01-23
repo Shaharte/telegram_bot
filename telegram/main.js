@@ -1407,7 +1407,7 @@ module.exports.telegram = async function () {
 
 
                     const finalData = allGames.filter(game => {
-                        return ((game.country === 'ENGLAND' && (game.name === 'Premier League' || game.name === 'FA Cup')) || (game.country === 'SPAIN' && (game.name === 'LaLiga' || game.name === 'Copa del Rey')) || (game.country === 'ITALY' && game.name === 'Serie A') || (game.country === 'GERMANY' && game.name === 'Bundesliga')|| (game.country === 'ISRAEL' && (game.name === "Ligat ha'Al" || game.name === "Leumit League")))
+                        return ((game.country === 'ISRAEL' && (game.name === "Ligat ha'Al" || game.name === "Leumit League")))
                     })
          
                     return finalData;
@@ -1467,7 +1467,7 @@ module.exports.telegram = async function () {
                                 str += `Match Started! ${min}: ${homeTeam} ${score} ${awayTeam}\n`
                                 botTest.sendMessage('-471015035', str)
 
-                            } else {
+                            } else if (oldGame.score !== score) {
                                 str += `GOALLL! ${min}: ${homeTeam} ${score} ${awayTeam}\n`
                                 botTest.sendMessage('-471015035', str)
                             }
@@ -2455,187 +2455,11 @@ module.exports.telegram = async function () {
 module.exports.telegramTest = async function () {
 
     const botTest = new TelegramBot(testtoken, { polling: true });
+
+
+
     // const updateTo = moment().utc().format('YYYY[-]MM[-]DD');
-    // const scraper = async () => {
-    //     console.log('starting to run scrapper')
-    //     const gamesScrapper = await games.find({ updateTo })
-    //     const oldGames = gamesScrapper.length ? gamesScrapper[0].games : []
-    //     puppeteer
-    //         .launch()
-    //         .then(async browser => {
-
-    //             //opening a new page and navigating to Fleshscore
-    //             const page = await browser.newPage();
-    //             await page.goto('https://www.flashscore.com/');
-    //             await page.waitForSelector('body');
-
-    //             //manipulating the page's content
-    //             let grabMatches = await page.evaluate(() => {
-    //                 let allLiveMatches = document.body.querySelectorAll('.event__header,.event__match--oneLine');
-
-    //                 let allteams = document.body.querySelectorAll('.event__header');
-    //                 //storing the post items in an array then selecting for retrieving content
-    //                 scrapeItems = [];
-    //                 allLiveMatches.forEach(item => {
-    //                     let awayTeam = '';
-    //                     let homeTeam = '';
-    //                     let country = '';
-    //                     let name = '';
-    //                     let score = '';
-    //                     let min = '';
-    //                     let time = '';
-    //                     // let min = item.querySelector('.event__stage--block').innerText;
-    //                     try {
-    //                         awayTeam = item.querySelector('.event__participant--away').innerText;
-    //                         homeTeam = item.querySelector('.event__participant--home').innerText;
-    //                         score = item.querySelector('.event__scores').innerText;
-    //                         min;
-    //                         time;
-    //                         try {
-    //                             time = item.querySelector('.event__time').innerText;
-    //                             time = time.replace('\nFRO', '')
-    //                             min = ''
-
-    //                         } catch (errr) {
-    //                             min = item.querySelector('.event__stage--block').innerText;
-    //                             time = ''
-    //                         }
-    //                         score = score.replaceAll('\n', '')
-    //                     } catch (err) {
-    //                         country = item.querySelector('.event__title--type').innerText;
-    //                         name = item.querySelector('.event__title--name').innerText;
-
-    //                     }
-
-
-
-    //                     scrapeItems.push({
-    //                         score,
-    //                         time,
-    //                         min,
-    //                         homeTeam,
-    //                         awayTeam,
-    //                         name,
-    //                         country
-
-    //                     });
-
-
-
-
-
-    //                 });
-    //                 const allGames = []
-    //                 let j = -1
-    //                 for (let i = 0; i < scrapeItems.length; i++) {
-
-    //                     const { name, country, score, time, min, homeTeam, awayTeam } = scrapeItems[i]
-    //                     if (country !== '') {
-    //                         j++
-    //                         allGames.push({
-    //                             name,
-    //                             country,
-    //                             games: []
-    //                         })
-
-    //                     } else {
-    //                         allGames[j].games.push(scrapeItems[i])
-    //                     }
-
-
-    //                 };
-
-
-    //                 // const finalData = allGames.filter(game => {
-    //                 //     return ((game.country === 'ENGLAND' && (game.name === 'Premier League' || game.name === 'FA Cup')) || (game.country === 'SPAIN' && (game.name === 'LaLiga' || game.name === 'Copa del Rey')) || (game.country === 'ITALY' && game.name === 'Serie A') || (game.country === 'GERMANY' && game.name === 'Bundesliga')|| (game.country === 'ISRAEL' && (game.name === "Ligat ha'Al" || game.name === "Leumit League")))
-    //                 // })
-    //                 const finalData = allGames.filter(game => {
-    //                     return ((game.country === 'ENGLAND' && (game.name === 'Premier League' || game.name === 'Championship' || game.name === 'FA Cup')) || (game.country === 'SPAIN' && (game.name === 'LaLiga' || game.name === 'Copa del Rey')) || (game.country === 'WORLD' && game.name === 'Club Friendly'))
-    //                 })
-    //                 return finalData;
-    //             });
-    //             //outputting the scraped data
-
-
-    //             const data = {
-    //                 updateTo,
-    //                 games: grabMatches,
-    //             }
-
-    //             await games.findOneAndUpdate({ updateTo }, data, { upsert: true, new: true });
-    //             sendNotification(grabMatches, oldGames)
-    //             //closing the browser
-    //             await browser.close();
-    //         })
-    //         //handling any errors
-    //         .catch(function (err) {
-    //             console.error(err);
-    //         });
-
-
-    // }
-    // //initiating Puppeteer
-    // scraper()
-    // const rule = new nodeSchedule.RecurrenceRule();
-    // rule.minute = 2;
-    // nodeSchedule.scheduleJob('* * * * *', () => {
-    //     try {
-    //         scraper()
-
-    //     } catch (err) { }
-
-    // });
-
-
-    // const sendNotification = (newGames, oldGames) => {
-    //     let str = ``
-    //     newGames.forEach(league => {
-    //         const { name, country, games = [] } = league
-
-    //         const findOld = oldGames.find(old => { return old.name === name && old.country === country })
-    //         if (findOld) {
-
-    //             games.forEach(game => {
-    //                 const { score, time, min, homeTeam, awayTeam } = game
-    //                 const oldGame = findOld.games.find(old => { return old.homeTeam === homeTeam && old.awayTeam === awayTeam })
-    //                 if (oldGame) {
-    //                     if (score !== '-' && score !== '') {
-    //                         console.log('oldGame.score',  oldGame.min, oldGame.score)
-    //                         console.log('score', min,score)
-
-    //                     }
-    //                     if (oldGame.score !== score || (oldGame.min !== min && min!=='' || min === 'Finished') ) {
-    //                         str += `${country} - ${name}: \n`
-    //                         if (min === 'Finished') {
-    //                             str += `${min}: ${homeTeam} ${score} ${awayTeam}\n`
-    //                             console.log(str)
-    //                             botTest.sendMessage('404011627', str)
-
-    //                         } else if (oldGame.score === '-') {
-    //                             str += `Match Started! ${min}: ${homeTeam} ${score} ${awayTeam}\n`
-    //                             botTest.sendMessage('404011627', str)
-
-    //                         } else {
-    //                             str += `GOALLL! ${min}: ${homeTeam} ${score} ${awayTeam}\n`
-    //                             console.log(str)
-    //                             botTest.sendMessage('404011627', str)
-    //                         }
-    //                         str=``
-    //                     }
-    //                 }
-
-    //             })
-
-    //         }
-
-
-    //     })
-
-    // }
-
-
-
-
+ 
     // var unirest = require("unirest");
 
     // var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/players/team/550");
@@ -3103,7 +2927,6 @@ module.exports.telegramTest = async function () {
 
                     }
                     leagueArr.forEach(game => {
-                        console.log('game', game)
                         const { goalsAwayTeam, goalsHomeTeam, homeTeam, awayTeam, elapsed, score, league } = game
                         const { name, country } = league
                         const { halftime } = score
