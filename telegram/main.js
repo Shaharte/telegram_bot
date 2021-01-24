@@ -1304,7 +1304,7 @@ module.exports.telegram = async function () {
     nodeSchedule.scheduleJob('30 12 * * 6', () => {
         console.log('start sending poll')
         nextMatch.forEach(match => {
-            console.log('match',match)
+            console.log('match', match)
 
             const { game, home, draw, away, time } = match
             const question = `${game}, ${time}`
@@ -1400,16 +1400,16 @@ module.exports.telegram = async function () {
 
                         } else {
                             allGames[j].games.push(scrapeItems[i])
-                        } 
+                        }
 
 
                     };
 
 
                     const finalData = allGames.filter(game => {
-                        return ((game.country === 'ISRAEL' && (game.name === "Ligat ha'Al" || game.name === "Leumit League")))
+                        return ((game.country === 'ISRAEL' && game.name === "Ligat ha'Al"))
                     })
-         
+
                     return finalData;
                 });
                 //outputting the scraped data
@@ -1433,10 +1433,7 @@ module.exports.telegram = async function () {
 
     }
     //initiating Puppeteer
-    scraper()
-    const rule = new nodeSchedule.RecurrenceRule();
-    rule.minute = 2;
-    nodeSchedule.scheduleJob('* 12-22 * * *', () => {
+    nodeSchedule.scheduleJob('* 16-20 * * *', () => {
         try {
             scraper()
 
@@ -1457,21 +1454,50 @@ module.exports.telegram = async function () {
                     const { score, time, min, homeTeam, awayTeam } = game
                     const oldGame = findOld.games.find(old => { return old.homeTeam === homeTeam && old.awayTeam === awayTeam })
                     if (oldGame) {
-                        if (oldGame.score !== score || (oldGame.min !== min && min!=='' || min === 'Finished') ) {
+                        if (oldGame.score !== score || (oldGame.min !== min && min !== '' || min === 'Finished')) {
+
+                            const homeScore = score.substring(0, 1) === '-' ? score.substring(0, 1) : Number(score.substring(0, 1))
+                            const awayScore = score.substring(score.length - 1, score.length) === '-' ? score.substring(score.length - 1, score.length) : Number(score.substring(score.length - 1, score.length))
+                            const oldHomeScore = oldGame.score.substring(0, 1) === '-' ? oldGame.score.substring(0, 1) : Number(oldGame.score.substring(0, 1))
+                            const oldAwayScore = oldGame.score.substring(oldGame.score.length - 1, oldGame.score.length) === '-' ? oldGame.score.substring(oldGame.score.length - 1, oldGame.score.length) : Number(oldGame.score.substring(oldGame.score.length - 1, oldGame.score.length))
+
                             str += `${country} - ${name}: \n`
-                            if (min === 'Finished' && oldGame.score !== score) {
+
+                            if (min === 'Finished' && oldGame.min !== min) {
                                 str += `${min}: ${homeTeam} ${score} ${awayTeam}\n`
-                                botTest.sendMessage('-471015035', str)
+                                console.log(str)
+                                // botTest.sendMessage('-471015035', str)
 
                             } else if (oldGame.score === '-') {
                                 str += `Match Started! ${min}: ${homeTeam} ${score} ${awayTeam}\n`
-                                botTest.sendMessage('-471015035', str)
+                                // botTest.sendMessage('-471015035', str)
+                                console.log(str)
 
                             } else if (oldGame.score !== score) {
-                                str += `GOALLL! ${min}: ${homeTeam} ${score} ${awayTeam}\n`
-                                botTest.sendMessage('-471015035', str)
+                                if (homeScore > oldHomeScore || awayScore > oldAwayScore) {
+                                    if (homeScore > oldHomeScore) {
+
+                                        str += `GOALLL! ${min}: ${homeTeam} [${homeScore}] - ${awayScore} ${awayTeam}\n`
+                                    } else {
+                                        str += `GOALLL! ${min}: ${homeTeam} ${homeScore} - [${awayScore}] ${awayTeam}\n`
+
+                                    }
+
+                                } else if (oldHomeScore > homeScore || oldAwayScore > awayScore) {
+                                    if (oldHomeScore > homeScore) {
+
+                                        str += `Goal Cancelled!! ${min}: ${homeTeam} [${homeScore}] - ${awayScore} ${awayTeam}\n`
+                                    } else {
+                                        str += `Goal Cancelled!! ${min}: ${homeTeam} ${homeScore} - [${awayScore}] ${awayTeam}\n`
+
+                                    }
+
+                                }
+                                // botTest.sendMessage('-471015035', str)
+                                console.log(str)
+
                             }
-                            str=``
+                            str = ``
                         }
                     }
 
@@ -1489,7 +1515,7 @@ module.exports.telegram = async function () {
     // getting next fixtsure - ligat HaAl
     botTest.onText(/\/next/, (msg, match) => {
         const chatId = msg.chat.id;
-        console.log('chatId:',chatId)
+        console.log('chatId:', chatId)
         const { text } = msg
         if (text === '/next') {
             let str = 'Next Fixtures Are:\n\n'
@@ -1764,7 +1790,7 @@ module.exports.telegram = async function () {
         if (text === '/help') {
 
 
-            let str = 'Your Options Are:\n\n/live \n/tables \n/stats \n/last \n/teams \n/mahzorim \n/ligyoners'
+            let str = 'Your Options Are:\n\n/live \n/table \n/stats \n/last \n/teams \n/mahzorim \n/ligyoners'
 
 
             botTest.sendMessage(chatId, str);
@@ -1788,39 +1814,11 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/liga_leumit/, (msg, match) => {
-        var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2770");
-        const chatId = msg.chat.id;
-        const { text } = msg
-        if (text === '/liga_leumit') {
-            req.headers(cerdentials);
-
-            req.end(function (res) {
-                if (res.error) throw new Error(res.error);
-                let str = ''
-                res.body.api.standings[0].forEach(team => {
-                    const { teamName, rank, points, all, goalsDiff } = team
-                    const teamname2 = _.padEnd(teamName, 25);
-                    const points2 = _.padStart(points, 3);
-                    const rank2 = _.padEnd(rank, 2);
-
-                    const { matchsPlayed, goalsFor, goalsAgainst } = all
-                    //${goalsFor}-${goalsAgainst}
-                    str += `${rank2}:  ${teamname2} ${points2}\n`
-
-                })
-
-                botTest.sendMessage(chatId, str);
-            });
-        }
-
-
-    });
-    botTest.onText(/\/ligat_haAl/, (msg, match) => {
+    botTest.onText(/\/table/, (msg, match) => {
         var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2708");
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/ligat_haAl') {
+        if (text === '/table') {
             req.headers(cerdentials);
 
             req.end(function (res) {
@@ -1840,16 +1838,6 @@ module.exports.telegram = async function () {
 
                 botTest.sendMessage(chatId, str);
             });
-        }
-
-
-    });
-    botTest.onText(/\/tables/, (msg, match) => {
-        const chatId = msg.chat.id;
-        const { text } = msg
-        if (text === '/tables') {
-            let str = 'Your Options Are:\n\n/ligat_haAl \n/liga_leumit  \n'
-            botTest.sendMessage(chatId, str);
         }
 
 
@@ -2452,68 +2440,326 @@ module.exports.telegram = async function () {
     // });
 
 };
+
 module.exports.telegramTest = async function () {
 
     const botTest = new TelegramBot(testtoken, { polling: true });
+    nodeSchedule.scheduleJob('30 12 * * 6', () => {
+        console.log('start sending poll')
+        nextMatch.forEach(match => {
+            console.log('match', match)
+
+            const { game, home, draw, away, time } = match
+            const question = `${game}, ${time}`
+            const options = [home, draw, away]
+            const is_anonymous = false
+            botTest.sendPoll('-471015035', question, options)
+        })
+
+    });
+
+    const updateTo = moment().utc().format('YYYY[-]MM[-]DD');
+    const scraper = async () => {
+        console.log('starting to run scrapper')
+        const gamesScrapper = await games.find({ updateTo })
+        const oldGames = gamesScrapper.length ? gamesScrapper[0].games : []
+        puppeteer
+            .launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
+            .then(async browser => {
+
+                //opening a new page and navigating to Fleshscore
+                const page = await browser.newPage();
+                await page.goto('https://www.flashscore.com/');
+                await page.waitForSelector('body');
+
+                //manipulating the page's content
+                let grabMatches = await page.evaluate(() => {
+                    let allLiveMatches = document.body.querySelectorAll('.event__header,.event__match--oneLine');
+
+                    let allteams = document.body.querySelectorAll('.event__header');
+                    //storing the post items in an array then selecting for retrieving content
+                    scrapeItems = [];
+                    allLiveMatches.forEach(async item => {
+                        let awayTeam = '';
+                        let homeTeam = '';
+                        let country = '';
+                        let name = '';
+                        let score = '';
+                        let min = '';
+                        let time = '';
+                        let scorrers = []
+                        // let min = item.querySelector('.event__stage--block').innerText;
+                        try {
+                            awayTeam = item.querySelector('.event__participant--away').innerText;
+                            homeTeam = item.querySelector('.event__participant--home').innerText;
+                            score = item.querySelector('.event__scores').innerText;
+                            min;
+                            time;
+                            try {
+                                time = item.querySelector('.event__time').innerText;
+                                time = time.replace('\nFRO', '')
+                                min = ''
+                               const data = await scraper2()
+                                scorrers.push(data)
+                                //outputting the scraped data
+
+
+                                //closing the browser
+                            } catch (errr) {
+                                min = item.querySelector('.event__stage--block').innerText;
+                                time = ''
+                            }
+                            score = score.replaceAll('\n', '')
+                        } catch (err) {
+                            country = item.querySelector('.event__title--type').innerText;
+                            name = item.querySelector('.event__title--name').innerText;
+
+                        }
 
 
 
-    // const updateTo = moment().utc().format('YYYY[-]MM[-]DD');
- 
-    // var unirest = require("unirest");
+                        scrapeItems.push({
+                            score,
+                            time,
+                            min,
+                            scorrers,
+                            homeTeam,
+                            awayTeam,
+                            name,
+                            country
 
-    // var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/players/team/550");
-
-    // req.headers({
-    //     "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-    //     "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-    //     "useQueryString": true
-    // });
-
-
-    // req.end(function (res) {
-    //     if (res.error) throw new Error(res.error);
-    //      res.body.api.players.forEach(le => {
-    //         if (le.nationality === 'Israel') {
-
-    //             console.log('le', le);
-
-    //         }
-    //     })
-    //     // console.log(res.body.api.players);
-    // });
-
-    // var unirest = require("unirest");
-
-    // var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagues");
-
-    // req.headers({
-    //     "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-    //     "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-    //     "useQueryString": true
-    // });
+                        });
 
 
-    // req.end(function (res) {
-    //     if (res.error) throw new Error(res.error);
-    //     res.body.api.leagues.forEach(le => {
-    //         if (le.country === 'World') {
 
-    //             console.log('name', le.name);
-    //             console.log('league_id', le.league_id);
-    //             console.log('season_start', le.season_start);
-    //             console.log('\n');
 
-    //         }
-    //     })
-    // });
+
+                    });
+                    const allGames = []
+                    let j = -1
+                    for (let i = 0; i < scrapeItems.length; i++) {
+
+                        const { name, country, score, time, min, homeTeam, awayTeamm, scorrers } = scrapeItems[i]
+                        if (country !== '') {
+                            j++
+                            allGames.push({
+                                name,
+                                country,
+                                games: []
+                            })
+
+                        } else {
+                            allGames[j].games.push(scrapeItems[i])
+                        }
+
+
+                    };
+
+
+                    const finalData = allGames.filter(game => {
+                        return (game.country === 'SPAIN')
+                    })
+
+                    return finalData;
+                });
+                //outputting the scraped data
+
+
+                const data = {
+                    updateTo,
+                    games: grabMatches,
+                }
+
+                await games.findOneAndUpdate({ updateTo }, data, { upsert: true, new: true });
+                sendNotification(grabMatches, oldGames)
+                //closing the browser
+                await browser.close();
+            })
+            //handling any errors
+            .catch(function (err) {
+                console.error(err);
+            });
+
+
+    }
+    const scraper2 = async () => {
+        console.log('starting to run scrapper2')
+
+        puppeteer
+            .launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
+            .then(async browser => {
+
+                //opening a new page and navigating to Fleshscore
+                const page = await browser.newPage();
+                await page.goto('https://www.flashscore.com/match/UFESYo1P/#match-summary');
+                await page.waitForSelector('body');
+
+                //manipulating the page's content
+                let grabMatches = await page.evaluate(() => {
+                    let scorrers = []
+
+                    let allLiveMatches = document.body.querySelectorAll('.detailMS__incidentRow')
+
+                    //storing the post items in an array then selecting for retrieving content
+                    scrapeItems = [];
+
+                    allLiveMatches.forEach(async item => {
+                        // let min = item.querySelector('.event__stage--block').innerText;
+                        try {
+                            let incedent = item.querySelector('.soccer-ball').innerText
+                            if (incedent) {
+                                let scorre = item.querySelector('.participant-name').innerText
+
+                                scorrers.push(scorre);
+                            }
+
+                        } catch (err) {
+                            country = item.querySelector('.event__title--type').innerText;
+                            name = item.querySelector('.event__title--name').innerText;
+
+                        }
+
+
+                        scrapeItems.push({
+
+                            scorrers,
+
+
+                        });
+
+
+
+
+
+                    });
+                    const allGames = []
+                    let j = -1
+                    for (let i = 0; i < scrapeItems.length; i++) {
+
+                        const { name, country, score, time, min, homeTeam, awayTeamm, scorrers } = scrapeItems[i]
+                        if (country !== '') {
+                            j++
+                            allGames.push({
+                                name,
+                                country,
+                                games: []
+                            })
+
+                        } else {
+                            allGames[j].games.push(scrapeItems[i])
+                        }
+
+
+                    };
+
+
+                    const finalData = allGames.filter(game => {
+                        return (game.country === 'SPAIN')
+                    })
+
+                    return scrapeItems;
+                });
+                //outputting the scraped data
+
+
+                //closing the browser
+                await browser.close();
+                console.log('grabMatches',grabMatches)
+                return grabMatches
+            })
+            //handling any errors
+            .catch(function (err) {
+                console.error(err);
+            });
+
+
+    }
+    //initiating Puppeteer
+    // scraper2()
+    nodeSchedule.scheduleJob('* * * * *', () => {
+        try {
+            scraper()
+
+        } catch (err) { }
+
+    });
+
+    // scraper2()
+    const sendNotification = (newGames, oldGames) => {
+        let str = ``
+        newGames.forEach(league => {
+            const { name, country, games = [] } = league
+
+            const findOld = oldGames.find(old => { return old.name === name && old.country === country })
+            if (findOld) {
+
+                games.forEach(game => {
+                    console.log('scorrers', game.scorrers)
+                    const { score, time, min, homeTeam, awayTeam } = game
+                    const oldGame = findOld.games.find(old => { return old.homeTeam === homeTeam && old.awayTeam === awayTeam })
+                    if (oldGame) {
+                        if (oldGame.score !== score || (oldGame.min !== min && min !== '' || min === 'Finished')) {
+
+                            const homeScore = score.substring(0, 1) === '-' ? score.substring(0, 1) : Number(score.substring(0, 1))
+                            const awayScore = score.substring(score.length - 1, score.length) === '-' ? score.substring(score.length - 1, score.length) : Number(score.substring(score.length - 1, score.length))
+                            const oldHomeScore = oldGame.score.substring(0, 1) === '-' ? oldGame.score.substring(0, 1) : Number(oldGame.score.substring(0, 1))
+                            const oldAwayScore = oldGame.score.substring(oldGame.score.length - 1, oldGame.score.length) === '-' ? oldGame.score.substring(oldGame.score.length - 1, oldGame.score.length) : Number(oldGame.score.substring(oldGame.score.length - 1, oldGame.score.length))
+
+                            str += `${country} - ${name}: \n`
+
+                            if (min === 'Finished' && oldGame.min !== min) {
+                                str += `${min}: ${homeTeam} ${score} ${awayTeam}\n`
+                                console.log(str)
+                                // botTest.sendMessage('-471015035', str)
+
+                            } else if (oldGame.score === '-') {
+                                str += `Match Started! ${min}: ${homeTeam} ${score} ${awayTeam}\n`
+                                // botTest.sendMessage('-471015035', str)
+                                console.log(str)
+
+                            } else if (oldGame.score !== score) {
+                                if (homeScore > oldHomeScore || awayScore > oldAwayScore) {
+                                    if (homeScore > oldHomeScore) {
+
+                                        str += `GOALLL! ${min}: ${homeTeam} [${homeScore}] - ${awayScore} ${awayTeam}\n`
+                                    } else {
+                                        str += `GOALLL! ${min}: ${homeTeam} ${homeScore} - [${awayScore}] ${awayTeam}\n`
+
+                                    }
+
+                                } else if (oldHomeScore > homeScore || oldAwayScore > awayScore) {
+                                    if (oldHomeScore > homeScore) {
+
+                                        str += `Goal Cancelled!! ${min}: ${homeTeam} [${homeScore}] - ${awayScore} ${awayTeam}\n`
+                                    } else {
+                                        str += `Goal Cancelled!! ${min}: ${homeTeam} ${homeScore} - [${awayScore}] ${awayTeam}\n`
+
+                                    }
+
+                                }
+                                // botTest.sendMessage('-471015035', str)
+                                console.log(str)
+
+                            }
+                            str = ``
+                        }
+                    }
+
+                })
+
+            }
+
+
+        })
+
+    }
 
 
 
     // getting next fixtsure - ligat HaAl
     botTest.onText(/\/next/, (msg, match) => {
         const chatId = msg.chat.id;
-        console.log('chatId',chatId)
+        console.log('chatId:', chatId)
         const { text } = msg
         if (text === '/next') {
             let str = 'Next Fixtures Are:\n\n'
@@ -2526,39 +2772,7 @@ module.exports.telegramTest = async function () {
         }
     });
 
-    // hightlight of ligat HaAl
-    // botTest.onText(/\/highlights/, (msg, match) => {
-    //     const chatId = msg.chat.id;
-    //     const { text } = msg
-    //     if (text === '/highlights') {
-    //         let str = 'Your Options Are:\n\n/Mahzor15\n/Mahzor14\n/Mahzor13\n/Mahzor12\n'
 
-    //         botTest.sendMessage(chatId, str);
-
-    //     }
-
-
-    // });
-
-    // getiing each mahzor results
-    // botTest.onText(/\/Mahzor(.+)/, (msg, match) => {
-    //     const chatId = msg.chat.id;
-    //     const { text } = msg
-    //     let str = ``
-    //     const mahzor = match[1].toLowerCase()
-
-    //     if (text.includes('Mahzor')) {
-    //         const games = highlights[mahzor]
-
-    //         games.forEach(game => {
-    //             str += `${game.id} score:${game.score} \n`
-    //         })
-    //         botTest.sendMessage(chatId, str)
-
-    //     }
-
-
-    // });
     botTest.onText(/\/ligyoners/, (msg, match) => {
 
 
@@ -2815,11 +3029,12 @@ module.exports.telegramTest = async function () {
     });
     botTest.onText(/\/help/, (msg, match) => {
         const chatId = msg.chat.id;
+        console.log(chatId)
         const { text } = msg
         if (text === '/help') {
 
 
-            let str = 'Your Options Are:\n\n/live \n/tables \n/stats \n/last \n/teams \n/mahzorim \n/ligyoners'
+            let str = 'Your Options Are:\n\n/live \n/table \n/stats \n/last \n/teams \n/mahzorim \n/ligyoners'
 
 
             botTest.sendMessage(chatId, str);
@@ -2843,39 +3058,11 @@ module.exports.telegramTest = async function () {
         }
 
     });
-    botTest.onText(/\/liga_leumit/, (msg, match) => {
-        var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2770");
-        const chatId = msg.chat.id;
-        const { text } = msg
-        if (text === '/liga_leumit') {
-            req.headers(cerdentials);
-
-            req.end(function (res) {
-                if (res.error) throw new Error(res.error);
-                let str = ''
-                res.body.api.standings[0].forEach(team => {
-                    const { teamName, rank, points, all, goalsDiff } = team
-                    const teamname2 = _.padEnd(teamName, 25);
-                    const points2 = _.padStart(points, 3);
-                    const rank2 = _.padEnd(rank, 2);
-
-                    const { matchsPlayed, goalsFor, goalsAgainst } = all
-                    //${goalsFor}-${goalsAgainst}
-                    str += `${rank2}:  ${teamname2} ${points2}\n`
-
-                })
-
-                botTest.sendMessage(chatId, str);
-            });
-        }
-
-
-    });
-    botTest.onText(/\/ligat_haAl/, (msg, match) => {
+    botTest.onText(/\/table/, (msg, match) => {
         var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2708");
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/ligat_haAl') {
+        if (text === '/table') {
             req.headers(cerdentials);
 
             req.end(function (res) {
@@ -2895,16 +3082,6 @@ module.exports.telegramTest = async function () {
 
                 botTest.sendMessage(chatId, str);
             });
-        }
-
-
-    });
-    botTest.onText(/\/tables/, (msg, match) => {
-        const chatId = msg.chat.id;
-        const { text } = msg
-        if (text === '/tables') {
-            let str = 'Your Options Are:\n\n/ligat_haAl \n/liga_leumit  \n'
-            botTest.sendMessage(chatId, str);
         }
 
 
@@ -2927,6 +3104,7 @@ module.exports.telegramTest = async function () {
 
                     }
                     leagueArr.forEach(game => {
+                        console.log('game', game)
                         const { goalsAwayTeam, goalsHomeTeam, homeTeam, awayTeam, elapsed, score, league } = game
                         const { name, country } = league
                         const { halftime } = score
@@ -3491,16 +3669,12 @@ module.exports.telegramTest = async function () {
     // botTest.onText(/\//, (msg, match) => {
     //     const chatId = msg.chat.id;
     //     const { text } = msg
-
     //     const mahzor = text.substring(1, 3)
-
     //     const highlight = highlights[mahzor].find(game => {
     //         return game.id === text
     //     })
 
     //     if (highlight) {
-    //         console.log('mahzor',mahzor)
-
     //         const { url } = highlight
     //         botTest.sendMessage(chatId, url)
 
@@ -3509,5 +3683,6 @@ module.exports.telegramTest = async function () {
 
     // });
 
-};
+}
+
 
