@@ -10,6 +10,7 @@ process.env.NTBA_FIX_319 = 1
 const moment = require('moment');
 const nodeSchedule = require('node-schedule');
 const puppeteer = require('puppeteer');
+require('events').EventEmitter.defaultMaxListeners = 15;
 
 
 const TelegramBot = require('node-telegram-bot-api');
@@ -1316,6 +1317,8 @@ module.exports.telegram = async function () {
     });
 
     const updateTo = moment().utc().format('YYYY[-]MM[-]DD');
+
+
     const scraper = async () => {
         console.log('starting to run scrapper')
         const gamesScrapper = await games.find({ updateTo })
@@ -1341,6 +1344,7 @@ module.exports.telegram = async function () {
                         let homeTeam = '';
                         let country = '';
                         let name = '';
+                        let id = '';
                         let score = '';
                         let min = '';
                         let time = '';
@@ -1348,6 +1352,7 @@ module.exports.telegram = async function () {
                         try {
                             awayTeam = item.querySelector('.event__participant--away').innerText;
                             homeTeam = item.querySelector('.event__participant--home').innerText;
+                            id = item.id ? item.id.substring(4, item.id.length) : '';
                             score = item.querySelector('.event__scores').innerText;
                             min;
                             time;
@@ -1373,10 +1378,12 @@ module.exports.telegram = async function () {
                             score,
                             time,
                             min,
+                            id,
                             homeTeam,
                             awayTeam,
                             name,
-                            country
+                            country,
+                            lastScorrer: []
 
                         });
 
@@ -1413,7 +1420,15 @@ module.exports.telegram = async function () {
                     return finalData;
                 });
                 //outputting the scraped data
+                for (const match of grabMatches) {
+                    const { games } = match
+                    for (const game of games) {
+                        const { id } = game
+                        const ans = await scraper2(id)
+                        game.lastScorrer = ans || []
 
+                    }
+                }
 
                 const data = {
                     updateTo,
@@ -1432,6 +1447,7 @@ module.exports.telegram = async function () {
 
 
     }
+
     //initiating Puppeteer
     nodeSchedule.scheduleJob('* 16-20 * * *', () => {
         try {
@@ -1440,7 +1456,6 @@ module.exports.telegram = async function () {
         } catch (err) { }
 
     });
-
 
     const sendNotification = (newGames, oldGames) => {
         let str = ``
@@ -1451,7 +1466,10 @@ module.exports.telegram = async function () {
             if (findOld) {
 
                 games.forEach(game => {
-                    const { score, time, min, homeTeam, awayTeam } = game
+                    const { score, time, min, homeTeam, awayTeam, lastScorrer = [] } = game
+                    let scorer = '';
+                    let assist = '';
+                    let sub = '';
                     const oldGame = findOld.games.find(old => { return old.homeTeam === homeTeam && old.awayTeam === awayTeam })
                     if (oldGame) {
                         if (oldGame.score !== score || (oldGame.min !== min && min !== '' || min === 'Finished')) {
@@ -1460,7 +1478,11 @@ module.exports.telegram = async function () {
                             const awayScore = score.substring(score.length - 1, score.length) === '-' ? score.substring(score.length - 1, score.length) : Number(score.substring(score.length - 1, score.length))
                             const oldHomeScore = oldGame.score.substring(0, 1) === '-' ? oldGame.score.substring(0, 1) : Number(oldGame.score.substring(0, 1))
                             const oldAwayScore = oldGame.score.substring(oldGame.score.length - 1, oldGame.score.length) === '-' ? oldGame.score.substring(oldGame.score.length - 1, oldGame.score.length) : Number(oldGame.score.substring(oldGame.score.length - 1, oldGame.score.length))
-
+                            if (lastScorrer.length) {
+                                scorer = lastScorrer[0].scorer
+                                assist = lastScorrer[0].assist
+                                sub = lastScorrer[0].sub
+                            }
                             str += `${country} - ${name}: \n`
 
                             if (min === 'Finished' && oldGame.min !== min) {
@@ -1482,7 +1504,9 @@ module.exports.telegram = async function () {
                                         str += `GOALLL! ${min}: ${homeTeam} ${homeScore} - [${awayScore}] ${awayTeam}\n`
 
                                     }
-
+                                    if (scorer !== '') {
+                                        str += `Scorer:${sub} ${scorer} ${assist}\n`
+                                    }
                                 } else if (oldHomeScore > homeScore || oldAwayScore > awayScore) {
                                     if (oldHomeScore > homeScore) {
 
@@ -1493,8 +1517,8 @@ module.exports.telegram = async function () {
                                     }
 
                                 }
-                                // botTest.sendMessage('-471015035', str)
-                                console.log(str)
+                                botTest.sendMessage('-471015035', str)
+                                // console.log(str)
 
                             }
                             str = ``
@@ -1510,7 +1534,71 @@ module.exports.telegram = async function () {
 
     }
 
+    const scraper2 = async (id) => {
+        console.log('starting to run scrapper2')
 
+        const matches = puppeteer
+            .launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
+            .then(async browser => {
+
+                //opening a new page and navigating to Fleshscore
+                const page = await browser.newPage();
+                await page.goto(`https://www.flashscore.com/match/${id}/#match-summary`);
+                await page.waitForSelector('body');
+
+                //manipulating the page's content
+                let grabMatches = await page.evaluate(() => {
+                    let scorrers = []
+
+                    let allLiveMatches = document.body.querySelectorAll('.detailMS__incidentRow')
+
+                    //storing the post items in an array then selecting for retrieving content
+                    scrapeItems = [];
+
+                    allLiveMatches.forEach(async item => {
+                        // let min = item.querySelector('.event__stage--block').innerText;
+                        try {
+                            let incedent = item.querySelector('.soccer-ball').innerText
+                            if (incedent) {
+                                const obj = {
+                                    scorer:item.querySelector('.participant-name') ?  item.querySelector('.participant-name').innerText : '',
+                                    assist:item.querySelector('.assist') ? item.querySelector('.assist').innerText : '',
+                                    sub: item.querySelector('.subincident-name') ? item.querySelector('.subincident-name').innerText : '',
+                                    min: item.querySelector('.time-box') ? item.querySelector('.time-box').innerText : '',
+
+                                }
+
+                                scorrers[0] = obj;
+                            }
+
+                        } catch (err) {
+
+
+                        }
+
+
+                    });
+
+
+
+
+                    return scorrers;
+                });
+                //outputting the scraped data
+
+                //closing the browser
+
+                await browser.close();
+                return grabMatches
+            })
+            //handling any errors
+            .catch(function (err) {
+                console.error(err);
+            });
+        return matches
+
+
+    }
 
     // getting next fixtsure - ligat HaAl
     botTest.onText(/\/next/, (msg, match) => {
@@ -1860,7 +1948,6 @@ module.exports.telegram = async function () {
 
                     }
                     leagueArr.forEach(game => {
-                        console.log('game', game)
                         const { goalsAwayTeam, goalsHomeTeam, homeTeam, awayTeam, elapsed, score, league } = game
                         const { name, country } = league
                         const { halftime } = score
@@ -2479,19 +2566,20 @@ module.exports.telegramTest = async function () {
                     let allteams = document.body.querySelectorAll('.event__header');
                     //storing the post items in an array then selecting for retrieving content
                     scrapeItems = [];
-                    allLiveMatches.forEach(async item => {
+                    allLiveMatches.forEach(item => {
                         let awayTeam = '';
                         let homeTeam = '';
                         let country = '';
                         let name = '';
+                        let id = '';
                         let score = '';
                         let min = '';
                         let time = '';
-                        let scorrers = []
                         // let min = item.querySelector('.event__stage--block').innerText;
                         try {
                             awayTeam = item.querySelector('.event__participant--away').innerText;
                             homeTeam = item.querySelector('.event__participant--home').innerText;
+                            id = item.id ? item.id.substring(4, item.id.length) : '';
                             score = item.querySelector('.event__scores').innerText;
                             min;
                             time;
@@ -2499,12 +2587,7 @@ module.exports.telegramTest = async function () {
                                 time = item.querySelector('.event__time').innerText;
                                 time = time.replace('\nFRO', '')
                                 min = ''
-                               const data = await scraper2()
-                                scorrers.push(data)
-                                //outputting the scraped data
 
-
-                                //closing the browser
                             } catch (errr) {
                                 min = item.querySelector('.event__stage--block').innerText;
                                 time = ''
@@ -2522,11 +2605,12 @@ module.exports.telegramTest = async function () {
                             score,
                             time,
                             min,
-                            scorrers,
+                            id,
                             homeTeam,
                             awayTeam,
                             name,
-                            country
+                            country,
+                            lastScorrer: []
 
                         });
 
@@ -2539,7 +2623,7 @@ module.exports.telegramTest = async function () {
                     let j = -1
                     for (let i = 0; i < scrapeItems.length; i++) {
 
-                        const { name, country, score, time, min, homeTeam, awayTeamm, scorrers } = scrapeItems[i]
+                        const { name, country, score, time, min, homeTeam, awayTeam } = scrapeItems[i]
                         if (country !== '') {
                             j++
                             allGames.push({
@@ -2557,13 +2641,21 @@ module.exports.telegramTest = async function () {
 
 
                     const finalData = allGames.filter(game => {
-                        return (game.country === 'SPAIN')
+                        return (game.country === "ITALY" && game.name ==='Serie A')
                     })
 
                     return finalData;
                 });
                 //outputting the scraped data
+                for (const match of grabMatches) {
+                    const { games } = match
+                    for (const game of games) {
+                        const { id } = game
+                        const ans = await scraper2(id)
+                        game.lastScorrer = ans || []
 
+                    }
+                }
 
                 const data = {
                     updateTo,
@@ -2582,16 +2674,16 @@ module.exports.telegramTest = async function () {
 
 
     }
-    const scraper2 = async () => {
+    const scraper2 = async (id) => {
         console.log('starting to run scrapper2')
 
-        puppeteer
+        const matches = puppeteer
             .launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
             .then(async browser => {
 
                 //opening a new page and navigating to Fleshscore
                 const page = await browser.newPage();
-                await page.goto('https://www.flashscore.com/match/UFESYo1P/#match-summary');
+                await page.goto(`https://www.flashscore.com/match/${id}/#match-summary`);
                 await page.waitForSelector('body');
 
                 //manipulating the page's content
@@ -2608,74 +2700,48 @@ module.exports.telegramTest = async function () {
                         try {
                             let incedent = item.querySelector('.soccer-ball').innerText
                             if (incedent) {
-                                let scorre = item.querySelector('.participant-name').innerText
+                                const obj = {
+                                    scorer:item.querySelector('.participant-name') ?  item.querySelector('.participant-name').innerText : '',
+                                    assist:item.querySelector('.assist') ? item.querySelector('.assist').innerText : '',
+                                    sub: item.querySelector('.subincident-name') ? item.querySelector('.subincident-name').innerText : '',
+                                    min: item.querySelector('.time-box') ? item.querySelector('.time-box').innerText : '',
 
-                                scorrers.push(scorre);
+                                }
+
+                                scorrers[0] = obj;
                             }
 
                         } catch (err) {
-                            country = item.querySelector('.event__title--type').innerText;
-                            name = item.querySelector('.event__title--name').innerText;
+
 
                         }
-
-
-                        scrapeItems.push({
-
-                            scorrers,
-
-
-                        });
-
-
-
 
 
                     });
-                    const allGames = []
-                    let j = -1
-                    for (let i = 0; i < scrapeItems.length; i++) {
-
-                        const { name, country, score, time, min, homeTeam, awayTeamm, scorrers } = scrapeItems[i]
-                        if (country !== '') {
-                            j++
-                            allGames.push({
-                                name,
-                                country,
-                                games: []
-                            })
-
-                        } else {
-                            allGames[j].games.push(scrapeItems[i])
-                        }
 
 
-                    };
 
 
-                    const finalData = allGames.filter(game => {
-                        return (game.country === 'SPAIN')
-                    })
-
-                    return scrapeItems;
+                    return scorrers;
                 });
                 //outputting the scraped data
 
-
                 //closing the browser
+
                 await browser.close();
-                console.log('grabMatches',grabMatches)
                 return grabMatches
             })
             //handling any errors
             .catch(function (err) {
                 console.error(err);
             });
+        return matches
 
 
     }
     //initiating Puppeteer
-    // scraper2()
+    // const ans = await scraper2('tKmMduCT')
+    // console.log('ans',ans)
     nodeSchedule.scheduleJob('* * * * *', () => {
         try {
             scraper()
@@ -2684,7 +2750,8 @@ module.exports.telegramTest = async function () {
 
     });
 
-    // scraper2()
+
+
     const sendNotification = (newGames, oldGames) => {
         let str = ``
         newGames.forEach(league => {
@@ -2694,8 +2761,10 @@ module.exports.telegramTest = async function () {
             if (findOld) {
 
                 games.forEach(game => {
-                    console.log('scorrers', game.scorrers)
-                    const { score, time, min, homeTeam, awayTeam } = game
+                    const { score, time, min, homeTeam, awayTeam, lastScorrer = [] } = game
+                    let scorer = '';
+                    let assist = '';
+                    let sub = '';
                     const oldGame = findOld.games.find(old => { return old.homeTeam === homeTeam && old.awayTeam === awayTeam })
                     if (oldGame) {
                         if (oldGame.score !== score || (oldGame.min !== min && min !== '' || min === 'Finished')) {
@@ -2704,7 +2773,11 @@ module.exports.telegramTest = async function () {
                             const awayScore = score.substring(score.length - 1, score.length) === '-' ? score.substring(score.length - 1, score.length) : Number(score.substring(score.length - 1, score.length))
                             const oldHomeScore = oldGame.score.substring(0, 1) === '-' ? oldGame.score.substring(0, 1) : Number(oldGame.score.substring(0, 1))
                             const oldAwayScore = oldGame.score.substring(oldGame.score.length - 1, oldGame.score.length) === '-' ? oldGame.score.substring(oldGame.score.length - 1, oldGame.score.length) : Number(oldGame.score.substring(oldGame.score.length - 1, oldGame.score.length))
-
+                            if (lastScorrer.length) {
+                                scorer = lastScorrer[0].scorer
+                                assist = lastScorrer[0].assist
+                                sub = lastScorrer[0].sub
+                            }
                             str += `${country} - ${name}: \n`
 
                             if (min === 'Finished' && oldGame.min !== min) {
@@ -2726,7 +2799,9 @@ module.exports.telegramTest = async function () {
                                         str += `GOALLL! ${min}: ${homeTeam} ${homeScore} - [${awayScore}] ${awayTeam}\n`
 
                                     }
-
+                                    if (scorer !== '') {
+                                        str += `Scorer:${sub} ${scorer} ${assist}\n`
+                                    }
                                 } else if (oldHomeScore > homeScore || oldAwayScore > awayScore) {
                                     if (oldHomeScore > homeScore) {
 
@@ -2737,8 +2812,8 @@ module.exports.telegramTest = async function () {
                                     }
 
                                 }
-                                // botTest.sendMessage('-471015035', str)
-                                console.log(str)
+                                botTest.sendMessage('-471015035', str)
+                                // console.log(str)
 
                             }
                             str = ``
@@ -2753,6 +2828,11 @@ module.exports.telegramTest = async function () {
         })
 
     }
+
+
+
+
+
 
 
 
