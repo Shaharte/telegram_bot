@@ -1487,13 +1487,11 @@ module.exports.telegram = async function () {
 
                             if (min === 'Finished' && oldGame.min !== min) {
                                 str += `${min}: ${homeTeam} ${score} ${awayTeam}\n`
-                                console.log(str)
-                                // botTest.sendMessage('-471015035', str)
+                                botTest.sendMessage('-471015035', str)
 
                             } else if (oldGame.score === '-') {
                                 str += `Match Started! ${min}: ${homeTeam} ${score} ${awayTeam}\n`
-                                // botTest.sendMessage('-471015035', str)
-                                console.log(str)
+                                botTest.sendMessage('-471015035', str)
 
                             } else if (oldGame.score !== score) {
                                 if (homeScore > oldHomeScore || awayScore > oldAwayScore) {
@@ -2812,7 +2810,7 @@ module.exports.telegramTest = async function () {
                                     }
 
                                 }
-                                botTest.sendMessage('-471015035', str)
+                                botTest.sendMessage('404011627', str)
                                 // console.log(str)
 
                             }
