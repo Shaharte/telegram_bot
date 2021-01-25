@@ -14,6 +14,7 @@ require('events').EventEmitter.defaultMaxListeners = 15;
 
 
 const TelegramBot = require('node-telegram-bot-api');
+const { isError } = require("lodash");
 
 const cerdentials = {
     "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
@@ -1055,6 +1056,31 @@ const highlights = {
             url: 'https://www.youtube.com/watch?v=-e0OEKfCaaE&t=7s',
             score: '1-1'
         },
+        {
+            id: 'Hapoel Hadera vs Beitar Jerusalem',
+            url: 'https://www.youtube.com/watch?v=QCqEFs6LZO4',
+            score: '0-4'
+        },
+        {
+            id: 'Bnei Yehuda vs Maccabi Tel Aviv',
+            url: 'https://www.youtube.com/watch?v=etI18Z1s2FQ',
+            score: '0-0'
+        },
+        {
+            id: 'Bnei Sakhnin vs Maccabi Netanya',
+            url: 'https://www.youtube.com/watch?v=ibI8y74qzO8',
+            score: '0-1'
+        },
+        {
+            id: 'Ashdod vs Hapoel Tel Aviv',
+            url: 'https://www.youtube.com/watch?v=FPF-K9kmnBA',
+            score: '2-1'
+        },
+        {
+            id: 'Hapoel Kfar Saba vs Maccabi Petah Tikva',
+            url: 'https://www.youtube.com/watch?v=MY-zI_pG6vM',
+            score: '2-0'
+        },
 
     ],
     '14': [
@@ -1246,53 +1272,53 @@ const ligyonersTeamIds = [
 ]
 const nextMatch = [
     {
-        game: 'Hapoel Tel Aviv Vs Hapoel Haifa',
-        home: 'Hapoel Tel Aviv',
+        game: 'Hapoel Haifa Vs Maccabi Petah Tikva',
+        home: 'Hapoel Haifa',
         draw: 'Draw',
-        away: 'Hapoel Haifa',
-        time: 'Saturday 23.01.21, 15:00',
+        away: 'Maccabi Petah Tikva',
+        time: 'Tuesday 26.01.21, 19:45',
     },
     {
-        game: 'Maccabi Petah Tikva Vs MS Ashdod',
-        home: 'Maccabi Petah Tikva',
+        game: 'Beitar Jerusalem Vs Hapoel Tel Aviv',
+        home: 'Beitar Jerusalem',
         draw: 'Draw',
-        away: 'MS Ashdod',
-        time: 'Saturday 23.01.21, 17:30',
+        away: 'Hapoel Tel Aviv',
+        time: 'Tuesday 26.01.21, 20:00',
     },
     {
-        game: 'Ironi Kiryat-Shmona Vs Beitar Jerusalem',
-        home: 'Ironi Kiryat-Shmona',
+        game: 'MS Ashdod Vs Bnei Yehuda',
+        home: 'MS Ashdod',
         draw: 'Draw',
-        away: 'Beitar Jerusalem',
-        time: 'Saturday 23.01.21, 18:45',
+        away: 'Bnei Yehuda',
+        time: 'Wednesday 27.01.21, 19:00',
     },
     {
-        game: 'Maccabi Haifa Vs Bnei Sakhnin',
-        home: 'Maccabi Haifa',
+        game: 'Hapoel Kfar Saba Vs Maccabi Netanya',
+        home: 'Hapoel Kfar Saba',
         draw: 'Draw',
-        away: 'Bnei Sakhnin',
-        time: 'Saturday 23.01.21, 20:00',
+        away: 'Maccabi Netanya',
+        time: 'Wednesday 27.01.21, 20:00',
     },
     {
-        game: 'Maccabi Netanya Vs Maccabi Tel Aviv',
-        home: 'Maccabi Netanya',
+        game: 'Maccabi Tel Aviv Vs Maccabi Haifa',
+        home: 'Maccabi Tel Aviv',
         draw: 'Draw',
-        away: 'Maccabi Tel Aviv',
-        time: 'Saturday 23.01.21, 20:45',
+        away: 'Maccabi Haifa',
+        time: 'Wednesday 27.01.21, 20:45',
     },
     {
-        game: 'Bnei Yehuda Vs Hapoel Kfar Saba',
-        home: 'Bnei Yehuda',
+        game: 'Hapoel Hadera Vs Ironi Kiryat Shmona',
+        home: 'Hapoel Hadera',
         draw: 'Draw',
-        away: 'Hapoel Kfar Saba',
-        time: 'Sunday 24.01.21, 19:00',
+        away: 'Ironi Kiryat Shmona',
+        time: 'Thursday 28.01.21, 19:00',
     },
     {
-        game: 'Hapoel Beer Sheva Vs Hapoel Hadera',
-        home: 'Hapoel Beer Sheva',
+        game: 'Bnei Sakhnin Vs Hapoel Beer Sheva',
+        home: 'Bnei Sakhnin',
         draw: 'Draw',
-        away: 'Hapoel Hadera',
-        time: 'Monday 25.01.21, 20:15',
+        away: 'Hapoel Beer Sheva',
+        time: 'Thursday 28.01.21, 20:15',
     },
 
 
@@ -1302,7 +1328,7 @@ const nextMatch = [
 module.exports.telegram = async function () {
 
     const botTest = new TelegramBot(token, { polling: true });
-    nodeSchedule.scheduleJob('30 12 * * 6', () => {
+    nodeSchedule.scheduleJob('30 12 * * 2', () => {
         console.log('start sending poll')
         nextMatch.forEach(match => {
             console.log('match', match)
@@ -1449,7 +1475,7 @@ module.exports.telegram = async function () {
     }
 
     //initiating Puppeteer
-    nodeSchedule.scheduleJob('* 16-20 * * *', () => {
+    nodeSchedule.scheduleJob('* 17-21 * * *', () => {
         try {
             scraper()
 
@@ -1559,8 +1585,8 @@ module.exports.telegram = async function () {
                             let incedent = item.querySelector('.soccer-ball').innerText
                             if (incedent) {
                                 const obj = {
-                                    scorer:item.querySelector('.participant-name') ?  item.querySelector('.participant-name').innerText : '',
-                                    assist:item.querySelector('.assist') ? item.querySelector('.assist').innerText : '',
+                                    scorer: item.querySelector('.participant-name') ? item.querySelector('.participant-name').innerText : '',
+                                    assist: item.querySelector('.assist') ? item.querySelector('.assist').innerText : '',
                                     sub: item.querySelector('.subincident-name') ? item.querySelector('.subincident-name').innerText : '',
                                     min: item.querySelector('.time-box') ? item.querySelector('.time-box').innerText : '',
 
@@ -1901,6 +1927,8 @@ module.exports.telegram = async function () {
 
     });
     botTest.onText(/\/table/, (msg, match) => {
+
+
         var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2708");
         const chatId = msg.chat.id;
         const { text } = msg
@@ -1909,19 +1937,20 @@ module.exports.telegram = async function () {
 
             req.end(function (res) {
                 if (res.error) throw new Error(res.error);
-                let str = ''
+                let str = `P:   Team                 Played  Points\n`
                 res.body.api.standings[0].forEach(team => {
-                    const { teamName, rank, points, all, goalsDiff } = team
-                    const teamname2 = _.padEnd(teamName, 25);
-                    const points2 = _.padStart(points, 3);
-                    const rank2 = _.padEnd(rank, 2);
-
+                    let { teamName, rank, points, all, goalsDiff } = team
                     const { matchsPlayed, goalsFor, goalsAgainst } = all
+  
+                    for (let i = teamName.length; i < 21; i++) {
+                        teamName += ' '
+                    }
+
+
                     //${goalsFor}-${goalsAgainst}
-                    str += `${rank2}:  ${teamname2} ${points2}\n`
+                    str += `${rank}:  ${teamName}  ${matchsPlayed}    ${points} \n`
 
                 })
-
                 botTest.sendMessage(chatId, str);
             });
         }
@@ -2034,17 +2063,22 @@ module.exports.telegram = async function () {
                 const { fulltime = 'No Result Yet' } = score
                 const finalScore = fulltime === null ? 'No Result Yet' : fulltime
                 const id = `${home} vs ${away}`
-                const takzir = highlights[mahzor].find(o => { return o.id === id })
+                const takzir = highlights[mahzor] ? highlights[mahzor].find(o => { return o.id === id }) : false
 
                 str += `${home} vs ${away}: ${finalScore}\n`
                 if (takzir) {
                     str += `Highlights: ${takzir.url}\n\n`
 
+                }else{
+                    str += `\n`
+  
                 }
             })
             // console.log(str)
-            botTest.sendMessage(chatId, str);
+            if (mahzor !=='im'){
 
+                botTest.sendMessage(chatId, str);
+            }
         });
 
 
@@ -2083,7 +2117,7 @@ module.exports.telegram = async function () {
                             const { fulltime } = score
 
                             const finalScore = fulltime === null ? 'No Result Yet' : fulltime
-                            str += `${home} vs ${away}: ${finalScore}\n`
+                            str += `${home} vs ${away}: ${finalScore}\n\n`
 
                         })
                     }
@@ -2529,19 +2563,19 @@ module.exports.telegram = async function () {
 module.exports.telegramTest = async function () {
 
     const botTest = new TelegramBot(testtoken, { polling: true });
-    nodeSchedule.scheduleJob('30 12 * * 6', () => {
-        console.log('start sending poll')
-        nextMatch.forEach(match => {
-            console.log('match', match)
+    // nodeSchedule.scheduleJob('30 12 * * 6', () => {
+    //     console.log('start sending poll')
+    //     nextMatch.forEach(match => {
+    //         console.log('match', match)
 
-            const { game, home, draw, away, time } = match
-            const question = `${game}, ${time}`
-            const options = [home, draw, away]
-            const is_anonymous = false
-            botTest.sendPoll('-471015035', question, options)
-        })
+    //         const { game, home, draw, away, time } = match
+    //         const question = `${game}, ${time}`
+    //         const options = [home, draw, away]
+    //         const is_anonymous = false
+    //         botTest.sendPoll('-471015035', question, options)
+    //     })
 
-    });
+    // });
 
     const updateTo = moment().utc().format('YYYY[-]MM[-]DD');
     const scraper = async () => {
@@ -2639,7 +2673,7 @@ module.exports.telegramTest = async function () {
 
 
                     const finalData = allGames.filter(game => {
-                        return (game.country === "ITALY" && game.name ==='Serie A')
+                        return ((game.country === 'IRAN' && game.name === "Division 1"))
                     })
 
                     return finalData;
@@ -2648,9 +2682,11 @@ module.exports.telegramTest = async function () {
                 for (const match of grabMatches) {
                     const { games } = match
                     for (const game of games) {
+
                         const { id } = game
                         const ans = await scraper2(id)
                         game.lastScorrer = ans || []
+
 
                     }
                 }
@@ -2694,30 +2730,53 @@ module.exports.telegramTest = async function () {
                     scrapeItems = [];
 
                     allLiveMatches.forEach(async item => {
-                        // let min = item.querySelector('.event__stage--block').innerText;
                         try {
-                            let incedent = item.querySelector('.soccer-ball').innerText
-                            if (incedent) {
-                                const obj = {
-                                    scorer:item.querySelector('.participant-name') ?  item.querySelector('.participant-name').innerText : '',
-                                    assist:item.querySelector('.assist') ? item.querySelector('.assist').innerText : '',
-                                    sub: item.querySelector('.subincident-name') ? item.querySelector('.subincident-name').innerText : '',
-                                    min: item.querySelector('.time-box') ? item.querySelector('.time-box').innerText : '',
+                            let goal = item.querySelector('.soccer-ball') ? true : false;
+                            let red = item.querySelector('.r-card') ? true : false;
+                            let yl = item.querySelector('.yr-card') ? true : false;
+                            if (goal) {
+                                let scorer = item.querySelector('.participant-name') ? item.querySelector('.participant-name').innerText : ''
+                                if (scorer !== '') {
+                                    const obj = {
+                                        scorer: item.querySelector('.participant-name') ? item.querySelector('.participant-name').innerText : '',
+                                        assist: item.querySelector('.assist') ? item.querySelector('.assist').innerText : '',
+                                        sub: item.querySelector('.subincident-name') ? item.querySelector('.subincident-name').innerText : '',
+                                        min: item.querySelector('.time-box') ? item.querySelector('.time-box').innerText : '',
+                                        team: item.className,
 
+                                    }
                                 }
 
                                 scorrers[0] = obj;
+                            } else if (red || yl) {
+                                scorrers[0] = {
+                                    scorer: item.querySelector('.participant-name') ? item.querySelector('.participant-name').innerText : '',
+                                    red: true,
+                                    min: item.querySelector('.time-box') ? item.querySelector('.time-box').innerText : '',
+                                    team: item.className,
+
+
+                                }
                             }
 
-                        } catch (err) {
 
+
+                        }
+                        catch (err) {
+                            console.log('err', err)
 
                         }
 
 
                     });
 
-
+                    scorrers = scorrers.length ? scorrers : [{
+                        scorer: '',
+                        assist: '',
+                        sub: '',
+                        min: '',
+                        bla: ""
+                    }]
 
 
                     return scorrers;
@@ -2725,7 +2784,6 @@ module.exports.telegramTest = async function () {
                 //outputting the scraped data
 
                 //closing the browser
-
                 await browser.close();
                 return grabMatches
             })
@@ -2763,30 +2821,37 @@ module.exports.telegramTest = async function () {
                     let scorer = '';
                     let assist = '';
                     let sub = '';
+                    let scorerMin = '';
+                    let team = '';
+                    if (lastScorrer.length) {
+                        scorer = lastScorrer[0].scorer
+                        assist = lastScorrer[0].assist
+                        sub = lastScorrer[0].sub
+                        scorerMin = lastScorrer[0].min
+                        team = lastScorrer[0].team ? (lastScorrer[0].team.includes('home') ? 'home' : 'away') : ''
+                    }
                     const oldGame = findOld.games.find(old => { return old.homeTeam === homeTeam && old.awayTeam === awayTeam })
+                    console.log('game', game)
+
+                    console.log('oldGame', oldGame)
+
                     if (oldGame) {
-                        if (oldGame.score !== score || (oldGame.min !== min && min !== '' || min === 'Finished')) {
+                        if (oldGame.score !== score || (oldGame.min !== min && min !== '' || min === 'Finished') || (oldGame.lastScorrer[0].scorer !== scorer && scorer !== '' || oldGame.lastScorrer[0].min !== scorerMin && scorer !== '')) {
 
                             const homeScore = score.substring(0, 1) === '-' ? score.substring(0, 1) : Number(score.substring(0, 1))
                             const awayScore = score.substring(score.length - 1, score.length) === '-' ? score.substring(score.length - 1, score.length) : Number(score.substring(score.length - 1, score.length))
                             const oldHomeScore = oldGame.score.substring(0, 1) === '-' ? oldGame.score.substring(0, 1) : Number(oldGame.score.substring(0, 1))
                             const oldAwayScore = oldGame.score.substring(oldGame.score.length - 1, oldGame.score.length) === '-' ? oldGame.score.substring(oldGame.score.length - 1, oldGame.score.length) : Number(oldGame.score.substring(oldGame.score.length - 1, oldGame.score.length))
-                            if (lastScorrer.length) {
-                                scorer = lastScorrer[0].scorer
-                                assist = lastScorrer[0].assist
-                                sub = lastScorrer[0].sub
-                            }
+
                             str += `${country} - ${name}: \n`
 
                             if (min === 'Finished' && oldGame.min !== min) {
                                 str += `${min}: ${homeTeam} ${score} ${awayTeam}\n`
-                                console.log(str)
-                                // botTest.sendMessage('-471015035', str)
+                                botTest.sendMessage('404011627', str)
 
                             } else if (oldGame.score === '-') {
                                 str += `Match Started! ${min}: ${homeTeam} ${score} ${awayTeam}\n`
-                                // botTest.sendMessage('-471015035', str)
-                                console.log(str)
+                                botTest.sendMessage('404011627', str)
 
                             } else if (oldGame.score !== score) {
                                 if (homeScore > oldHomeScore || awayScore > oldAwayScore) {
@@ -2811,9 +2876,14 @@ module.exports.telegramTest = async function () {
 
                                 }
                                 botTest.sendMessage('404011627', str)
-                                // console.log(str)
+
+                            } else if (oldGame.lastScorrer.length === 0 && scorer !== '' || oldGame.lastScorrer.length !== 0 && oldGame.lastScorrer[0].min !== scorerMin && scorer !== '') {
+                                const scoreTeam = team === 'home' ? homeTeam : (team === 'away' ? awayTeam : '')
+                                str += `Update Scorer ${scoreTeam} - ${scorerMin}: ${sub} ${scorer} ${assist}\n`
+                                botTest.sendMessage('404011627', str)
 
                             }
+                            console.log(str)
                             str = ``
                         }
                     }
@@ -2833,8 +2903,8 @@ module.exports.telegramTest = async function () {
 
 
 
-
     // getting next fixtsure - ligat HaAl
+
     botTest.onText(/\/next/, (msg, match) => {
         const chatId = msg.chat.id;
         console.log('chatId:', chatId)
@@ -2849,7 +2919,6 @@ module.exports.telegramTest = async function () {
             botTest.sendMessage(chatId, str)
         }
     });
-
 
     botTest.onText(/\/ligyoners/, (msg, match) => {
 
@@ -3096,7 +3165,7 @@ module.exports.telegramTest = async function () {
         const chatId = msg.chat.id;
         const { text } = msg
         if (text === '/mahzorim') {
-            let str = 'Your Options Are:\n\n/mahzor1\n/mahzor2\n/mahzor3\n/mahzor4\n/mahzor5\n/mahzor6\n/mahzor7\n/mahzor8\n/mahzor9\n/mahzor10\n/mahzor11\n/mahzor12\n/mahzor13\n/mahzor14\n/mahzor15\n/mahzor16\n/mahzor17\n/mahzor18\n/mahzor19\n/mahzor20\n '
+            let str = 'Your Options Are:\n\n/mahzor1\n/mahzor2\n/mahzor3\n/mahzor4\n/mahzor5\n/mahzor6\n/mahzor7\n/mahzor8\n/mahzor9\n/mahzor10\n/mahzor11\n/mahzor12\n/mahzor13\n/mahzor14\n/mahzor15\n/mahzor16\n/next\n'
             botTest.sendMessage(chatId, str);
 
 
@@ -3137,6 +3206,8 @@ module.exports.telegramTest = async function () {
 
     });
     botTest.onText(/\/table/, (msg, match) => {
+
+
         var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2708");
         const chatId = msg.chat.id;
         const { text } = msg
@@ -3145,19 +3216,20 @@ module.exports.telegramTest = async function () {
 
             req.end(function (res) {
                 if (res.error) throw new Error(res.error);
-                let str = ''
+                let str = `P:   Team                 Played  Points\n`
                 res.body.api.standings[0].forEach(team => {
-                    const { teamName, rank, points, all, goalsDiff } = team
-                    const teamname2 = _.padEnd(teamName, 25);
-                    const points2 = _.padStart(points, 3);
-                    const rank2 = _.padEnd(rank, 2);
-
+                    let { teamName, rank, points, all, goalsDiff } = team
                     const { matchsPlayed, goalsFor, goalsAgainst } = all
+  
+                    for (let i = teamName.length; i < 21; i++) {
+                        teamName += ' '
+                    }
+
+
                     //${goalsFor}-${goalsAgainst}
-                    str += `${rank2}:  ${teamname2} ${points2}\n`
+                    str += `${rank}:  ${teamName}  ${matchsPlayed}    ${points} \n`
 
                 })
-
                 botTest.sendMessage(chatId, str);
             });
         }
@@ -3271,17 +3343,22 @@ module.exports.telegramTest = async function () {
                 const { fulltime = 'No Result Yet' } = score
                 const finalScore = fulltime === null ? 'No Result Yet' : fulltime
                 const id = `${home} vs ${away}`
-                const takzir = highlights[mahzor].find(o => { return o.id === id })
+                const takzir = highlights[mahzor] ? highlights[mahzor].find(o => { return o.id === id }) : false
 
                 str += `${home} vs ${away}: ${finalScore}\n`
                 if (takzir) {
                     str += `Highlights: ${takzir.url}\n\n`
 
+                }else{
+                    str += `\n`
+  
                 }
             })
             // console.log(str)
-            botTest.sendMessage(chatId, str);
+            if (mahzor !=='im'){
 
+                botTest.sendMessage(chatId, str);
+            }
         });
 
 
@@ -3320,7 +3397,7 @@ module.exports.telegramTest = async function () {
                             const { fulltime } = score
 
                             const finalScore = fulltime === null ? 'No Result Yet' : fulltime
-                            str += `${home} vs ${away}: ${finalScore}\n`
+                            str += `${home} vs ${away}: ${finalScore}\n\n`
 
                         })
                     }
