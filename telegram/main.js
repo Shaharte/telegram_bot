@@ -1050,6 +1050,34 @@ const topTackles = [
 
 ]
 const highlights = {
+    '16': [
+        {
+            id: 'Maccabi Netanya vs Maccabi Tel Aviv',
+            url: 'https://www.youtube.com/watch?v=SJY4M6b324I',
+            score: '1-3'
+        },
+        {
+            id: 'Maccabi Haifa vs Bnei Sakhnin',
+            url: 'https://www.youtube.com/watch?v=Uzh22eXkarE',
+            score: '3-0'
+        },
+        {
+            id: 'Ironi Kiryat Shmona vs Beitar Jerusalem',
+            url: 'https://www.youtube.com/watch?v=0odq_ZX7ZQA',
+            score: '0-2'
+        },
+        {
+            id: 'Maccabi Petah Tikva vs Ashdod',
+            url: 'https://www.youtube.com/watch?v=5HWNrmt9fO4',
+            score: '2-1'
+        },
+        {
+            id: 'Hapoel Tel Aviv vs Hapoel Haifa',
+            url: 'https://www.youtube.com/watch?v=KGs47jTpYnQ',
+            score: '2-2'
+        },
+
+    ],
     '15': [
         {
             id: 'Hapoel Haifa vs Ironi Kiryat Shmona',
@@ -2577,17 +2605,11 @@ module.exports.telegram = async function () {
 module.exports.telegramTest = async function () {
 
     const botTest = new TelegramBot(testtoken, { polling: true });
-    // nodeSchedule.scheduleJob('30 12 * * 6', () => {
-    //     console.log('start sending poll')
-    //     nextMatch.forEach(match => {
-    //         console.log('match', match)
+    // nodeSchedule.scheduleJob('* * * * *', () => {
+    //     try {
+    //         scraper()
 
-    //         const { game, home, draw, away, time } = match
-    //         const question = `${game}, ${time}`
-    //         const options = [home, draw, away]
-    //         const is_anonymous = false
-    //         botTest.sendPoll('-471015035', question, options)
-    //     })
+    //     } catch (err) { }
 
     // });
 
@@ -2686,13 +2708,14 @@ module.exports.telegramTest = async function () {
 
 
                     const finalData = allGames.filter(game => {
-                        return ((game.country === 'PORTUGAL' && game.name === "Primeira Liga"))
+                        return ((game.country === 'ALGERIA' && game.name === "Ligue 1"))
                     })
 
                     return finalData;
                 });
                 //outputting the scraped data
-                const { games: oldMatches } = oldGames[0]
+
+
                 for (const match of grabMatches) {
                     const { games } = match
                     for (const game of games) {
@@ -2703,7 +2726,8 @@ module.exports.telegramTest = async function () {
                         if (ans.scorer !== '') {
                             game.lastScorrer = ans
 
-                        } else {
+                        } else if (oldGames.length) {
+                            const { games: oldMatches } = oldGames[0]
                             const exist = oldMatches.find(o => { return o.id === id })
                             if (exist) {
                                 game.lastScorrer = exist.lastScorrer
@@ -2737,7 +2761,69 @@ module.exports.telegramTest = async function () {
 
 
     }
+    const scraperStat = async () => {
+        console.log('starting to run statitics scrapper')
+        // const stats = []
+        puppeteer
+            .launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
+            .then(async browser => {
 
+                //opening a new page and navigating to Fleshscore
+                const page = await browser.newPage();
+                await page.goto('https://www.football.co.il/stats/');
+                await page.waitForSelector('body');
+
+                //manipulating the page's content
+                let allStats = await page.evaluate(() => {
+                    let allStats = document.body.querySelectorAll('.stats-category-item');
+                    let stats = []
+
+                    //storing the post items in an array then selecting for retrieving content
+                    allStats.forEach(item => {
+                        let arr = []
+                        try {
+                            let title = item.querySelector('.stats-category-item-title').innerText;
+                            let allPlayers = item.querySelectorAll('.player-list-item')
+                            allPlayers.forEach(player => {
+                                let count = item.querySelector('.player-list-player-count').innerText;
+                                let name = item.querySelector('.player-list-player-name').innerText;
+                                let position = item.querySelector('.player-list-player-role').innerText;
+
+                                arr.push({
+                                    name,
+                                    count,
+                                    position
+                                })
+
+                            })
+                            stats.push({
+                                [title]: arr
+                            })
+                        } catch (err) {
+
+
+                        
+                        }
+
+
+                    });
+
+
+                    return stats;
+                });
+                //outputting the scraped data
+                console.log('allStats',allStats)
+                //closing the browser
+                await browser.close();
+            })
+            //handling any errors
+            .catch(function (err) {
+                console.error(err);
+            });
+
+
+    }
+    // scraperStat()
     const scraper2 = async (id) => {
         console.log('starting to run scrapper2')
 
@@ -2863,7 +2949,6 @@ module.exports.telegramTest = async function () {
 
 
                     if (oldGame) {
-                        console.log('oldGame', oldGame)
                         if (oldGame.score !== score || (oldGame.min !== min && min !== '' || min === 'Finished') || (scorer !== '' && oldGame.lastScorrer.scorer !== scorer || oldGame.lastScorrer.min !== scorerMin && scorer !== '')) {
 
                             const homeScore = score.substring(0, 1) === '-' ? score.substring(0, 1) : Number(score.substring(0, 1))
@@ -2947,6 +3032,14 @@ module.exports.telegramTest = async function () {
             botTest.sendMessage(chatId, str)
         }
     });
+    // botTest.onText(/\/tablepic/, (msg, match) => {
+    //     const chatId = msg.chat.id;
+    //     console.log('chatId:', chatId)
+    //     const { text } = msg
+    //     if (text === '/tablepic') {
+    //         botTest.sendMessage(chatId, 'https://launcher.spot.im/spot/sp_dbj1rz5F')
+    //     }
+    // });
 
     botTest.onText(/\/ligyoners/, (msg, match) => {
 
