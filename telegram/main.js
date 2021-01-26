@@ -1333,7 +1333,7 @@ const nextMatch = [
 module.exports.telegram = async function () {
 
     const botTest = new TelegramBot(token, { polling: true });
-    nodeSchedule.scheduleJob('30 12 * * 2', () => {
+    nodeSchedule.scheduleJob('00 12 * * 2', () => {
         console.log('start sending poll')
         nextMatch.forEach(match => {
             console.log('match', match)
@@ -1488,13 +1488,13 @@ module.exports.telegram = async function () {
 
     });
 
-    nodeSchedule.scheduleJob('30 10 * * *', () => {
-        try {
-            scraper()
+    // nodeSchedule.scheduleJob('00 11 * * *', () => {
+    //     try {
+    //         scraper()
 
-        } catch (err) { }
+    //     } catch (err) { }
 
-    });
+    // });
 
 
     const sendNotification = (newGames, oldGames) => {
@@ -3931,7 +3931,7 @@ module.exports.ahanhala = async function () {
     const updateTo = moment().utc().format('YYYY[-]MM[-]DD');
 
     const botTest = new TelegramBot(elazToken, { polling: true });
-    nodeSchedule.scheduleJob('00 6 * * 4',async () => {
+    nodeSchedule.scheduleJob('00 6 * * 4', async () => {
 
         const data = {
             updateTo,
@@ -3946,39 +3946,51 @@ module.exports.ahanhala = async function () {
 
     botTest.onText(/\נושא:/, async (msg, match) => {
         const chatId = msg.chat.id;
-        const text = match[0]
+        const text = msg.text.substring(0, 5)
+        let str = ``
         if (text === 'נושא:' && !(msg.text.includes('בטל'))) {
-            let str = ``
-            let input = msg.text.substring(5, msg.text.length)
-            const subjectsarray = await wednesdeySubjects.find({})
-            const { subjects = [] } = subjectsarray[0]
+            let input = msg.text.substring(5, msg.text.length).trim()
+            if (input !== '') {
+                const subjectsarray = await wednesdeySubjects.find({})
+                const { subjects = [] } = subjectsarray[0]
 
-            const isThere = subjects.find(o => { return o.trim() === input.trim() })
-            if (isThere) {
-                str += `יש נושא כזה כבר.. למה אתה משגע אותי`
-            } else {
-                subjects.push(input)
-                const data = {
-                    updateTo,
-                    subjects
+                const isThere = subjects.find(o => { return o.trim() === input.trim() })
+                if (isThere) {
+                    str += `יש נושא כזה כבר.. למה אתה משגע אותי`
+                } else {
+                    subjects.push(input)
+                    const data = {
+                        updateTo,
+                        subjects
+                    }
+                    await wednesdeySubjects.findOneAndUpdate({}, data, { upsert: true, new: true });
+
+                    str = sentensesAdd[Math.floor(Math.random() * sentensesAdd.length)];
+
                 }
-                await wednesdeySubjects.findOneAndUpdate({}, data, { upsert: true, new: true });
 
-                str = sentensesAdd[Math.floor(Math.random() * sentensesAdd.length)];
+            } else {
+                str += `אל תנסה אותי.. תרשום נושא לנושא`
+
             }
-
             botTest.sendMessage(chatId, str);
 
+        }
+        else if (text === 'בטל נ') {
+        } else {
+            str += 'פקודה לא חוקית יא נקניק'
 
+            botTest.sendMessage(chatId, str);
         }
 
     });
 
     botTest.onText(/\הסר:/, async (msg, match) => {
         const chatId = msg.chat.id;
-        const text = match[0]
+        const text = msg.text.substring(0, 4)
+        let str = ``
         if (text === 'הסר:') {
-            let str = `רשימת הנושאים: \n`
+            str += `רשימת הנושאים: \n`
 
             const data = {
                 updateTo,
@@ -3988,53 +4000,78 @@ module.exports.ahanhala = async function () {
             for (let i = 1; i <= data.subjects.length; i++) {
                 str += `${i}: ${data.subjects[i - 1]}\n`
             }
-            botTest.sendMessage(chatId, str);
 
 
         }
+        else {
+            str += 'פקודה לא חוקית יא נקניק'
+        }
+        botTest.sendMessage(chatId, str);
 
     });
     botTest.onText(/\בטל נושא:/, async (msg, match) => {
         const chatId = msg.chat.id;
-        const text = match[0]
-        
+        const text = msg.text.substring(0, 9)
+        console.log('text', text)
+
+        let str = ``
         if (text === 'בטל נושא:') {
-            let str = ``
-            let input = msg.text.substring(9, msg.text.length)
-            const subjectsarray = await wednesdeySubjects.find({})
-            const { subjects = [] } = subjectsarray[0]
+            let input = msg.text.substring(9, msg.text.length).trim()
+            if (input !== "1" && input !== "2" && input !== "3") {
+                console.log('input2', input)
 
-            const index = subjects.indexOf(input)
 
-            subjects.splice(subjects.indexOf(input), 1);
+                const subjectsarray = await wednesdeySubjects.find({})
+                const { subjects = [] } = subjectsarray[0]
+                console.log('subjects', subjects)
+                const index = subjects.indexOf(input)
+                console.log('index', index)
 
-            const data = {
-                updateTo,
-                subjects
+                if (index === -1) {
+                    str += `אין נושא כזה :)`
+                } else {
+                    subjects.splice(index, 1);
+                    const data = {
+                        updateTo,
+                        subjects
+                    }
+                    await wednesdeySubjects.findOneAndUpdate({}, data, { upsert: true, new: true });
+                    str = sentensesRemove[Math.floor(Math.random() * sentensesRemove.length)];
+
+                }
+
+
+            } else {
+                str += ' פחחחחחח, עלק מנסה להוריד נושא קבוע. מה יש לך?'
+
             }
-            await wednesdeySubjects.findOneAndUpdate({}, data, { upsert: true, new: true });
-            str = sentensesRemove[Math.floor(Math.random() * sentensesRemove.length)];
-            botTest.sendMessage(chatId, str)
-
 
         }
+        else {
+            str += 'פקודה לא חוקית יא נקניק'
+        }
+        botTest.sendMessage(chatId, str)
+
 
     });
     botTest.onText(/\נושאים:/, async (msg, match) => {
         const chatId = msg.chat.id;
         const text = match[0]
-
+        let str = ``
         if (text === 'נושאים:') {
             const subjectsarray = await wednesdeySubjects.find({})
             const { subjects = [] } = subjectsarray[0]
-            let str = `רשימת הנושאים: \n`
+            str += `רשימת הנושאים: \n`
             for (let i = 1; i <= subjects.length; i++) {
                 str += `${i}: ${subjects[i - 1]}\n`
             }
-            botTest.sendMessage(chatId, str);
 
 
         }
+        else {
+            str += 'פקודה לא חוקית יא נקניק'
+        }
+        botTest.sendMessage(chatId, str);
 
     });
 
