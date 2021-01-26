@@ -3988,20 +3988,28 @@ module.exports.ahanhala = async function () {
     botTest.onText(/\הסר:/, async (msg, match) => {
         const chatId = msg.chat.id;
         const text = msg.text.substring(0, 4)
+        const { username } = msg.from
         let str = ``
         if (text === 'הסר:') {
-            str += `רשימת הנושאים: \n`
+            if (username === 'falustang') {
+                str += `רשימת הנושאים: \n`
 
-            const data = {
-                updateTo,
-                subjects: ['1', '2', '3']
+                const data = {
+                    updateTo,
+                    subjects: ['1', '2', '3']
+                }
+                await wednesdeySubjects.findOneAndUpdate({}, data, { upsert: true, new: true })
+                for (let i = 1; i <= data.subjects.length; i++) {
+                    str += `${i}: ${data.subjects[i - 1]}\n`
+                }
+
+
             }
-            await wednesdeySubjects.findOneAndUpdate({}, data, { upsert: true, new: true })
-            for (let i = 1; i <= data.subjects.length; i++) {
-                str += `${i}: ${data.subjects[i - 1]}\n`
+
+            else {
+                str += `מי אתה חושב שאתה ${username}? !רק המזכל יכול למחוק את כל הנושאים`
+
             }
-
-
         }
         else {
             str += 'פקודה לא חוקית יא נקניק'
