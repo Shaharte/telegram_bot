@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express();
-const {telegramTest, telegram} = require('./telegram/main');
+const {telegramTest, telegram, ahanhala} = require('./telegram/main');
 
 const port = process.env.PORT || 8000
 
@@ -24,3 +24,4 @@ app.listen(port, () => {
 });
 telegram()
 // telegramTest()
+ahanhala()

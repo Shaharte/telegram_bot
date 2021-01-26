@@ -1,9 +1,10 @@
 // const { Telegraf } = require('telegraf')
 const axios = require("axios");
-const { games } = require('./schema');
+const { games, wednesdeySubjects } = require('./schema');
 // const pexelKey = process.env.PEXEL_KEY;
 const token = '1557847459:AAGP08OPiRxV2OrCQ0FZhx4CbtOA2Btf7QA';
 const testtoken = '1556993489:AAHrW-PHjchV5A9oTbPUuJiN54PZwF800h0';
+const elazToken = '1523524884:AAFz46CJAiyreUFc58_Gc_3PuPtMbkDlE5g';
 var unirest = require("unirest");
 const _ = require('lodash');
 process.env.NTBA_FIX_319 = 1
@@ -11,6 +12,10 @@ const moment = require('moment');
 const nodeSchedule = require('node-schedule');
 const puppeteer = require('puppeteer');
 require('events').EventEmitter.defaultMaxListeners = 15;
+
+const subjectArr = ['1', '2', '3']
+const sentensesAdd = ['הוספתי לך את הנושא יא מלך עולם', 'פששש נושא מפחיד', 'חזקקקק, יאללה רשמתי']
+const sentensesRemove = ['בוזזזזזזזזזז', 'מה אתה קשוררררר, טוב נו', 'לאאאא נו למה.. יאללה בסדר']
 
 
 const TelegramBot = require('node-telegram-bot-api');
@@ -1475,13 +1480,22 @@ module.exports.telegram = async function () {
     }
 
     //initiating Puppeteer
-    nodeSchedule.scheduleJob('* 17-21 * * *', () => {
+    nodeSchedule.scheduleJob('* 18-21 * * *', () => {
         try {
             scraper()
 
         } catch (err) { }
 
     });
+
+    nodeSchedule.scheduleJob('30 10 * * *', () => {
+        try {
+            scraper()
+
+        } catch (err) { }
+
+    });
+
 
     const sendNotification = (newGames, oldGames) => {
         let str = ``
@@ -1886,7 +1900,7 @@ module.exports.telegram = async function () {
         const chatId = msg.chat.id;
         const { text } = msg
         if (text === '/mahzorim') {
-            let str = 'Your Options Are:\n\n/mahzor1\n/mahzor2\n/mahzor3\n/mahzor4\n/mahzor5\n/mahzor6\n/mahzor7\n/mahzor8\n/mahzor9\n/mahzor10\n/mahzor11\n/mahzor12\n/mahzor13\n/mahzor14\n/mahzor15\n/mahzor16\n/mahzor17\n/mahzor18\n/mahzor19\n/mahzor20\n '
+            let str = 'Your Options Are:\n\n/mahzor1\n/mahzor2\n/mahzor3\n/mahzor4\n/mahzor5\n/mahzor6\n/mahzor7\n/mahzor8\n/mahzor9\n/mahzor10\n/mahzor11\n/mahzor12\n/mahzor13\n/mahzor14\n/mahzor15\n/mahzor16\n/next\n'
             botTest.sendMessage(chatId, str);
 
 
@@ -1941,7 +1955,7 @@ module.exports.telegram = async function () {
                 res.body.api.standings[0].forEach(team => {
                     let { teamName, rank, points, all, goalsDiff } = team
                     const { matchsPlayed, goalsFor, goalsAgainst } = all
-  
+
                     for (let i = teamName.length; i < 21; i++) {
                         teamName += ' '
                     }
@@ -2069,13 +2083,13 @@ module.exports.telegram = async function () {
                 if (takzir) {
                     str += `Highlights: ${takzir.url}\n\n`
 
-                }else{
+                } else {
                     str += `\n`
-  
+
                 }
             })
             // console.log(str)
-            if (mahzor !=='im'){
+            if (mahzor !== 'im') {
 
                 botTest.sendMessage(chatId, str);
             }
@@ -2632,7 +2646,6 @@ module.exports.telegramTest = async function () {
                         }
 
 
-
                         scrapeItems.push({
                             score,
                             time,
@@ -2642,7 +2655,7 @@ module.exports.telegramTest = async function () {
                             awayTeam,
                             name,
                             country,
-                            lastScorrer: []
+                            lastScorrer: {}
 
                         });
 
@@ -2673,19 +2686,35 @@ module.exports.telegramTest = async function () {
 
 
                     const finalData = allGames.filter(game => {
-                        return ((game.country === 'IRAN' && game.name === "Division 1"))
+                        return ((game.country === 'PORTUGAL' && game.name === "Primeira Liga"))
                     })
 
                     return finalData;
                 });
                 //outputting the scraped data
+                const { games: oldMatches } = oldGames[0]
                 for (const match of grabMatches) {
                     const { games } = match
                     for (const game of games) {
 
                         const { id } = game
                         const ans = await scraper2(id)
-                        game.lastScorrer = ans || []
+                        console.log('ans', ans,)
+                        if (ans.scorer !== '') {
+                            game.lastScorrer = ans
+
+                        } else {
+                            const exist = oldMatches.find(o => { return o.id === id })
+                            if (exist) {
+                                game.lastScorrer = exist.lastScorrer
+                            }
+                        }
+
+
+                        console.log(game.lastScorrer, '\n')
+
+
+
 
 
                     }
@@ -2708,6 +2737,7 @@ module.exports.telegramTest = async function () {
 
 
     }
+
     const scraper2 = async (id) => {
         console.log('starting to run scrapper2')
 
@@ -2722,7 +2752,13 @@ module.exports.telegramTest = async function () {
 
                 //manipulating the page's content
                 let grabMatches = await page.evaluate(() => {
-                    let scorrers = []
+                    let scorrers = {
+                        scorer: '',
+                        assist: '',
+                        sub: '',
+                        min: '',
+                        bla: ""
+                    };
 
                     let allLiveMatches = document.body.querySelectorAll('.detailMS__incidentRow')
 
@@ -2737,7 +2773,7 @@ module.exports.telegramTest = async function () {
                             if (goal) {
                                 let scorer = item.querySelector('.participant-name') ? item.querySelector('.participant-name').innerText : ''
                                 if (scorer !== '') {
-                                    const obj = {
+                                    scorrers = {
                                         scorer: item.querySelector('.participant-name') ? item.querySelector('.participant-name').innerText : '',
                                         assist: item.querySelector('.assist') ? item.querySelector('.assist').innerText : '',
                                         sub: item.querySelector('.subincident-name') ? item.querySelector('.subincident-name').innerText : '',
@@ -2747,14 +2783,13 @@ module.exports.telegramTest = async function () {
                                     }
                                 }
 
-                                scorrers[0] = obj;
-                            } else if (red || yl) {
-                                scorrers[0] = {
+                            }
+                            else if (red || yl) {
+                                scorrers = {
                                     scorer: item.querySelector('.participant-name') ? item.querySelector('.participant-name').innerText : '',
                                     red: true,
                                     min: item.querySelector('.time-box') ? item.querySelector('.time-box').innerText : '',
                                     team: item.className,
-
 
                                 }
                             }
@@ -2770,13 +2805,7 @@ module.exports.telegramTest = async function () {
 
                     });
 
-                    scorrers = scorrers.length ? scorrers : [{
-                        scorer: '',
-                        assist: '',
-                        sub: '',
-                        min: '',
-                        bla: ""
-                    }]
+
 
 
                     return scorrers;
@@ -2798,13 +2827,13 @@ module.exports.telegramTest = async function () {
     //initiating Puppeteer
     // const ans = await scraper2('tKmMduCT')
     // console.log('ans',ans)
-    nodeSchedule.scheduleJob('* * * * *', () => {
-        try {
-            scraper()
+    // nodeSchedule.scheduleJob('* * * * *', () => {
+    //     try {
+    //         scraper()
 
-        } catch (err) { }
+    //     } catch (err) { }
 
-    });
+    // });
 
 
 
@@ -2823,20 +2852,19 @@ module.exports.telegramTest = async function () {
                     let sub = '';
                     let scorerMin = '';
                     let team = '';
-                    if (lastScorrer.length) {
-                        scorer = lastScorrer[0].scorer
-                        assist = lastScorrer[0].assist
-                        sub = lastScorrer[0].sub
-                        scorerMin = lastScorrer[0].min
-                        team = lastScorrer[0].team ? (lastScorrer[0].team.includes('home') ? 'home' : 'away') : ''
+                    if (lastScorrer.scorer) {
+                        scorer = lastScorrer.scorer
+                        assist = lastScorrer.assist
+                        sub = lastScorrer.sub
+                        scorerMin = lastScorrer.min
+                        team = lastScorrer.team ? (lastScorrer.team.includes('home') ? 'home' : 'away') : ''
                     }
                     const oldGame = findOld.games.find(old => { return old.homeTeam === homeTeam && old.awayTeam === awayTeam })
-                    console.log('game', game)
 
-                    console.log('oldGame', oldGame)
 
                     if (oldGame) {
-                        if (oldGame.score !== score || (oldGame.min !== min && min !== '' || min === 'Finished') || (oldGame.lastScorrer[0].scorer !== scorer && scorer !== '' || oldGame.lastScorrer[0].min !== scorerMin && scorer !== '')) {
+                        console.log('oldGame', oldGame)
+                        if (oldGame.score !== score || (oldGame.min !== min && min !== '' || min === 'Finished') || (scorer !== '' && oldGame.lastScorrer.scorer !== scorer || oldGame.lastScorrer.min !== scorerMin && scorer !== '')) {
 
                             const homeScore = score.substring(0, 1) === '-' ? score.substring(0, 1) : Number(score.substring(0, 1))
                             const awayScore = score.substring(score.length - 1, score.length) === '-' ? score.substring(score.length - 1, score.length) : Number(score.substring(score.length - 1, score.length))
@@ -2877,9 +2905,9 @@ module.exports.telegramTest = async function () {
                                 }
                                 botTest.sendMessage('404011627', str)
 
-                            } else if (oldGame.lastScorrer.length === 0 && scorer !== '' || oldGame.lastScorrer.length !== 0 && oldGame.lastScorrer[0].min !== scorerMin && scorer !== '') {
+                            } else if (oldGame.lastScorrer.scorer === '' && scorer !== '' || oldGame.lastScorrer.scorer && oldGame.lastScorrer.min !== scorerMin && scorer !== '') {
                                 const scoreTeam = team === 'home' ? homeTeam : (team === 'away' ? awayTeam : '')
-                                str += `Update Scorer ${scoreTeam} - ${scorerMin}: ${sub} ${scorer} ${assist}\n`
+                                str += `Update Scorer - ${scoreTeam}: ${sub} ${scorer} ${assist}\n`
                                 botTest.sendMessage('404011627', str)
 
                             }
@@ -3220,7 +3248,7 @@ module.exports.telegramTest = async function () {
                 res.body.api.standings[0].forEach(team => {
                     let { teamName, rank, points, all, goalsDiff } = team
                     const { matchsPlayed, goalsFor, goalsAgainst } = all
-  
+
                     for (let i = teamName.length; i < 21; i++) {
                         teamName += ' '
                     }
@@ -3349,13 +3377,13 @@ module.exports.telegramTest = async function () {
                 if (takzir) {
                     str += `Highlights: ${takzir.url}\n\n`
 
-                }else{
+                } else {
                     str += `\n`
-  
+
                 }
             })
             // console.log(str)
-            if (mahzor !=='im'){
+            if (mahzor !== 'im') {
 
                 botTest.sendMessage(chatId, str);
             }
@@ -3821,6 +3849,66 @@ module.exports.telegramTest = async function () {
         }
 
     });
+    let arr = ['1', '2', '3']
+    const sentensesAdd = ['הוספתי לך את הנושא יא מלך עולם', 'פששש נושא מפחיד', 'חזקקקק, יאללה רשמתי']
+    const sentensesRemove = ['בוזזזזזזזזזז', 'מה אתה קשוררררר, טוב נו', 'לאאאא נו למה.. יאללה בסדר']
+    botTest.onText(/\נושא:/, (msg, match) => {
+        const chatId = msg.chat.id;
+        const text = match[0]
+
+        if (text === 'נושא:' && !(msg.text.includes('בטל'))) {
+            let input = msg.text.substring(5, msg.text.length)
+            input = input.replace(/\s/g, '');
+
+            //.substring(5,match[0].input.length)
+            arr.push(input)
+            const randomElement = sentensesAdd[Math.floor(Math.random() * sentensesAdd.length)];
+
+            // let str = 'Your Options Are:\n\n/goals - Top Goal Scorer \n/assists - Top Assists \n/attempts - Top Attempt on Goal \n/passes - Top Accurate Passes \n/owngoals - Top Own Goals \n/red - Top Red Cards \n/yellow - Top Yellow Cards \n/dribbles - Top Dribbles \n/successfulDribbles - Top Successful Dribbles \n/keypasses - Top Accurate Key Passes \n/penaltymiss - Top Penalty Misses \n/offsides - Top Offsides \n/tackles - Top Successful Tackels \n/lostball - Top Lost Ball'
+            botTest.sendMessage(chatId, randomElement);
+
+
+        }
+
+    });
+    botTest.onText(/\בטל נושא:/, (msg, match) => {
+        const chatId = msg.chat.id;
+        const text = match[0]
+
+        if (text === 'בטל נושא:') {
+            let input = msg.text.substring(8, msg.text.length)
+            input = input.replace(/\s/g, '');
+            //.substring(5,match[0].input.length)
+            // arr.push(input)
+            console.log('input', input)
+            console.log('arr1', arr)
+
+            arr.splice(arr.indexOf(input), 1);
+            console.log('arr2', arr)
+            const randomElement = sentensesRemove[Math.floor(Math.random() * sentensesRemove.length)];
+
+            // let str = 'Your Options Are:\n\n/goals - Top Goal Scorer \n/assists - Top Assists \n/attempts - Top Attempt on Goal \n/passes - Top Accurate Passes \n/owngoals - Top Own Goals \n/red - Top Red Cards \n/yellow - Top Yellow Cards \n/dribbles - Top Dribbles \n/successfulDribbles - Top Successful Dribbles \n/keypasses - Top Accurate Key Passes \n/penaltymiss - Top Penalty Misses \n/offsides - Top Offsides \n/tackles - Top Successful Tackels \n/lostball - Top Lost Ball'
+            botTest.sendMessage(chatId, randomElement);
+
+
+        }
+
+    });
+    botTest.onText(/\נושאים:/, (msg, match) => {
+        const chatId = msg.chat.id;
+        const text = match[0]
+
+        if (text === 'נושאים:') {
+            let str = `רשימת הנושאים: \n`
+            for (let i = 1; i <= arr.length; i++) {
+                str += `${i}: ${arr[i - 1]}\n`
+            }
+            botTest.sendMessage(chatId, str);
+
+
+        }
+
+    });
     // botTest.onText(/\//, (msg, match) => {
     //     const chatId = msg.chat.id;
     //     const { text } = msg
@@ -3837,6 +3925,118 @@ module.exports.telegramTest = async function () {
 
 
     // });
+
+}
+module.exports.ahanhala = async function () {
+    const updateTo = moment().utc().format('YYYY[-]MM[-]DD');
+
+    const botTest = new TelegramBot(elazToken, { polling: true });
+    nodeSchedule.scheduleJob('00 6 * * 4',async () => {
+
+        const data = {
+            updateTo,
+            subjects: ['1', '2', '3']
+        }
+        await wednesdeySubjects.findOneAndUpdate({}, data, { upsert: true, new: true })
+    })
+
+    // });
+
+
+
+    botTest.onText(/\נושא:/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const text = match[0]
+        if (text === 'נושא:' && !(msg.text.includes('בטל'))) {
+            let str = ``
+            let input = msg.text.substring(5, msg.text.length)
+            const subjectsarray = await wednesdeySubjects.find({})
+            const { subjects = [] } = subjectsarray[0]
+
+            const isThere = subjects.find(o => { return o.trim() === input.trim() })
+            if (isThere) {
+                str += `יש נושא כזה כבר.. למה אתה משגע אותי`
+            } else {
+                subjects.push(input)
+                const data = {
+                    updateTo,
+                    subjects
+                }
+                await wednesdeySubjects.findOneAndUpdate({}, data, { upsert: true, new: true });
+
+                str = sentensesAdd[Math.floor(Math.random() * sentensesAdd.length)];
+            }
+
+            botTest.sendMessage(chatId, str);
+
+
+        }
+
+    });
+
+    botTest.onText(/\הסר:/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const text = match[0]
+        if (text === 'הסר:') {
+            let str = `רשימת הנושאים: \n`
+
+            const data = {
+                updateTo,
+                subjects: ['1', '2', '3']
+            }
+            await wednesdeySubjects.findOneAndUpdate({}, data, { upsert: true, new: true })
+            for (let i = 1; i <= data.subjects.length; i++) {
+                str += `${i}: ${data.subjects[i - 1]}\n`
+            }
+            botTest.sendMessage(chatId, str);
+
+
+        }
+
+    });
+    botTest.onText(/\בטל נושא:/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const text = match[0]
+        
+        if (text === 'בטל נושא:') {
+            let str = ``
+            let input = msg.text.substring(9, msg.text.length)
+            const subjectsarray = await wednesdeySubjects.find({})
+            const { subjects = [] } = subjectsarray[0]
+
+            const index = subjects.indexOf(input)
+
+            subjects.splice(subjects.indexOf(input), 1);
+
+            const data = {
+                updateTo,
+                subjects
+            }
+            await wednesdeySubjects.findOneAndUpdate({}, data, { upsert: true, new: true });
+            str = sentensesRemove[Math.floor(Math.random() * sentensesRemove.length)];
+            botTest.sendMessage(chatId, str)
+
+
+        }
+
+    });
+    botTest.onText(/\נושאים:/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const text = match[0]
+
+        if (text === 'נושאים:') {
+            const subjectsarray = await wednesdeySubjects.find({})
+            const { subjects = [] } = subjectsarray[0]
+            let str = `רשימת הנושאים: \n`
+            for (let i = 1; i <= subjects.length; i++) {
+                str += `${i}: ${subjects[i - 1]}\n`
+            }
+            botTest.sendMessage(chatId, str);
+
+
+        }
+
+    });
 
 }
 
