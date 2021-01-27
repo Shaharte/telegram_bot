@@ -1393,9 +1393,7 @@ module.exports.telegram = async function () {
 
     const updateTo = moment().utc().format('YYYY[-]MM[-]DD');
 
-    const finalData = allGames.filter(game => {
-        return ((game.country === 'ISRAEL' && game.name === "Ligat ha'Al"))
-    })
+
     const scraper = async () => {
         console.log('starting to run scrapper')
         const gamesScrapper = await games.find({ updateTo })
@@ -1490,7 +1488,7 @@ module.exports.telegram = async function () {
 
 
                     const finalData = allGames.filter(game => {
-                        return ((game.country === 'SOUTH AFRICA' && game.name === 'GladAfrica Championship'))
+                        return ((game.country === 'ISRAEL' && game.name === "Ligat ha'Al"))
                     })
 
                     return finalData;
