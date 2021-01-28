@@ -4330,6 +4330,8 @@ module.exports.stocks = async function () {
     const updateTo = moment().utc().format('YYYY[/]MM[/]DD');
 
     const botTest = new TelegramBot(stockToken, { polling: true });
+    const yahooStockAPI = require('yahoo-stock-api');
+    const yahooStockPrices = require('yahoo-stock-prices')
 
 
     // });
@@ -4361,7 +4363,6 @@ module.exports.stocks = async function () {
     // });
 
     botTest.onText(/\//, async (msg, match) => {
-        const yahooStockPrices = require('yahoo-stock-prices')
         const chatId = msg.chat.id;
         // console.log('chatId:', chatId)
         const { text } = msg
@@ -4369,12 +4370,35 @@ module.exports.stocks = async function () {
         console.log('stock:', stock)
         let str = ``
         try {
+            const date = new Date(updateTo);
             const data = await yahooStockPrices.getCurrentData(stock);
-            console.log('data', data)
-            const { price = 0 } = data
+            // const data2 = await yahooStockAPI.getHistoricalPrices(date, date, stock, '1d');
+            // console.log('data:', data)
+            // console.log('data2:', data2)
+            const preData = await yahooStockAPI.getSymbol(stock)
+            // console.log('preData:', preData)
+            // let { response = [] } = data2
+            // let { close = 1 } = response[0]
+            let { previousClose, open } = preData.response
+
+            const { price = 0, currency } = data
+            const symbol = currency === 'USD' ? '$' : ''
+            let percentage = ((Number(previousClose) - Number(price)) / Number(previousClose) * 100).toFixed(2).toString()
+            const arrow = price < previousClose ? '🡇' : (previousClose < price ? '🡅' : '')
+            percentage = percentage < 0 ? percentage.substring(1, percentage.length) + '%' : percentage + '%'
+            //  const opts = {
+            //     reply_markup:{
+            //       keyboard: [
+            //         ['FAQ'],
+            //         ['Buy']
+            //       ]
+            //     },
+            //     parse_mode: 'HTML'
+            //   };
+
             if (price > 0) {
                 str += `${stock}:\n`
-                str += `Price: ${price}\n`
+                str += `Price: ${symbol}${price}, ${arrow} ${percentage}\n`
                 botTest.sendMessage(chatId, str)
             }
 
@@ -4394,26 +4418,34 @@ module.exports.stocks = async function () {
                 //manipulating the page's content
                 let allStats = await page.evaluate(() => {
                     let price = document.body.querySelector('.YMlKec.fxKbKc').innerText;
+                    let movment = document.body.querySelector('.NydbP.VOXKNe.tnNmPe').innerText;
                     const stats = []
 
                     //storing the post items in an array then selecting for retrieving content
                     // allStock.forEach(stock => {
 
                     //     let price = stock.innerText;
-                    //     stats.push(price)
+                    stats.push(price)
+                    stats.push(movment)
 
 
                     // });
 
 
-                    return price;
+                    return stats;
                 });
                 await browser.close();
-                str += `${stock}:\n`
-                str += `Price: ${allStats}\n`
-                botTest.sendMessage(chatId, str)
-                //outputting the scraped data
+                if (allStats.length) {
+                    const price = allStats[0]
+                    let arr = allStats[1].split('\n')
+                    const arrow = arr[0].includes('down') ? '🡇' : '🡅';
+                    const percentage = arr[1] ? arr[1] : '0%';
+                    str += `${stock}:\n`
+                    str += `Price: ${price}, ${arrow} ${percentage}\n`
+                    botTest.sendMessage(chatId, str)
 
+                    //outputting the scraped data
+                }
                 //closing the browser
             }
             catch (err) {
