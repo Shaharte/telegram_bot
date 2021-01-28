@@ -4363,9 +4363,9 @@ module.exports.stocks = async function () {
     botTest.onText(/\//, async (msg, match) => {
         const yahooStockPrices = require('yahoo-stock-prices')
         const chatId = msg.chat.id;
-        console.log('chatId:', chatId)
+        // console.log('chatId:', chatId)
         const { text } = msg
-        const stock = text.substring(1, text.length).toUpperCase()
+        let stock = text.substring(1, text.length).toUpperCase()
         console.log('stock:', stock)
         let str = ``
         try {
@@ -4379,7 +4379,52 @@ module.exports.stocks = async function () {
             }
 
         } catch (err) {
-            botTest.sendMessage(chatId, `Cant find your stock..`)
+
+            const browser = await puppeteer
+                .launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
+
+
+            //opening a new page and navigating to Fleshscore
+            const page = await browser.newPage();
+
+            await page.goto(`https://www.google.com/finance/quote/${stock}`);
+            await page.waitForSelector('body');
+
+            try {
+                //manipulating the page's content
+                let allStats = await page.evaluate(() => {
+                    let price = document.body.querySelector('.YMlKec.fxKbKc').innerText;
+                    const stats = []
+
+                    //storing the post items in an array then selecting for retrieving content
+                    // allStock.forEach(stock => {
+
+                    //     let price = stock.innerText;
+                    //     stats.push(price)
+
+
+                    // });
+
+
+                    return price;
+                });
+                await browser.close();
+                str += `${stock}:\n`
+                str += `Price: ${allStats}\n`
+                botTest.sendMessage(chatId, str)
+                //outputting the scraped data
+
+                //closing the browser
+            }
+            catch (err) {
+                botTest.sendMessage(chatId, `Cant find your stock..`)
+
+
+
+            }
+
+
+
 
         }
 
