@@ -2673,13 +2673,13 @@ module.exports.telegramTest = async function () {
 
 
     const botTest = new TelegramBot(testtoken, { polling: true });
-    nodeSchedule.scheduleJob('* * * * *', () => {
-        try {
-            scraper()
+    // nodeSchedule.scheduleJob('* * * * *', () => {
+    //     try {
+    //         scraper()
 
-        } catch (err) { }
+    //     } catch (err) { }
 
-    });
+    // });
 
     const updateTo = moment().utc().format('YYYY[-]MM[-]DD');
     const scraper = async () => {
@@ -3089,6 +3089,25 @@ module.exports.telegramTest = async function () {
 
     // getting next fixtsure - ligat HaAl
 
+    botTest.onText(/\/test/, (msg, match) => {
+        const chatId = msg.chat.id;
+        console.log('chatId:', chatId)
+        const { text } = msg
+        if (text === '/test') {
+            let str = 'hey there'
+               const opts = {
+                reply_markup:{
+                  keyboard: [
+                    ['FAQ'],
+                    ['Buy']
+                  ]
+                },
+                parse_mode: 'HTML'
+              };
+
+            botTest.sendMessage(chatId, str,opts)
+        }
+    });
     botTest.onText(/\/next/, (msg, match) => {
         const chatId = msg.chat.id;
         console.log('chatId:', chatId)
@@ -3449,7 +3468,20 @@ module.exports.telegramTest = async function () {
         console.log(chatId)
         const { text } = msg
         if (text === '/help') {
-
+            const opts = {
+                reply_markup:{
+                  keyboard: [
+                    ['/table'],
+                    ['/live'],
+                    ['/stats'],
+                    ['/last'],
+                    ['/teams'],
+                    ['/mahzorim'],
+                    ['/ligyoners'],
+                  ]
+                },
+                parse_mode: 'HTML'
+              };
 
             let str = 'Your Options Are:\n\n/live \n/table \n/stats \n/last \n/teams \n/mahzorim \n/ligyoners'
 
@@ -4091,82 +4123,8 @@ module.exports.telegramTest = async function () {
         }
 
     });
-    let arr = ['1', '2', '3']
-    const sentensesAdd = ['הוספתי לך את הנושא יא מלך עולם', 'פששש נושא מפחיד', 'חזקקקק, יאללה רשמתי']
-    const sentensesRemove = ['בוזזזזזזזזזז', 'מה אתה קשוררררר, טוב נו', 'לאאאא נו למה.. יאללה בסדר']
-    botTest.onText(/\נושא:/, (msg, match) => {
-        const chatId = msg.chat.id;
-        const text = match[0]
-
-        if (text === 'נושא:' && !(msg.text.includes('בטל'))) {
-            let input = msg.text.substring(5, msg.text.length)
-            input = input.replace(/\s/g, '');
-
-            //.substring(5,match[0].input.length)
-            arr.push(input)
-            const randomElement = sentensesAdd[Math.floor(Math.random() * sentensesAdd.length)];
-
-            // let str = 'Your Options Are:\n\n/goals - Top Goal Scorer \n/assists - Top Assists \n/attempts - Top Attempt on Goal \n/passes - Top Accurate Passes \n/owngoals - Top Own Goals \n/red - Top Red Cards \n/yellow - Top Yellow Cards \n/dribbles - Top Dribbles \n/successfulDribbles - Top Successful Dribbles \n/keypasses - Top Accurate Key Passes \n/penaltymiss - Top Penalty Misses \n/offsides - Top Offsides \n/tackles - Top Successful Tackels \n/lostball - Top Lost Ball'
-            botTest.sendMessage(chatId, randomElement);
 
 
-        }
-
-    });
-    botTest.onText(/\בטל נושא:/, (msg, match) => {
-        const chatId = msg.chat.id;
-        const text = match[0]
-
-        if (text === 'בטל נושא:') {
-            let input = msg.text.substring(8, msg.text.length)
-            input = input.replace(/\s/g, '');
-            //.substring(5,match[0].input.length)
-            // arr.push(input)
-            console.log('input', input)
-            console.log('arr1', arr)
-
-            arr.splice(arr.indexOf(input), 1);
-            console.log('arr2', arr)
-            const randomElement = sentensesRemove[Math.floor(Math.random() * sentensesRemove.length)];
-
-            // let str = 'Your Options Are:\n\n/goals - Top Goal Scorer \n/assists - Top Assists \n/attempts - Top Attempt on Goal \n/passes - Top Accurate Passes \n/owngoals - Top Own Goals \n/red - Top Red Cards \n/yellow - Top Yellow Cards \n/dribbles - Top Dribbles \n/successfulDribbles - Top Successful Dribbles \n/keypasses - Top Accurate Key Passes \n/penaltymiss - Top Penalty Misses \n/offsides - Top Offsides \n/tackles - Top Successful Tackels \n/lostball - Top Lost Ball'
-            botTest.sendMessage(chatId, randomElement);
-
-
-        }
-
-    });
-    botTest.onText(/\נושאים:/, (msg, match) => {
-        const chatId = msg.chat.id;
-        const text = match[0]
-
-        if (text === 'נושאים:') {
-            let str = `רשימת הנושאים: \n`
-            for (let i = 1; i <= arr.length; i++) {
-                str += `${i}: ${arr[i - 1]}\n`
-            }
-            botTest.sendMessage(chatId, str);
-
-
-        }
-
-    });
-    // botTest.onText(/\//, (msg, match) => {
-    //     const chatId = msg.chat.id;
-    //     const { text } = msg
-    //     const mahzor = text.substring(1, 3)
-    //     const highlight = highlights[mahzor].find(game => {
-    //         return game.id === text
-    //     })
-
-    //     if (highlight) {
-    //         const { url } = highlight
-    //         botTest.sendMessage(chatId, url)
-
-    //     }
-
-
-    // });
 
 }
 module.exports.ahanhala = async function () {
@@ -4384,7 +4342,7 @@ module.exports.stocks = async function () {
             const { price = 0, currency } = data
             const symbol = currency === 'USD' ? '$' : ''
             let percentage = ((Number(previousClose) - Number(price)) / Number(previousClose) * 100).toFixed(2).toString()
-            const arrow = price < previousClose ? '🡇' : (previousClose < price ? '🡅' : '')
+            const arrow = price < previousClose ? '-' : (previousClose < price ? '+' : '')
             percentage = percentage < 0 ? percentage.substring(1, percentage.length) + '%' : percentage + '%'
             //  const opts = {
             //     reply_markup:{
@@ -4438,7 +4396,7 @@ module.exports.stocks = async function () {
                 if (allStats.length) {
                     const price = allStats[0]
                     let arr = allStats[1].split('\n')
-                    const arrow = arr[0].includes('down') ? '🡇' : '🡅';
+                    const arrow = arr[0].includes('down') ? '-' : '+';
                     const percentage = arr[1] ? arr[1] : '0%';
                     str += `${stock}:\n`
                     str += `Price: ${price}, ${arrow} ${percentage}\n`
