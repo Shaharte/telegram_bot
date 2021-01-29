@@ -1382,165 +1382,158 @@ module.exports.telegram = async function () {
     // });
 
     //initiating Puppeteer
-    nodeSchedule.scheduleJob('* 16-21 * * *', () => {
-        try {
-            scraper()
+    // nodeSchedule.scheduleJob('* 16-21 * * *', () => {
+    //     try {
+    //         scraper()
 
-        } catch (err) { }
+    //     } catch (err) { }
 
-    });
+    // });
 
 
     const updateTo = moment().utc().format('YYYY[-]MM[-]DD');
-
-
     const scraper = async () => {
         console.log('starting to run scrapper')
         const gamesScrapper = await games.find({ updateTo })
         const oldGames = gamesScrapper.length ? gamesScrapper[0].games : []
-        puppeteer
-            .launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
-            .then(async browser => {
+        const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
 
-                //opening a new page and navigating to Fleshscore
-                const page = await browser.newPage();
-                await page.goto('https://www.flashscore.com/');
-                await page.waitForSelector('body');
+        try {
+            //opening a new page and navigating to Fleshscore
+            const page = await browser.newPage();
+            await page.goto('https://www.flashscore.com/');
+            await page.waitForSelector('body');
 
-                //manipulating the page's content
-                let grabMatches = await page.evaluate(() => {
-                    let allLiveMatches = document.body.querySelectorAll('.event__header,.event__match--oneLine');
+            //manipulating the page's content
+            let grabMatches = await page.evaluate(() => {
+                let allLiveMatches = document.body.querySelectorAll('.event__header,.event__match--oneLine');
 
-                    let allteams = document.body.querySelectorAll('.event__header');
-                    //storing the post items in an array then selecting for retrieving content
-                    scrapeItems = [];
-                    allLiveMatches.forEach(item => {
-                        let awayTeam = '';
-                        let homeTeam = '';
-                        let country = '';
-                        let name = '';
-                        let id = '';
-                        let score = '';
-                        let min = '';
-                        let time = '';
-                        // let min = item.querySelector('.event__stage--block').innerText;
+                let allteams = document.body.querySelectorAll('.event__header');
+                //storing the post items in an array then selecting for retrieving content
+                scrapeItems = [];
+                allLiveMatches.forEach(item => {
+                    let awayTeam = '';
+                    let homeTeam = '';
+                    let country = '';
+                    let name = '';
+                    let id = '';
+                    let score = '';
+                    let min = '';
+                    let time = '';
+                    // let min = item.querySelector('.event__stage--block').innerText;
+                    try {
+                        awayTeam = item.querySelector('.event__participant--away').innerText;
+                        homeTeam = item.querySelector('.event__participant--home').innerText;
+                        id = item.id ? item.id.substring(4, item.id.length) : '';
+                        score = item.querySelector('.event__scores').innerText;
+                        min;
+                        time;
                         try {
-                            awayTeam = item.querySelector('.event__participant--away').innerText;
-                            homeTeam = item.querySelector('.event__participant--home').innerText;
-                            id = item.id ? item.id.substring(4, item.id.length) : '';
-                            score = item.querySelector('.event__scores').innerText;
-                            min;
-                            time;
-                            try {
-                                time = item.querySelector('.event__time').innerText;
-                                time = time.replace('\nFRO', '')
-                                min = ''
+                            time = item.querySelector('.event__time').innerText;
+                            time = time.replace('\nFRO', '')
+                            min = ''
 
-                            } catch (errr) {
-                                min = item.querySelector('.event__stage--block').innerText;
-                                time = ''
-                            }
-                            score = score.replaceAll('\n', '')
-                        } catch (err) {
-                            country = item.querySelector('.event__title--type').innerText;
-                            name = item.querySelector('.event__title--name').innerText;
-
+                        } catch (errr) {
+                            min = item.querySelector('.event__stage--block').innerText;
+                            time = ''
                         }
-
-
-                        scrapeItems.push({
-                            score,
-                            time,
-                            min,
-                            id,
-                            homeTeam,
-                            awayTeam,
-                            name,
-                            country,
-                            lastScorrer: {}
-
-                        });
-
-
-
-
-
-                    });
-                    const allGames = []
-                    let j = -1
-                    for (let i = 0; i < scrapeItems.length; i++) {
-
-                        const { name, country, score, time, min, homeTeam, awayTeam } = scrapeItems[i]
-                        if (country !== '') {
-                            j++
-                            allGames.push({
-                                name,
-                                country,
-                                games: []
-                            })
-
-                        } else {
-                            allGames[j].games.push(scrapeItems[i])
-                        }
-
-
-                    };
-
-
-                    const finalData = allGames.filter(game => {
-                        return ((game.country === 'ISRAEL' && game.name === "Ligat ha'Al"))
-                    })
-
-                    return finalData;
-                });
-                //outputting the scraped data
-
-
-                for (const match of grabMatches) {
-                    const { games } = match
-                    for (const game of games) {
-
-                        const { id } = game
-                        const ans = await scraper2(id)
-                        game.lastScorrer = ans
-                        // if (ans.scorer !== '') {
-                        //     game.lastScorrer = ans
-
-                        // } else if (oldGames.length) {
-                        //     const { games: oldMatches } = oldGames[0]
-                        //     const exist = oldMatches.find(o => { return o.id === id })
-                        //     if (exist) {
-                        //         game.lastScorrer = exist.lastScorrer
-                        //     }
-                        // }
-
-
-
-
-
-
+                        score = score.replaceAll('\n', '')
+                    } catch (err) {
+                        country = item.querySelector('.event__title--type').innerText;
+                        name = item.querySelector('.event__title--name').innerText;
 
                     }
-                }
 
-                const data = {
-                    updateTo,
-                    games: grabMatches,
-                }
 
-                await games.findOneAndUpdate({ updateTo }, data, { upsert: true, new: true });
-                sendNotification(grabMatches, oldGames)
-                //closing the browser
-                await browser.close();
-            })
-            //handling any errors
-            .catch(function (err) {
-                console.error(err);
+                    scrapeItems.push({
+                        score,
+                        time,
+                        min,
+                        id,
+                        homeTeam,
+                        awayTeam,
+                        name,
+                        country,
+                        lastScorrer: {}
+
+                    });
+
+
+
+
+
+                });
+                const allGames = []
+                let j = -1
+                for (let i = 0; i < scrapeItems.length; i++) {
+
+                    const { name, country, score, time, min, homeTeam, awayTeam } = scrapeItems[i]
+                    if (country !== '') {
+                        j++
+                        allGames.push({
+                            name,
+                            country,
+                            games: []
+                        })
+
+                    } else {
+                        allGames[j].games.push(scrapeItems[i])
+                    }
+
+
+                };
+
+
+                const finalData = allGames.filter(game => {
+                    return ((game.country === 'ISRAEL' && game.name === "Ligat ha'Al"))
+                })
+
+
+                return finalData;
             });
+            //outputting the scraped data
+
+
+            // for (const match of grabMatches) {
+            //     const { games } = match
+            //     for (const game of games) {
+
+            //         const { id } = game
+            //         const ans = await scraper2(id)
+            //         game.lastScorrer = ans
+
+
+
+
+
+
+
+            //     }
+            // }
+
+            const data = {
+                updateTo,
+                games: grabMatches,
+            }
+
+            await games.findOneAndUpdate({ updateTo }, data, { upsert: true, new: true });
+            sendNotification(grabMatches, oldGames)
+            //closing the browser
+
+        } catch (err) {
+
+        }
+        finally {
+            console.log('closing browser - scrapper')
+            await browser.close();
+
+        }
+
+        //handling any errors
+
 
 
     }
-
 
 
     // nodeSchedule.scheduleJob('00 11 * * *', () => {
@@ -1679,11 +1672,11 @@ module.exports.telegram = async function () {
 
                             if (min === 'Finished' && oldGame.min !== min) {
                                 str += `${min}: ${homeTeam} ${score} ${awayTeam}\n`
-                                botTest.sendMessage('-471015035', str)
+                                botTest.sendMessage('404011627', str)
 
                             } else if (oldGame.score === '-') {
                                 str += `Match Started! ${min}: ${homeTeam} ${score} ${awayTeam}\n`
-                                botTest.sendMessage('-471015035', str)
+                                botTest.sendMessage('404011627', str)
 
                             } else if (oldGame.score !== score) {
                                 if (homeScore > oldHomeScore || awayScore > oldAwayScore) {
@@ -1707,7 +1700,7 @@ module.exports.telegram = async function () {
                                     }
 
                                 }
-                                botTest.sendMessage('-471015035', str)
+                                botTest.sendMessage('404011627', str)
 
                             }
                             //  else if (oldGame.lastScorrer.scorer === '' && scorer !== '' || oldGame.lastScorrer.scorer && oldGame.lastScorrer.min !== scorerMin && scorer !== '') {
@@ -1729,6 +1722,7 @@ module.exports.telegram = async function () {
         })
 
     }
+
 
 
     // getting next fixtsure - ligat HaAl
@@ -2673,158 +2667,154 @@ module.exports.telegramTest = async function () {
 
 
     const botTest = new TelegramBot(testtoken, { polling: true });
-    // nodeSchedule.scheduleJob('* * * * *', () => {
-    //     try {
-    //         scraper()
+    nodeSchedule.scheduleJob('* * * * *', () => {
+        try {
+            scraper()
 
-    //     } catch (err) { }
+        } catch (err) { }
 
-    // });
+    });
 
     const updateTo = moment().utc().format('YYYY[-]MM[-]DD');
     const scraper = async () => {
         console.log('starting to run scrapper')
         const gamesScrapper = await games.find({ updateTo })
         const oldGames = gamesScrapper.length ? gamesScrapper[0].games : []
-        puppeteer
-            .launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
-            .then(async browser => {
+        const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
 
-                //opening a new page and navigating to Fleshscore
-                const page = await browser.newPage();
-                await page.goto('https://www.flashscore.com/');
-                await page.waitForSelector('body');
+        try {
+            //opening a new page and navigating to Fleshscore
+            const page = await browser.newPage();
+            await page.goto('https://www.flashscore.com/');
+            await page.waitForSelector('body');
 
-                //manipulating the page's content
-                let grabMatches = await page.evaluate(() => {
-                    let allLiveMatches = document.body.querySelectorAll('.event__header,.event__match--oneLine');
+            //manipulating the page's content
+            let grabMatches = await page.evaluate(() => {
+                let allLiveMatches = document.body.querySelectorAll('.event__header,.event__match--oneLine');
 
-                    let allteams = document.body.querySelectorAll('.event__header');
-                    //storing the post items in an array then selecting for retrieving content
-                    scrapeItems = [];
-                    allLiveMatches.forEach(item => {
-                        let awayTeam = '';
-                        let homeTeam = '';
-                        let country = '';
-                        let name = '';
-                        let id = '';
-                        let score = '';
-                        let min = '';
-                        let time = '';
-                        // let min = item.querySelector('.event__stage--block').innerText;
+                let allteams = document.body.querySelectorAll('.event__header');
+                //storing the post items in an array then selecting for retrieving content
+                scrapeItems = [];
+                allLiveMatches.forEach(item => {
+                    let awayTeam = '';
+                    let homeTeam = '';
+                    let country = '';
+                    let name = '';
+                    let id = '';
+                    let score = '';
+                    let min = '';
+                    let time = '';
+                    // let min = item.querySelector('.event__stage--block').innerText;
+                    try {
+                        awayTeam = item.querySelector('.event__participant--away').innerText;
+                        homeTeam = item.querySelector('.event__participant--home').innerText;
+                        id = item.id ? item.id.substring(4, item.id.length) : '';
+                        score = item.querySelector('.event__scores').innerText;
+                        min;
+                        time;
                         try {
-                            awayTeam = item.querySelector('.event__participant--away').innerText;
-                            homeTeam = item.querySelector('.event__participant--home').innerText;
-                            id = item.id ? item.id.substring(4, item.id.length) : '';
-                            score = item.querySelector('.event__scores').innerText;
-                            min;
-                            time;
-                            try {
-                                time = item.querySelector('.event__time').innerText;
-                                time = time.replace('\nFRO', '')
-                                min = ''
+                            time = item.querySelector('.event__time').innerText;
+                            time = time.replace('\nFRO', '')
+                            min = ''
 
-                            } catch (errr) {
-                                min = item.querySelector('.event__stage--block').innerText;
-                                time = ''
-                            }
-                            score = score.replaceAll('\n', '')
-                        } catch (err) {
-                            country = item.querySelector('.event__title--type').innerText;
-                            name = item.querySelector('.event__title--name').innerText;
-
+                        } catch (errr) {
+                            min = item.querySelector('.event__stage--block').innerText;
+                            time = ''
                         }
-
-
-                        scrapeItems.push({
-                            score,
-                            time,
-                            min,
-                            id,
-                            homeTeam,
-                            awayTeam,
-                            name,
-                            country,
-                            lastScorrer: {}
-
-                        });
-
-
-
-
-
-                    });
-                    const allGames = []
-                    let j = -1
-                    for (let i = 0; i < scrapeItems.length; i++) {
-
-                        const { name, country, score, time, min, homeTeam, awayTeam } = scrapeItems[i]
-                        if (country !== '') {
-                            j++
-                            allGames.push({
-                                name,
-                                country,
-                                games: []
-                            })
-
-                        } else {
-                            allGames[j].games.push(scrapeItems[i])
-                        }
-
-
-                    };
-
-
-                    const finalData = allGames.filter(game => {
-                        return ((game.country === 'SOUTH AFRICA' && game.name === 'GladAfrica Championship'))
-                    })
-
-                    return finalData;
-                });
-                //outputting the scraped data
-
-
-                for (const match of grabMatches) {
-                    const { games } = match
-                    for (const game of games) {
-
-                        const { id } = game
-                        const ans = await scraper2(id)
-                        game.lastScorrer = ans
-                        // if (ans.scorer !== '') {
-                        //     game.lastScorrer = ans
-
-                        // } else if (oldGames.length) {
-                        //     const { games: oldMatches } = oldGames[0]
-                        //     const exist = oldMatches.find(o => { return o.id === id })
-                        //     if (exist) {
-                        //         game.lastScorrer = exist.lastScorrer
-                        //     }
-                        // }
-
-
-
-
-
-
+                        score = score.replaceAll('\n', '')
+                    } catch (err) {
+                        country = item.querySelector('.event__title--type').innerText;
+                        name = item.querySelector('.event__title--name').innerText;
 
                     }
-                }
 
-                const data = {
-                    updateTo,
-                    games: grabMatches,
-                }
 
-                await games.findOneAndUpdate({ updateTo }, data, { upsert: true, new: true });
-                sendNotification(grabMatches, oldGames)
-                //closing the browser
-                await browser.close();
-            })
-            //handling any errors
-            .catch(function (err) {
-                console.error(err);
+                    scrapeItems.push({
+                        score,
+                        time,
+                        min,
+                        id,
+                        homeTeam,
+                        awayTeam,
+                        name,
+                        country,
+                        lastScorrer: {}
+
+                    });
+
+
+
+
+
+                });
+                const allGames = []
+                let j = -1
+                for (let i = 0; i < scrapeItems.length; i++) {
+
+                    const { name, country, score, time, min, homeTeam, awayTeam } = scrapeItems[i]
+                    if (country !== '') {
+                        j++
+                        allGames.push({
+                            name,
+                            country,
+                            games: []
+                        })
+
+                    } else {
+                        allGames[j].games.push(scrapeItems[i])
+                    }
+
+
+                };
+
+
+                const finalData = allGames.filter(game => {
+                    return ((game.country === 'EGYPT' && game.name === "Premier League"))
+                })
+
+
+                return finalData;
             });
+            //outputting the scraped data
+
+
+            // for (const match of grabMatches) {
+            //     const { games } = match
+            //     for (const game of games) {
+
+            //         const { id } = game
+            //         const ans = await scraper2(id)
+            //         game.lastScorrer = ans
+
+
+
+
+
+
+
+            //     }
+            // }
+
+            const data = {
+                updateTo,
+                games: grabMatches,
+            }
+
+            await games.findOneAndUpdate({ updateTo }, data, { upsert: true, new: true });
+            sendNotification(grabMatches, oldGames)
+            //closing the browser
+
+        } catch (err) {
+
+        }
+        finally {
+            console.log('closing browser - scrapper')
+            await browser.close();
+
+        }
+
+        //handling any errors
+
 
 
     }
@@ -3095,17 +3085,17 @@ module.exports.telegramTest = async function () {
         const { text } = msg
         if (text === '/test') {
             let str = 'hey there'
-               const opts = {
-                reply_markup:{
-                  keyboard: [
-                    ['FAQ'],
-                    ['Buy']
-                  ]
+            const opts = {
+                reply_markup: {
+                    keyboard: [
+                        ['FAQ'],
+                        ['Buy']
+                    ]
                 },
                 parse_mode: 'HTML'
-              };
+            };
 
-            botTest.sendMessage(chatId, str,opts)
+            botTest.sendMessage(chatId, str, opts)
         }
     });
     botTest.onText(/\/next/, (msg, match) => {
@@ -3122,93 +3112,6 @@ module.exports.telegramTest = async function () {
             botTest.sendMessage(chatId, str)
         }
     });
-    botTest.onText(/\/stock/, async (msg, match) => {
-        const yahooStockPrices = require('yahoo-stock-prices')
-        const chatId = msg.chat.id;
-        console.log('chatId:', chatId)
-        const { text } = msg
-        if (text === '/stock') {
-            const data = await yahooStockPrices.getCurrentData('TSLA');
-            console.log(data); // { currency: 'USD', price: 132.05 }
-            const prices = await yahooStockPrices.getHistoricalPrices(0, 27, 2021, 0, 27, 2021, 'TSLA', '1d');
-            console.log(prices); // { currency: 'USD', price: 132.05 }
-
-
-            // botTest.sendMessage(chatId, str)
-        }
-    });
-
-    // botTest.onText(/\/tablepic/, (msg, match) => {
-    //     const chatId = msg.chat.id;
-    //     console.log('chatId:', chatId)
-    //     const arr = []
-    //     const { text } = msg
-    //     if (text === '/tablepic') {
-    //         puppeteer
-    //             .launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
-    //             .then(async browser => {
-
-    //                 //opening a new page and navigating to Fleshscore
-    //                 const page = await browser.newPage();
-    //                 await page.goto('https://www.google.com/search?q=%D7%98%D7%91%D7%9C%D7%AA+%D7%9C%D7%99%D7%92%D7%AA+%D7%94%D7%A2%D7%9C+%D7%91%D7%9B%D7%93%D7%95%D7%A8%D7%92%D7%9C&rlz=1C1GCEA_enIL850IL850&oq=%D7%98%D7%91%D7%9C%D7%AA+%D7%9C%D7%99%D7%92%D7%AA+%D7%94%D7%A2%D7%9C+%D7%91%D7%9B%D7%93%D7%95%D7%A8%D7%92%D7%9C&aqs=chrome..69i57.4863j0j7&sourceid=chrome&ie=UTF-8#sie=lg;/g/11j8l5d5kd;2;/m/0f8216;st;fp;1;;');
-    //                 await page.waitForSelector('body');
-
-    //                 //manipulating the page's content
-    //                 let grabMatches = await page.evaluate(() => {
-
-    //                     let allteams = document.body.querySelectorAll('.imso-loa.imso-hov');
-    //                     let str = `קבוצה          מש  נצ' הפ' ז' ח' הפ' נק'\n`
-    //                     let i = 0
-    //                     //storing the post items in an array then selecting for retrieving content
-    //                     try {
-    //                         allteams.forEach(item => {
-    //                             i++
-    //                             // let min = item.querySelector('.event__stage--block').innerText;
-    //                             let team_name = item.querySelector('.ellipsisize.hsKSJe').innerText;
-    //                             let rank = item.querySelector('.iU5t0d').innerText;
-    //                             str += `${rank}: ${team_name}  `
-    //                             let allData = item.querySelectorAll('.e9fBA.xkW0Cc');
-    //                             allData.forEach(data => {
-    //                                 let win = data.innerText;
-    //                                 if (win === 14) {
-    //                                     throw BreakException
-    //                                 }
-
-    //                                 str += `${win}  `
-    //                             })
-    //                             str += `\n `
-    //                             if (i === 14) {
-    //                                 throw BreakException
-    //                             }
-
-
-
-
-    //                         });
-    //                     } catch (err) {
-    //                         i = 0
-    //                     }
-    //                     //outputting the scraped data
-
-    //                     return str;
-
-
-
-    //                 })
-
-    //                 console.log(grabMatches)
-
-    //                 botTest.sendMessage(chatId, grabMatches)
-    //                 await browser.close();
-
-
-
-
-
-    //             });
-    //     }
-    // });
-
     botTest.onText(/\/ligyoners/, (msg, match) => {
 
 
@@ -3469,19 +3372,19 @@ module.exports.telegramTest = async function () {
         const { text } = msg
         if (text === '/help') {
             const opts = {
-                reply_markup:{
-                  keyboard: [
-                    ['/table'],
-                    ['/live'],
-                    ['/stats'],
-                    ['/last'],
-                    ['/teams'],
-                    ['/mahzorim'],
-                    ['/ligyoners'],
-                  ]
+                reply_markup: {
+                    keyboard: [
+                        ['/table'],
+                        ['/live'],
+                        ['/stats'],
+                        ['/last'],
+                        ['/teams'],
+                        ['/mahzorim'],
+                        ['/ligyoners'],
+                    ]
                 },
                 parse_mode: 'HTML'
-              };
+            };
 
             let str = 'Your Options Are:\n\n/live \n/table \n/stats \n/last \n/teams \n/mahzorim \n/ligyoners'
 
@@ -4130,7 +4033,7 @@ module.exports.telegramTest = async function () {
 module.exports.ahanhala = async function () {
     const updateTo = moment().utc().format('YYYY[-]MM[-]DD');
 
-    const botTest = new TelegramBot(elazToken, { polling: true });
+    const botTest = new TelegramBot(stockToken, { polling: true });
     nodeSchedule.scheduleJob('00 6 * * 4', async () => {
 
         const data = {
@@ -4145,6 +4048,7 @@ module.exports.ahanhala = async function () {
 
 
     botTest.onText(/\נושא:/, async (msg, match) => {
+        console.log('msg', msg)
         const chatId = msg.chat.id;
         const text = msg.text.substring(0, 5)
         let str = ``
@@ -4182,6 +4086,100 @@ module.exports.ahanhala = async function () {
 
             botTest.sendMessage(chatId, str);
         }
+
+    });
+
+    //jsa kv,rx
+    botTest.onText(/(.+)/, async (msg, match) => {
+        console.log('msg1', msg)
+        const chatId = msg.chat.id;
+        let str = ``
+        const { text } = msg
+        console.log('text', text)
+
+        if (text === '🧐') {
+            console.log('text', text)
+
+            const { reply_to_message } = msg
+            if (reply_to_message) {
+                let input = reply_to_message.text.substring(5, reply_to_message.text.length).trim()
+                console.log('input', input)
+                const subjectsarray = await wednesdeySubjects.find({})
+                const { subjects = [] } = subjectsarray[0]
+                let isThere = subjects.find(o => { return o.trim() === input.trim() })
+                if (isThere) {
+                    isThere += ` ${text}`
+                    console.log('isThere', isThere)
+
+                }
+
+
+            }
+            // let input = msg.text.substring(5, msg.text.length).trim()
+            // if (input !== '') {
+            //     const subjectsarray = await wednesdeySubjects.find({})
+            //     const { subjects = [] } = subjectsarray[0]
+
+            //     const isThere = subjects.find(o => { return o.trim() === input.trim() })
+            //     if (isThere) {
+            //         str += `יש נושא כזה כבר.. למה אתה משגע אותי`
+            //     } else {
+            //         subjects.push(input)
+            //         const data = {
+            //             updateTo,
+            //             subjects
+            //         }
+            //         await wednesdeySubjects.findOneAndUpdate({}, data, { upsert: true, new: true });
+
+            //         str = sentensesAdd[Math.floor(Math.random() * sentensesAdd.length)];
+
+            //     }
+
+            // } else {
+            //     str += `אל תנסה אותי.. תרשום נושא לנושא`
+
+            // }
+            // botTest.sendMessage(chatId, str);
+
+        }
+
+
+    });
+    botTest.onText(/\+1/, async (msg, match) => {
+        console.log('msg1', msg)
+        const chatId = msg.chat.id;
+        let str = ``
+        const { text } = msg
+
+        if (text === '+1') {
+            const { reply_to_message } = msg
+            if (reply_to_message) {
+                let input = reply_to_message.text.substring(5, reply_to_message.text.length).trim()
+                console.log('input', input)
+                const subjectsarray = await wednesdeySubjects.find({})
+                let { subjects = [] } = subjectsarray[0]
+                let isThere = subjects.find(o => { return o.trim() === input.trim() })
+                if (isThere) {
+                    isThere += ` (${text})`
+                    console.log('subjects', subjects)
+                    const index = subjects.indexOf(input)
+                    console.log('index', index)
+                    subjects[index] = isThere
+                    const data = {
+                        updateTo,
+                        subjects
+                    }
+                    await wednesdeySubjects.findOneAndUpdate({}, data, { upsert: true, new: true })
+
+
+                }
+
+
+            }
+
+
+        }
+
 
     });
 
@@ -4392,7 +4390,7 @@ module.exports.stocks = async function () {
 
                     return stats;
                 });
-                await browser.close();
+                // await browser.close();
                 if (allStats.length) {
                     const price = allStats[0]
                     let arr = allStats[1].split('\n')
@@ -4412,7 +4410,11 @@ module.exports.stocks = async function () {
 
 
             }
+            finally {
+                console.log('closing browser - stock')
+                await browser.close();
 
+            }
 
 
 
