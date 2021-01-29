@@ -1726,21 +1726,73 @@ module.exports.telegram = async function () {
 
 
     // getting next fixtsure - ligat HaAl
-    botTest.onText(/\/next/, (msg, match) => {
+    botTest.onText(/\/next/, async (msg, match) => {
         const chatId = msg.chat.id;
         console.log('chatId:', chatId)
         const { text } = msg
         if (text === '/next') {
-            let str = 'Next Fixtures Are:\n\n'
-            nextMatch.forEach(match => {
-                const { game, home, draw, away, time } = match
-                str += `${game}, ${time}\n\n`
+            let str = 'המחזור הבא:\n\n'
 
-            })
-            botTest.sendMessage(chatId, str)
+            const browser = await puppeteer
+                .launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
+
+
+            //opening a new page and navigating to Fleshscore
+            const page = await browser.newPage();
+
+            await page.goto(`https://www.football.co.il/`);
+            await page.waitForSelector('body');
+
+            try {
+                //manipulating the page's content
+                let allStats = await page.evaluate(() => {
+                    let games = document.body.querySelectorAll('.game-round-header-18');
+                    const higjlights = []
+
+                    games.forEach(game => {
+                        let date = game.querySelector('.matchDate').innerText;
+                        let teams = game.querySelector('.teamNames').innerText;
+
+                        higjlights.push({ teams, date })
+
+                    })
+
+
+
+                    // });
+
+
+                    return higjlights;
+                });
+                // await browser.close();
+                if (allStats.length) {
+                    allStats.forEach(stat => {
+                        const { teams = '', date = '' } = stat
+                        str += `תאריך: ${date}\n`
+                        str += `${teams}\n\n`
+
+                    })
+                    botTest.sendMessage(chatId, str)
+
+                    //outputting the scraped data
+                }
+                //closing the browser
+            }
+            catch (err) {
+                console.log(err)
+
+
+
+            }
+            finally {
+                console.log('closing browser - next fixure')
+                await browser.close();
+
+            }
+
+
         }
     });
-
 
     botTest.onText(/\/ligyoners/, (msg, match) => {
 
@@ -2667,13 +2719,13 @@ module.exports.telegramTest = async function () {
 
 
     const botTest = new TelegramBot(testtoken, { polling: true });
-    nodeSchedule.scheduleJob('* * * * *', () => {
-        try {
-            scraper()
+    // nodeSchedule.scheduleJob('* * * * *', () => {
+    //     try {
+    //         scraper()
 
-        } catch (err) { }
+    //     } catch (err) { }
 
-    });
+    // });
 
     const updateTo = moment().utc().format('YYYY[-]MM[-]DD');
     const scraper = async () => {
@@ -3098,18 +3150,85 @@ module.exports.telegramTest = async function () {
             botTest.sendMessage(chatId, str, opts)
         }
     });
-    botTest.onText(/\/next/, (msg, match) => {
+    // botTest.onText(/\/next/, (msg, match) => {
+    //     const chatId = msg.chat.id;
+    //     console.log('chatId:', chatId)
+    //     const { text } = msg
+    //     if (text === '/next') {
+    //         let str = 'Next Fixtures Are:\n\n'
+    //         nextMatch.forEach(match => {
+    //             const { game, home, draw, away, time } = match
+    //             str += `${game}, ${time}\n\n`
+
+    //         })
+    //         botTest.sendMessage(chatId, str)
+    //     }
+    // });
+    botTest.onText(/\/next/, async (msg, match) => {
         const chatId = msg.chat.id;
         console.log('chatId:', chatId)
         const { text } = msg
         if (text === '/next') {
-            let str = 'Next Fixtures Are:\n\n'
-            nextMatch.forEach(match => {
-                const { game, home, draw, away, time } = match
-                str += `${game}, ${time}\n\n`
+            let str = 'המחזור הבא:\n\n'
 
-            })
-            botTest.sendMessage(chatId, str)
+            const browser = await puppeteer
+                .launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
+
+
+            //opening a new page and navigating to Fleshscore
+            const page = await browser.newPage();
+
+            await page.goto(`https://www.football.co.il/`);
+            await page.waitForSelector('body');
+
+            try {
+                //manipulating the page's content
+                let allStats = await page.evaluate(() => {
+                    let games = document.body.querySelectorAll('.game-round-header-18');
+                    const higjlights = []
+
+                    games.forEach(game => {
+                        let date = game.querySelector('.matchDate').innerText;
+                        let teams = game.querySelector('.teamNames').innerText;
+
+                        higjlights.push({ teams, date })
+
+                    })
+
+
+
+                    // });
+
+
+                    return higjlights;
+                });
+                // await browser.close();
+                if (allStats.length) {
+                    allStats.forEach(stat => {
+                        const { teams = '', date = '' } = stat
+                        str += `תאריך: ${date}\n`
+                        str += `${teams}\n\n`
+
+                    })
+                    botTest.sendMessage(chatId, str)
+
+                    //outputting the scraped data
+                }
+                //closing the browser
+            }
+            catch (err) {
+                console.log(err)
+
+
+
+            }
+            finally {
+                console.log('closing browser - next fixure')
+                await browser.close();
+
+            }
+
+
         }
     });
     botTest.onText(/\/ligyoners/, (msg, match) => {
@@ -4034,7 +4153,7 @@ module.exports.ahanhala = async function () {
     const updateTo = moment().utc().format('YYYY[-]MM[-]DD');
 
     const botTest = new TelegramBot(elazToken, { polling: true });
-    nodeSchedule.scheduleJob('00 6 * * 4', async () => {
+    nodeSchedule.scheduleJob('00 20 * * 3', async () => {
 
         const data = {
             updateTo,
