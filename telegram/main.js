@@ -4033,7 +4033,7 @@ module.exports.telegramTest = async function () {
 module.exports.ahanhala = async function () {
     const updateTo = moment().utc().format('YYYY[-]MM[-]DD');
 
-    const botTest = new TelegramBot(stockToken, { polling: true });
+    const botTest = new TelegramBot(elazToken, { polling: true });
     nodeSchedule.scheduleJob('00 6 * * 4', async () => {
 
         const data = {
