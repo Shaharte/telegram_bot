@@ -2505,8 +2505,8 @@ module.exports.telegram = async function () {
                 topArr[search].forEach(item => {
                     const { name, count, position, href } = item
                     const arr = position.split('|')[1]
-                    str += `סטיסטיקות שחקן: ${href}\n\n`
                     str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
                 })
 
                 botTest.sendMessage(chatId, str);
