@@ -2487,10 +2487,12 @@ module.exports.telegram = async function () {
 
     });
     //stats
-    botTest.onText(/\/שערים/, async (msg, match) => {
+    botTest.onText(/\/goals/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/שערים') {
+        console.log('match',match)
+        console.log('text',text)
+        if (match[0] === '/goals') {
             const search = 'שערים'
             try {
                 const arr = await statistics.find({})
@@ -2515,10 +2517,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/דקות_משחק/, async (msg, match) => {
+    botTest.onText(/\/minutes/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/minPlayed') {
+        if (match[0] === '/minutes') {
             const search = 'דקות משחק'
             try {
                 const arr = await statistics.find({})
@@ -2543,10 +2545,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/בישולים/, async (msg, match) => {
+    botTest.onText(/\/assists/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/בישולים') {
+        if (match[0] === '/assists') {
             const search = 'בישולים'
             try {
                 const arr = await statistics.find({})
@@ -2571,10 +2573,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/איומים_לשער/, async (msg, match) => {
+    botTest.onText(/\/attempt_on_goal/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/איומים_לשער') {
+        if (match[0] === '/attempt_on_goal') {
             const search = 'איומים לשער'
             try {
                 const arr = await statistics.find({})
@@ -2599,11 +2601,11 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/מסירות_מפתח_ניסיונות/, async (msg, match) => {
+    botTest.onText(/\/key_pass/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/מסירות_מפתח_ניסיונות') {
-            const search = 'מסירות מפתח ניסיונות'
+        if (match[0] === '/key_pass') {
+            const search = 'מסירות מפתח - ניסיונות'
             try {
                 const arr = await statistics.find({})
                 const stats = arr.length ? arr[0].stats : []
@@ -2627,10 +2629,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/מסירות_מפתח_מדוייקות/, async (msg, match) => {
+    botTest.onText(/\/accurate_key_passes/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/מסירות_מפתח_מדוייקות') {
+        if (match[0] === '/accurate_key_passes') {
             const search = 'מסירות מפתח מדוייקות'
             try {
                 const arr = await statistics.find({})
@@ -2655,10 +2657,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/איומים_למסגרת/, async (msg, match) => {
+    botTest.onText(/\/on_target/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/איומים_למסגרת') {
+        if (match[0] === '/on_target') {
             const search = 'איומים למסגרת'
             try {
                 const arr = await statistics.find({})
@@ -2683,10 +2685,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/איומים_מתוך_הרחבה/, async (msg, match) => {
+    botTest.onText(/\/attempts_inside_the_box/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/איומים_מתוך_הרחבה') {
+        if (text === '/attempts_inside_the_box') {
             const search = 'איומים מתוך הרחבה'
             try {
                 const arr = await statistics.find({})
@@ -2711,10 +2713,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/איומים_מחוץ_לרחבה/, async (msg, match) => {
+    botTest.onText(/\/attempts_outside_the_box/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/איומים_מחוץ_לרחבה') {
+        if (text === '/attempts_outside_the_box') {
             const search = 'איומים מחוץ לרחבה'
             try {
                 const arr = await statistics.find({})
@@ -2739,10 +2741,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/איומים_מחוץ_למסגרת/, async (msg, match) => {
+    botTest.onText(/\/attempts_off_target/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/איומים_מחוץ_למסגרת') {
+        if (text === '/attempts_off_target') {
             const search = 'איומים מחוץ למסגרת'
             try {
                 const arr = await statistics.find({})
@@ -2767,10 +2769,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/כדורי_רוחב/, async (msg, match) => {
+    botTest.onText(/\/cross/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/כדורי_רוחב') {
+        if (text === '/cross') {
             const search = 'כדורי רוחב'
             try {
                 const arr = await statistics.find({})
@@ -2795,10 +2797,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/מסירות/, async (msg, match) => {
+    botTest.onText(/\/passes/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/מסירות') {
+        if (text === '/passes') {
             const search = 'מסירות'
             try {
                 const arr = await statistics.find({})
@@ -2823,10 +2825,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/מסירות_מדויקות/, async (msg, match) => {
+    botTest.onText(/\/accurate_passes/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/מסירות_מדויקות') {
+        if (text === '/accurate_passes') {
             const search = 'מסירות מדויקות'
             try {
                 const arr = await statistics.find({})
@@ -2851,11 +2853,11 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/מאבקי_אוויר/, async (msg, match) => {
+    botTest.onText(/\/air_challange/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
         console.log(text)
-        if (text === '/מאבקי_אוויר') {
+        if (text === '/air_challange') {
             const search = 'מאבקי אוויר'
             try {
                 const arr = await statistics.find({})
@@ -2881,10 +2883,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/מאבקי_אוויר_מוצלחים/, async (msg, match) => {
+    botTest.onText(/\/won_air_challange/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/מאבקי_אוויר_מוצלחים') {
+        if (text === '/won_air_challange') {
             const search = 'מאבקי אוויר מוצלחים'
             try {
                 const arr = await statistics.find({})
@@ -2909,10 +2911,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/מאבקי_קרקע/, async (msg, match) => {
+    botTest.onText(/\/ground_challenges/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/מאבקי_קרקע') {
+        if (text === '/ground_challenges') {
             const search = 'מאבקי קרקע'
             try {
                 const arr = await statistics.find({})
@@ -2937,10 +2939,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/מאבקי_קרקע_מוצלחים/, async (msg, match) => {
+    botTest.onText(/\/won_ground_challenges/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/מאבקי_קרקע_מוצלחים') {
+        if (text === '/won_ground_challenges') {
             const search = 'מאבקי קרקע מוצלחים'
             try {
                 const arr = await statistics.find({})
@@ -2965,10 +2967,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/דריבלים/, async (msg, match) => {
+    botTest.onText(/\/dribbles/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/דריבלים') {
+        if (text === '/dribbles') {
             const search = 'דריבלים'
             try {
                 const arr = await statistics.find({})
@@ -2993,10 +2995,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/דריבלים_מוצלחים/, async (msg, match) => {
+    botTest.onText(/\/successful_dribbles/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/דריבלים_מוצלחים') {
+        if (text === '/successful_dribbles') {
             const search = 'דריבלים מוצלחים'
             try {
                 const arr = await statistics.find({})
@@ -3021,10 +3023,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/תיקולים/, async (msg, match) => {
+    botTest.onText(/\/tackles/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/תיקולים') {
+        if (text === '/tackles') {
             const search = 'תיקולים'
             try {
                 const arr = await statistics.find({})
@@ -3049,10 +3051,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/תיקולים_מוצלחים/, async (msg, match) => {
+    botTest.onText(/\/successful_tackles/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/תיקולים_מוצלחים') {
+        if (text === '/successful_tackles') {
             const search = 'תיקולים מוצלחים'
             try {
                 const arr = await statistics.find({})
@@ -3077,10 +3079,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/חילוצי_כדור/, async (msg, match) => {
+    botTest.onText(/\/ball_recoveries/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/חילוצי_כדור') {
+        if (text === '/ball_recoveries') {
             const search = 'חילוצי כדור'
             try {
                 const arr = await statistics.find({})
@@ -3105,10 +3107,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/חילוצי_כדור_בחצי_היריבה/, async (msg, match) => {
+    botTest.onText(/\/ball_recoveries_in_opponents_half/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/חילוצי_כדור_בחצי_היריבה') {
+        if (text === '/ball_recoveries_in_opponents_half') {
             const search = 'חילוצי כדור בחצי היריבה'
             try {
                 const arr = await statistics.find({})
@@ -3133,10 +3135,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/חילוצי_כדור_בחצי_הגנתי/, async (msg, match) => {
+    botTest.onText(/\/ball_recoveries_in_own_half/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/חילוצי_כדור_בחצי_הגנתי') {
+        if (text === '/ball_recoveries_in_own_half') {
             const search = 'חילוצי כדור בחצי הגנתי'
             try {
                 const arr = await statistics.find({})
@@ -3161,10 +3163,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/איומים_שנבלמו/, async (msg, match) => {
+    botTest.onText(/\/blocked_attempts_on_goal/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/איומים_שנבלמו') {
+        if (text === '/blocked_attempts_on_goal') {
             const search = 'איומים שנבלמו'
             try {
                 const arr = await statistics.find({})
@@ -3189,10 +3191,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/איבודי_כדור/, async (msg, match) => {
+    botTest.onText(/\/lost_ball/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/איבודי_כדור') {
+        if (text === '/lost_ball') {
             const search = 'איבודי כדור'
             try {
                 const arr = await statistics.find({})
@@ -3217,10 +3219,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/איבודי_כדור_בחצי_קבוצתו/, async (msg, match) => {
+    botTest.onText(/\/lost_ball_own_half/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/איבודי_כדור_בחצי_קבוצתו') {
+        if (text === '/lost_ball_own_half') {
             const search = 'איבודי כדור בחצי קבוצתו'
             try {
                 const arr = await statistics.find({})
@@ -3245,10 +3247,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/שערים_עצמיים/, async (msg, match) => {
+    botTest.onText(/\/own_goal/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/שערים_עצמיים') {
+        if (text === '/own_goal') {
             const search = 'שערים עצמיים'
             try {
                 const arr = await statistics.find({})
@@ -3273,10 +3275,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/החמצות_פנדל/, async (msg, match) => {
+    botTest.onText(/\/penalty_miss/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/החמצות_פנדל') {
+        if (text === '/penalty_miss') {
             const search = 'החמצות פנדל'
             try {
                 const arr = await statistics.find({})
@@ -3301,10 +3303,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/צהובים/, async (msg, match) => {
+    botTest.onText(/\/yellow_card/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/צהובים') {
+        if (text === '/yellow_card') {
             const search = 'צהובים'
             try {
                 const arr = await statistics.find({})
@@ -3329,10 +3331,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/אדומים/, async (msg, match) => {
+    botTest.onText(/\/res_card/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/אדומים') {
+        if (text === '/res_card') {
             const search = 'אדומים'
             try {
                 const arr = await statistics.find({})
@@ -3357,10 +3359,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/עבירות/, async (msg, match) => {
+    botTest.onText(/\/fouls/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/עבירות') {
+        if (text === '/fouls') {
             const search = 'עבירות'
             try {
                 const arr = await statistics.find({})
@@ -3385,10 +3387,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/עבירות_יריבות/, async (msg, match) => {
+    botTest.onText(/\/opponent_fouls/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/עבירות_יריבות') {
+        if (text === '/opponent_fouls') {
             const search = 'עבירות - יריבות'
             try {
                 const arr = await statistics.find({})
@@ -3413,10 +3415,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/נבדלים/, async (msg, match) => {
+    botTest.onText(/\/offside/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/נבדלים') {
+        if (text === '/offside') {
             const search = 'נבדלים'
             try {
                 const arr = await statistics.find({})
@@ -3441,10 +3443,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/הופעות/, async (msg, match) => {
+    botTest.onText(/\/appearances/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/הופעות') {
+        if (text === '/appearances') {
             const search = 'הופעות'
             try {
                 const arr = await statistics.find({})
@@ -3469,10 +3471,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/הוחלף/, async (msg, match) => {
+    botTest.onText(/\/sub_out/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/הוחלף') {
+        if (text === '/sub_out') {
             const search = 'הוחלף'
             try {
                 const arr = await statistics.find({})
@@ -3497,10 +3499,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/נכנס_כמחליף/, async (msg, match) => {
+    botTest.onText(/\/sub_in/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/נכנס_כמחליף') {
+        if (text === '/sub_in') {
             const search = 'נכנס כמחליף'
             try {
                 const arr = await statistics.find({})
@@ -3529,7 +3531,8 @@ module.exports.telegram = async function () {
         const chatId = msg.chat.id;
         const { text } = msg
         if (text === '/stats') {
-            let str = 'סטטיסטיקות מנהלת לכדורגל:\n\n/שערים\n/בישולים\n/איומים_לשער\n/דקות_משחק\n/מסירות_מפתח_ניסיונות\n/מסירות_מפתח_מדוייקות\n/מסירות\n/איומים_מתוך_הרחבה\n/איומים_מחוץ_לרחבה\n/איומים_מחוץ_למסגרת\n/כדורי_רוחב\n/מסירות_מדויקות\n/מאבקי_אוויר\n/מאבקי_אוויר_מוצלחים\n/מאבקי_קרקע\n/מאבקי_קרקע_מוצלחים\n/דריבלים\n/דריבלים_מוצלחים\n/תיקולים\n/תיקולים_מוצלחים\n/חילוצי_כדור\n/חילוצי_כדור_בחצי_היריבה\n/חילוצי_כדור_בחצי_הגנתי\n/איומים_שנבלמו\n/איבודי_כדור\n/איבודי_כדור_בחצי_קבוצתו\n/החמצות_פנדל\n/צהובים\n/אדומים\n/עבירות\n/עבירות_יריבות\n/נבדלים\n/הופעות\n/הוחלף\n/נכנס_כמחליף\n'
+            let str = 'סטטיסטיקות מנהלת לכדורגל:\n\n/goals - מלך שערים\n/assists - בישולים\n/attempt_on_goal - איומים לשער\n/minutes - דקות משחק\n/key_pass - מסירות מפתח ניסיונות\n/accurate_key_passes - מסירות מפתח מדוייקות\n/passes - מסירות \n/accurate_passes - מסירות מדוייקות\n/on_target - איומים למסגרת\n/attempts_inside_the_box - איומים מתוך הרחבה\n/attempts_outside_the_box - איומים מחוץ לרחבה\n/attempts_off_target - איומים מחוץ למסגרת\n/cross - כדורי רוחב\n/accurate_passes - מסירות מדויקות\n/air_challange - מאבקי אוויר\n/won_air_challange - מאבקי אוויר מוצלחים\n/ground_challenges - מאבקי קרקע\n/won_ground_challenges - מאבקי קרקע מוצלחים\n/dribbles - דריבלים\n/successful_dribbles - דריבלים מוצלחים\n/tackles -תיקולים\n/successful_tackles - תיקולים מוצלחים\n'
+            str+='/ball_recoveries - חילוצי כדור\n/ball_recoveries_in_opponents_half - חילוצי כדור בחצי היריבה\n/ball_recoveries_in_own_half חילוצי כדור בחצי הגנתי\n/blocked_attempts_on_goal - איומים שנבלמו\n/lost_ball - איבודי כדור\n/lost_ball_own_half - איבודי כדור בחצי קבוצתו\n/penalty_miss - החמצות פנדל\n/own_goal - שערים עצמיים\n/yellow_card - צהובים\n/red_card - אדומים\n/fouls - עבירות\n/opponent_fouls - עבירות יריבות\n/offside - נבדלים\n/appearances - הופעות\n/sub_out - הוחלף\n/sub_in - נכנס כמחליף\n'
             botTest.sendMessage(chatId, str);
 
 
