@@ -1,6 +1,6 @@
 // const { Telegraf } = require('telegraf')
 const axios = require("axios");
-const { games, wednesdeySubjects } = require('./schema');
+const { games, wednesdeySubjects, statistics } = require('./schema');
 // const pexelKey = process.env.PEXEL_KEY;
 const token = '1557847459:AAGP08OPiRxV2OrCQ0FZhx4CbtOA2Btf7QA';
 const testtoken = '1556993489:AAHrW-PHjchV5A9oTbPUuJiN54PZwF800h0';
@@ -1534,16 +1534,98 @@ module.exports.telegram = async function () {
 
 
     }
+    const scraperStat = async () => {
+        console.log('starting to run statitics scrapper')
+        // const stats = []
+        const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
+
+        const page = await browser.newPage();
+        try {
+
+            //opening a new page and navigating to Fleshscore
+            await page.goto('https://www.football.co.il/stats/');
+            await page.waitForSelector('body');
+
+            //manipulating the page's content
+            let allStatss = await page.evaluate(() => {
+                document.querySelector(".stats-see-more-btn").click();
+                document.querySelector(".stats-see-more-btn").click();
+                document.querySelector(".stats-see-more-btn").click();
+                document.querySelector(".stats-see-more-btn").click();
+                let ststtt = document.body.querySelector('.stats-page');
+                let allStats = ststtt.querySelectorAll('.stats-category-item');
+                let stats = []
+
+                //storing the post items in an array then selecting for retrieving content
+                allStats.forEach(item => {
+                    let arr = []
+                    try {
+                        let title = item.querySelector('.stats-category-item-title').innerText;
+                        let allPlayers = item.querySelectorAll('.player-list-item')
+                        allPlayers.forEach(player => {
+                            let count = item.querySelector('.player-list-player-count').innerText;
+                            let name = item.querySelector('.player-list-player-name').innerText;
+                            let position = item.querySelector('.player-list-player-role').innerText;
+
+                            arr.push({
+                                name,
+                                count,
+                                position
+                            })
+
+                        })
+                        stats.push({
+                            [title]: arr
+                        })
+                    } catch (err) {
 
 
-    // nodeSchedule.scheduleJob('00 11 * * *', () => {
-    //     try {
-    //         scraper()
 
-    //     } catch (err) { }
+                    }
 
-    // });
 
+                });
+
+
+                return stats;
+            });
+            console.log(allStatss)
+            const data = {
+                updateTo,
+                stats: allStatss
+            }
+            await statistics.findOneAndUpdate({ updateTo }, data, { upsert: true, new: true })
+
+            //outputting the scraped data
+        } catch (err) {
+
+        }
+        finally {
+            console.log('browser close stats')
+
+            //closing the browser
+            await browser.close();
+        }
+
+
+
+    }
+
+    nodeSchedule.scheduleJob('* 16-19 * * *', () => {
+        try {
+            scraper()
+
+        } catch (err) { }
+
+    });
+
+    nodeSchedule.scheduleJob('00 8-10 * * *', () => {
+        try {
+            scraperStat()
+
+        } catch (err) { }
+
+    });
 
     const scraper2 = async (id) => {
         console.log('starting to run scrapper2')
@@ -1745,8 +1827,20 @@ module.exports.telegram = async function () {
 
             try {
                 //manipulating the page's content
+
                 let allStats = await page.evaluate(() => {
-                    let games = document.body.querySelectorAll('.game-round-header-18');
+                    let rounds = document.body.querySelectorAll('.roundName');
+                    let mahzor = ''
+                    rounds.forEach(roundd => {
+                        if (window.getComputedStyle(roundd).visibility !== "hidden")
+
+                            mahzor = roundd.innerText
+
+                    })
+                    let arr = mahzor.split(' ');
+                    const round = arr[1] || '18'
+                    // Do something..
+                    let games = document.body.querySelectorAll(`.game-round-header-${round}`);
                     const higjlights = []
 
                     games.forEach(game => {
@@ -1764,6 +1858,7 @@ module.exports.telegram = async function () {
 
                     return higjlights;
                 });
+                // console.log(allStats)
                 // await browser.close();
                 if (allStats.length) {
                     allStats.forEach(stat => {
@@ -2391,295 +2486,1042 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/goals/, (msg, match) => {
+    //stats
+    botTest.onText(/\/שערים/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/goals') {
+        if (text === '/שערים') {
+            const search = 'שערים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'מלך שערים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                    str += `${name}: ${arr}, ${count} \n`
+                })
 
-            let str = 'Top Goal Scorers Are:\n\n'
-            topGoalsScorrer.forEach(goal => {
-                const { name, goals, team } = goal
-                str += `${name}, ${team}: ${goals}\n`
-            })
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/assists/, (msg, match) => {
+    botTest.onText(/\/דקות_משחק/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/assists') {
+        if (text === '/minPlayed') {
+            const search = 'דקות משחק'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'דקות משחק:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
-            let str = 'Top Assists Are:\n\n'
-            topAssists.forEach(goal => {
-                const { name, assists, team } = goal
-                str += `${name}, ${team}: ${assists}\n`
-            })
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/passes/, (msg, match) => {
+    botTest.onText(/\/בישולים/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/passes') {
+        if (text === '/בישולים') {
+            const search = 'בישולים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'מלך בישולים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
-            let str = 'Top Accurate Passes Are:\n\n'
-            accuratePasses.forEach(goal => {
-                const { name, passes, position, team } = goal
-                str += `${name}, ${team}: ${passes}\n`
-            })
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/keypasses/, (msg, match) => {
+    botTest.onText(/\/איומים_לשער/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/keypasses') {
+        if (text === '/איומים_לשער') {
+            const search = 'איומים לשער'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'איומים לשער:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
-            let str = 'Top Accurate Key Passes Are:\n\n'
-            accurateKeyPasses.forEach(goal => {
-                const { name, passes, team } = goal
-                str += `${name}, ${team}: ${passes}\n`
-            })
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/penaltymiss/, (msg, match) => {
+    botTest.onText(/\/מסירות_מפתח_ניסיונות/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/penaltymiss') {
+        if (text === '/מסירות_מפתח_ניסיונות') {
+            const search = 'מסירות מפתח ניסיונות'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'ניסיונות מסירות מפתח:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
-            let str = 'Top Penalty Misses Are:\n\n'
-            penaltyMisses.forEach(goal => {
-                const { name, misses, position, team } = goal
-                str += `${name}, ${team}: ${misses}\n`
-            })
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/owngoals/, (msg, match) => {
+    botTest.onText(/\/מסירות_מפתח_מדוייקות/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/owngoals') {
+        if (text === '/מסירות_מפתח_מדוייקות') {
+            const search = 'מסירות מפתח מדוייקות'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'מסירות מפתח מדוייקות:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
-            let str = 'Top Own Goals Are:\n\n'
-            topOwnGoals.forEach(goal => {
-                const { name, goals, team } = goal
-                str += `${name}, ${team}: ${goals}\n`
-            })
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/red/, (msg, match) => {
+    botTest.onText(/\/איומים_למסגרת/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/red') {
+        if (text === '/איומים_למסגרת') {
+            const search = 'איומים למסגרת'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'איומים למסגרת:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
-            let str = 'Top Red Cards Are:\n\n'
-            topRedCards.forEach(goal => {
-                const { name, cards, team } = goal
-                str += `${name}, ${team}: ${cards}\n`
-            })
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/dribbles/, (msg, match) => {
+    botTest.onText(/\/איומים_מתוך_הרחבה/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/dribbles') {
+        if (text === '/איומים_מתוך_הרחבה') {
+            const search = 'איומים מתוך הרחבה'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'איומים מתוך הרחבה:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
-            let str = 'Top Dribbles Are:\n\n'
-            topDribbles.forEach(goal => {
-                const { name, dribbles, team } = goal
-                str += `${name}, ${team} ${dribbles}\n`
-            })
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/successfulDribbles/, (msg, match) => {
+    botTest.onText(/\/איומים_מחוץ_לרחבה/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/successfulDribbles') {
+        if (text === '/איומים_מחוץ_לרחבה') {
+            const search = 'איומים מחוץ לרחבה'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'איומים מחוץ הרחבה:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
-            let str = 'Top Successful Dribbles Are:\n\n'
-            topSuccessDribbles.forEach(goal => {
-                const { name, dribbles, team } = goal
-                str += `${name}, ${team}: ${dribbles}\n`
-            })
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/tackles/, (msg, match) => {
+    botTest.onText(/\/איומים_מחוץ_למסגרת/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/tackles') {
+        if (text === '/איומים_מחוץ_למסגרת') {
+            const search = 'איומים מחוץ למסגרת'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'איומים מחוץ למסגרת:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
-            let str = 'Top Successful Tackles Are:\n\n'
-            topTackles.forEach(goal => {
-                const { name, tackles, team } = goal
-                str += `${name} ,${team}: ${tackles}\n`
-            })
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/lostball/, (msg, match) => {
+    botTest.onText(/\/כדורי_רוחב/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/lostball') {
+        if (text === '/כדורי_רוחב') {
+            const search = 'כדורי רוחב'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'כדורי רוחב:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
-            let str = 'Top Lost Ball Are:\n\n'
-            topLostBall.forEach(goal => {
-                const { name, lost, team } = goal
-                str += `${name}, ${team}: ${lost}\n`
-            })
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/offsides/, (msg, match) => {
+    botTest.onText(/\/מסירות/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/offsides') {
+        if (text === '/מסירות') {
+            const search = 'מסירות'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
-            let str = 'Top Offsides Are:\n\n'
-            topOffsides.forEach(goal => {
-                const { name, offsides, team, position } = goal
-                str += `${name} ,${team}: ${offsides}\n`
-            })
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'מסירות:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/attempts/, (msg, match) => {
+    botTest.onText(/\/מסירות_מדויקות/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/attempts') {
+        if (text === '/מסירות_מדויקות') {
+            const search = 'מסירות מדויקות'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
-            let str = 'Top Attempt on Goal Are:\n\n'
-            topAttempts.forEach(goal => {
-                const { name, goals, team } = goal
-                str += `${name}, ${team}: ${goals}\n`
-            })
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'מסירות מדויקות:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/yellow/, (msg, match) => {
+    botTest.onText(/\/מאבקי_אוויר/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/yellow') {
+        console.log(text)
+        if (text === '/מאבקי_אוויר') {
+            const search = 'מאבקי אוויר'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'מאבקי אוויר:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
 
-            let str = 'Top Yellow Cards Are:\n\n'
-            topYellowCards.forEach(goal => {
-                const { name, cards, team } = goal
-                str += `${name}, ${team}: ${cards}\n`
-            })
+                })
 
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
+            }
+        }
 
+    });
+    botTest.onText(/\/מאבקי_אוויר_מוצלחים/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/מאבקי_אוויר_מוצלחים') {
+            const search = 'מאבקי אוויר מוצלחים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
-            botTest.sendMessage(chatId, str);
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'מאבקי אוויר מוצלחים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
+            }
+        }
+
+    });
+    botTest.onText(/\/מאבקי_קרקע/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/מאבקי_קרקע') {
+            const search = 'מאבקי קרקע'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'מאבקי קרקע:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/מאבקי_קרקע_מוצלחים/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/מאבקי_קרקע_מוצלחים') {
+            const search = 'מאבקי קרקע מוצלחים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'מאבקי קרקע מוצלחים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/דריבלים/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/דריבלים') {
+            const search = 'דריבלים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'דריבלים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/דריבלים_מוצלחים/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/דריבלים_מוצלחים') {
+            const search = 'דריבלים מוצלחים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'דריבלים מוצלחים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/תיקולים/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/תיקולים') {
+            const search = 'תיקולים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'תיקולים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/תיקולים_מוצלחים/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/תיקולים_מוצלחים') {
+            const search = 'תיקולים מוצלחים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'תיקולים מוצלחים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/חילוצי_כדור/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/חילוצי_כדור') {
+            const search = 'חילוצי כדור'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'חילוצי כדור:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/חילוצי_כדור_בחצי_היריבה/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/חילוצי_כדור_בחצי_היריבה') {
+            const search = 'חילוצי כדור בחצי היריבה'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'חילוצי כדור בחצי היריבה:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/חילוצי_כדור_בחצי_הגנתי/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/חילוצי_כדור_בחצי_הגנתי') {
+            const search = 'חילוצי כדור בחצי הגנתי'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'חילוצי כדור בחצי הגנתי:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/איומים_שנבלמו/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/איומים_שנבלמו') {
+            const search = 'איומים שנבלמו'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'איומים שנבלמו:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/איבודי_כדור/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/איבודי_כדור') {
+            const search = 'איבודי כדור'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'איבודי כדור:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/איבודי_כדור_בחצי_קבוצתו/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/איבודי_כדור_בחצי_קבוצתו') {
+            const search = 'איבודי כדור בחצי קבוצתו'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'איבודי כדור בחצי קבוצתו:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/שערים_עצמיים/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/שערים_עצמיים') {
+            const search = 'שערים עצמיים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'שערים עצמיים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/החמצות_פנדל/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/החמצות_פנדל') {
+            const search = 'החמצות פנדל'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'החמצות פנדל:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/צהובים/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/צהובים') {
+            const search = 'צהובים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'צהובים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/אדומים/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/אדומים') {
+            const search = 'אדומים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'אדומים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/עבירות/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/עבירות') {
+            const search = 'עבירות'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'עבירות:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/עבירות_יריבות/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/עבירות_יריבות') {
+            const search = 'עבירות - יריבות'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'עבירות - יריבות:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/נבדלים/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/נבדלים') {
+            const search = 'נבדלים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'נבדלים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/הופעות/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/הופעות') {
+            const search = 'הופעות'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'הופעות:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/הוחלף/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/הוחלף') {
+            const search = 'הוחלף'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'הוחלף:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/נכנס_כמחליף/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/נכנס_כמחליף') {
+            const search = 'נכנס כמחליף'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'נכנס כמחליף:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
         }
 
     });
@@ -2687,7 +3529,7 @@ module.exports.telegram = async function () {
         const chatId = msg.chat.id;
         const { text } = msg
         if (text === '/stats') {
-            let str = 'Your Options Are:\n\n/goals - Top Goal Scorer \n/assists - Top Assists \n/attempts - Top Attempt on Goal \n/passes - Top Accurate Passes \n/owngoals - Top Own Goals \n/red - Top Red Cards \n/yellow - Top Yellow Cards \n/dribbles - Top Dribbles \n/successfulDribbles - Top Successful Dribbles \n/keypasses - Top Accurate Key Passes \n/penaltymiss - Top Penalty Misses \n/offsides - Top Offsides \n/tackles - Top Successful Tackels \n/lostball - Top Lost Ball'
+            let str = 'סטטיסטיקות מנהלת לכדורגל:\n\n/שערים\n/בישולים\n/איומים_לשער\n/דקות_משחק\n/מסירות_מפתח_ניסיונות\n/מסירות_מפתח_מדוייקות\n/מסירות\n/איומים_מתוך_הרחבה\n/איומים_מחוץ_לרחבה\n/איומים_מחוץ_למסגרת\n/כדורי_רוחב\n/מסירות_מדויקות\n/מאבקי_אוויר\n/מאבקי_אוויר_מוצלחים\n/מאבקי_קרקע\n/מאבקי_קרקע_מוצלחים\n/דריבלים\n/דריבלים_מוצלחים\n/תיקולים\n/תיקולים_מוצלחים\n/חילוצי_כדור\n/חילוצי_כדור_בחצי_היריבה\n/חילוצי_כדור_בחצי_הגנתי\n/איומים_שנבלמו\n/איבודי_כדור\n/איבודי_כדור_בחצי_קבוצתו\n/החמצות_פנדל\n/צהובים\n/אדומים\n/עבירות\n/עבירות_יריבות\n/נבדלים\n/הופעות\n/הוחלף\n/נכנס_כמחליף\n'
             botTest.sendMessage(chatId, str);
 
 
@@ -2873,67 +3715,86 @@ module.exports.telegramTest = async function () {
     const scraperStat = async () => {
         console.log('starting to run statitics scrapper')
         // const stats = []
-        puppeteer
-            .launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
-            .then(async browser => {
+        const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
 
-                //opening a new page and navigating to Fleshscore
-                const page = await browser.newPage();
-                await page.goto('https://www.football.co.il/stats/');
-                await page.waitForSelector('body');
+        const page = await browser.newPage();
+        try {
 
-                //manipulating the page's content
-                let allStats = await page.evaluate(() => {
-                    let allStats = document.body.querySelectorAll('.stats-category-item');
-                    let stats = []
+            //opening a new page and navigating to Fleshscore
+            await page.goto('https://www.football.co.il/stats/');
+            await page.waitForSelector('body');
 
-                    //storing the post items in an array then selecting for retrieving content
-                    allStats.forEach(item => {
-                        let arr = []
-                        try {
-                            let title = item.querySelector('.stats-category-item-title').innerText;
-                            let allPlayers = item.querySelectorAll('.player-list-item')
-                            allPlayers.forEach(player => {
-                                let count = item.querySelector('.player-list-player-count').innerText;
-                                let name = item.querySelector('.player-list-player-name').innerText;
-                                let position = item.querySelector('.player-list-player-role').innerText;
+            //manipulating the page's content
+            let allStatss = await page.evaluate(() => {
+                document.querySelector(".stats-see-more-btn").click();
+                document.querySelector(".stats-see-more-btn").click();
+                document.querySelector(".stats-see-more-btn").click();
+                document.querySelector(".stats-see-more-btn").click();
+                let ststtt = document.body.querySelector('.stats-page');
+                let allStats = ststtt.querySelectorAll('.stats-category-item');
+                let stats = []
 
-                                arr.push({
-                                    name,
-                                    count,
-                                    position
-                                })
+                //storing the post items in an array then selecting for retrieving content
+                allStats.forEach(item => {
+                    let arr = []
+                    try {
+                        let title = item.querySelector('.stats-category-item-title').innerText;
+                        let allPlayers = item.querySelectorAll('.player-list-item')
+                        allPlayers.forEach(player => {
+                            let count = player.querySelector('.player-list-player-count').innerText;
+                            let name = player.querySelector('.player-list-player-name').innerText;
+                            let position = player.querySelector('.player-list-player-role').innerText;
+                            let image = player.querySelector('.image').src;
+                            let href = player.querySelector('a').href;
 
+                            // let arr = position.split['|']
+                            // position = arr.length ? arr[0] : position
+                            arr.push({
+                                name,
+                                count,
+                                position,
+                                image,
+                                href
                             })
-                            stats.push({
-                                [title]: arr
-                            })
-                        } catch (err) {
+
+                        })
+                        stats.push({
+                            [title]: arr
+                        })
+                    } catch (err) {
+
+                        console.log(err)
+
+                    }
 
 
-
-                        }
-
-
-                    });
-
-
-                    return stats;
                 });
-                //outputting the scraped data
-                console.log('allStats', allStats)
-                //closing the browser
-                await browser.close();
-            })
-            //handling any errors
-            .catch(function (err) {
-                console.error(err);
+
+
+                return stats;
             });
+            console.log(allStatss)
+            const data = {
+                updateTo,
+                stats: allStatss
+            }
+            await statistics.findOneAndUpdate({}, data, { upsert: true, new: true })
+
+            //outputting the scraped data
+        } catch (err) {
+
+        }
+        finally {
+            console.log('browser close stats')
+
+            //closing the browser
+            await browser.close();
+        }
+
 
 
     }
     // scraperStat()
-
     //initiating Puppeteer
     // const ans = await scraper2('tKmMduCT')
     // console.log('ans',ans)
@@ -3183,8 +4044,20 @@ module.exports.telegramTest = async function () {
 
             try {
                 //manipulating the page's content
+
                 let allStats = await page.evaluate(() => {
-                    let games = document.body.querySelectorAll('.game-round-header-18');
+                    let rounds = document.body.querySelectorAll('.roundName');
+                    let mahzor = ''
+                    rounds.forEach(roundd => {
+                        if (window.getComputedStyle(roundd).visibility !== "hidden")
+
+                            mahzor = roundd.innerText
+
+                    })
+                    let arr = mahzor.split(' ');
+                    const round = arr[1] || '18'
+                    // Do something..
+                    let games = document.body.querySelectorAll(`.game-round-header-${round}`);
                     const higjlights = []
 
                     games.forEach(game => {
@@ -3202,6 +4075,7 @@ module.exports.telegramTest = async function () {
 
                     return higjlights;
                 });
+                // console.log(allStats)
                 // await browser.close();
                 if (allStats.length) {
                     allStats.forEach(stat => {
@@ -3842,295 +4716,1043 @@ module.exports.telegramTest = async function () {
         }
 
     });
-    botTest.onText(/\/goals/, (msg, match) => {
+
+    //stats
+    botTest.onText(/\/שערים/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/goals') {
+        if (text === '/שערים') {
+            const search = 'שערים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'מלך שערים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                    str += `${name}: ${arr}, ${count} \n`
+                })
 
-            let str = 'Top Goal Scorers Are:\n\n'
-            topGoalsScorrer.forEach(goal => {
-                const { name, goals, team } = goal
-                str += `${name}, ${team}: ${goals}\n`
-            })
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/assists/, (msg, match) => {
+    botTest.onText(/\/דקות_משחק/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/assists') {
+        if (text === '/minPlayed') {
+            const search = 'דקות משחק'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'דקות משחק:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
-            let str = 'Top Assists Are:\n\n'
-            topAssists.forEach(goal => {
-                const { name, assists, team } = goal
-                str += `${name}, ${team}: ${assists}\n`
-            })
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/passes/, (msg, match) => {
+    botTest.onText(/\/בישולים/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/passes') {
+        if (text === '/בישולים') {
+            const search = 'בישולים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'מלך בישולים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
-            let str = 'Top Accurate Passes Are:\n\n'
-            accuratePasses.forEach(goal => {
-                const { name, passes, position, team } = goal
-                str += `${name}, ${team}: ${passes}\n`
-            })
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/keypasses/, (msg, match) => {
+    botTest.onText(/\/איומים_לשער/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/keypasses') {
+        if (text === '/איומים_לשער') {
+            const search = 'איומים לשער'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'איומים לשער:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
-            let str = 'Top Accurate Key Passes Are:\n\n'
-            accurateKeyPasses.forEach(goal => {
-                const { name, passes, team } = goal
-                str += `${name}, ${team}: ${passes}\n`
-            })
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/penaltymiss/, (msg, match) => {
+    botTest.onText(/\/מסירות_מפתח_ניסיונות/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/penaltymiss') {
+        if (text === '/מסירות_מפתח_ניסיונות') {
+            const search = 'מסירות מפתח ניסיונות'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'ניסיונות מסירות מפתח:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
-            let str = 'Top Penalty Misses Are:\n\n'
-            penaltyMisses.forEach(goal => {
-                const { name, misses, position, team } = goal
-                str += `${name}, ${team}: ${misses}\n`
-            })
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/owngoals/, (msg, match) => {
+    botTest.onText(/\/מסירות_מפתח_מדוייקות/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/owngoals') {
+        if (text === '/מסירות_מפתח_מדוייקות') {
+            const search = 'מסירות מפתח מדוייקות'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'מסירות מפתח מדוייקות:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
-            let str = 'Top Own Goals Are:\n\n'
-            topOwnGoals.forEach(goal => {
-                const { name, goals, team } = goal
-                str += `${name}, ${team}: ${goals}\n`
-            })
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/red/, (msg, match) => {
+    botTest.onText(/\/איומים_למסגרת/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/red') {
+        if (text === '/איומים_למסגרת') {
+            const search = 'איומים למסגרת'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'איומים למסגרת:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
-            let str = 'Top Red Cards Are:\n\n'
-            topRedCards.forEach(goal => {
-                const { name, cards, team } = goal
-                str += `${name}, ${team}: ${cards}\n`
-            })
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/dribbles/, (msg, match) => {
+    botTest.onText(/\/איומים_מתוך_הרחבה/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/dribbles') {
+        if (text === '/איומים_מתוך_הרחבה') {
+            const search = 'איומים מתוך הרחבה'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'איומים מתוך הרחבה:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
-            let str = 'Top Dribbles Are:\n\n'
-            topDribbles.forEach(goal => {
-                const { name, dribbles, team } = goal
-                str += `${name}, ${team} ${dribbles}\n`
-            })
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/successfulDribbles/, (msg, match) => {
+    botTest.onText(/\/איומים_מחוץ_לרחבה/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/successfulDribbles') {
+        if (text === '/איומים_מחוץ_לרחבה') {
+            const search = 'איומים מחוץ לרחבה'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'איומים מחוץ הרחבה:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
-            let str = 'Top Successful Dribbles Are:\n\n'
-            topSuccessDribbles.forEach(goal => {
-                const { name, dribbles, team } = goal
-                str += `${name}, ${team}: ${dribbles}\n`
-            })
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/tackles/, (msg, match) => {
+    botTest.onText(/\/איומים_מחוץ_למסגרת/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/tackles') {
+        if (text === '/איומים_מחוץ_למסגרת') {
+            const search = 'איומים מחוץ למסגרת'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'איומים מחוץ למסגרת:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
-            let str = 'Top Successful Tackles Are:\n\n'
-            topTackles.forEach(goal => {
-                const { name, tackles, team } = goal
-                str += `${name} ,${team}: ${tackles}\n`
-            })
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/lostball/, (msg, match) => {
+    botTest.onText(/\/כדורי_רוחב/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/lostball') {
+        if (text === '/כדורי_רוחב') {
+            const search = 'כדורי רוחב'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'כדורי רוחב:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
-            let str = 'Top Lost Ball Are:\n\n'
-            topLostBall.forEach(goal => {
-                const { name, lost, team } = goal
-                str += `${name}, ${team}: ${lost}\n`
-            })
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/offsides/, (msg, match) => {
+    botTest.onText(/\/מסירות/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/offsides') {
+        if (text === '/מסירות') {
+            const search = 'מסירות'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
-            let str = 'Top Offsides Are:\n\n'
-            topOffsides.forEach(goal => {
-                const { name, offsides, team, position } = goal
-                str += `${name} ,${team}: ${offsides}\n`
-            })
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'מסירות:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/attempts/, (msg, match) => {
+    botTest.onText(/\/מסירות_מדויקות/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/attempts') {
+        if (text === '/מסירות_מדויקות') {
+            const search = 'מסירות מדויקות'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
-            let str = 'Top Attempt on Goal Are:\n\n'
-            topAttempts.forEach(goal => {
-                const { name, goals, team } = goal
-                str += `${name}, ${team}: ${goals}\n`
-            })
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'מסירות מדויקות:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
-
-
-            botTest.sendMessage(chatId, str);
-
-
+            }
         }
 
     });
-    botTest.onText(/\/yellow/, (msg, match) => {
+    botTest.onText(/\/מאבקי_אוויר/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/yellow') {
+        console.log(text)
+        if (text === '/מאבקי_אוויר') {
+            const search = 'מאבקי אוויר'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'מאבקי אוויר:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
 
-            let str = 'Top Yellow Cards Are:\n\n'
-            topYellowCards.forEach(goal => {
-                const { name, cards, team } = goal
-                str += `${name}, ${team}: ${cards}\n`
-            })
+                })
 
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
+            }
+        }
 
+    });
+    botTest.onText(/\/מאבקי_אוויר_מוצלחים/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/מאבקי_אוויר_מוצלחים') {
+            const search = 'מאבקי אוויר מוצלחים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
 
-            botTest.sendMessage(chatId, str);
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'מאבקי אוויר מוצלחים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
 
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
 
+            }
+        }
+
+    });
+    botTest.onText(/\/מאבקי_קרקע/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/מאבקי_קרקע') {
+            const search = 'מאבקי קרקע'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'מאבקי קרקע:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/מאבקי_קרקע_מוצלחים/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/מאבקי_קרקע_מוצלחים') {
+            const search = 'מאבקי קרקע מוצלחים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'מאבקי קרקע מוצלחים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/דריבלים/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/דריבלים') {
+            const search = 'דריבלים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'דריבלים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/דריבלים_מוצלחים/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/דריבלים_מוצלחים') {
+            const search = 'דריבלים מוצלחים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'דריבלים מוצלחים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/תיקולים/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/תיקולים') {
+            const search = 'תיקולים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'תיקולים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/תיקולים_מוצלחים/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/תיקולים_מוצלחים') {
+            const search = 'תיקולים מוצלחים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'תיקולים מוצלחים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/חילוצי_כדור/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/חילוצי_כדור') {
+            const search = 'חילוצי כדור'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'חילוצי כדור:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/חילוצי_כדור_בחצי_היריבה/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/חילוצי_כדור_בחצי_היריבה') {
+            const search = 'חילוצי כדור בחצי היריבה'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'חילוצי כדור בחצי היריבה:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/חילוצי_כדור_בחצי_הגנתי/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/חילוצי_כדור_בחצי_הגנתי') {
+            const search = 'חילוצי כדור בחצי הגנתי'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'חילוצי כדור בחצי הגנתי:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/איומים_שנבלמו/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/איומים_שנבלמו') {
+            const search = 'איומים שנבלמו'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'איומים שנבלמו:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/איבודי_כדור/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/איבודי_כדור') {
+            const search = 'איבודי כדור'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'איבודי כדור:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/איבודי_כדור_בחצי_קבוצתו/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/איבודי_כדור_בחצי_קבוצתו') {
+            const search = 'איבודי כדור בחצי קבוצתו'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'איבודי כדור בחצי קבוצתו:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/שערים_עצמיים/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/שערים_עצמיים') {
+            const search = 'שערים עצמיים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'שערים עצמיים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/החמצות_פנדל/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/החמצות_פנדל') {
+            const search = 'החמצות פנדל'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'החמצות פנדל:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/צהובים/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/צהובים') {
+            const search = 'צהובים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'צהובים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/אדומים/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/אדומים') {
+            const search = 'אדומים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'אדומים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/עבירות/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/עבירות') {
+            const search = 'עבירות'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'עבירות:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/עבירות_יריבות/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/עבירות_יריבות') {
+            const search = 'עבירות - יריבות'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'עבירות - יריבות:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/נבדלים/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/נבדלים') {
+            const search = 'נבדלים'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'נבדלים:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/הופעות/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/הופעות') {
+            const search = 'הופעות'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'הופעות:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/הוחלף/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/הוחלף') {
+            const search = 'הוחלף'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'הוחלף:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
+        }
+
+    });
+    botTest.onText(/\/נכנס_כמחליף/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/נכנס_כמחליף') {
+            const search = 'נכנס כמחליף'
+            try {
+                const arr = await statistics.find({})
+                const stats = arr.length ? arr[0].stats : []
+
+                const topArr = stats.find((k, v) => {
+                    return k[search]
+                })
+                let str = 'נכנס כמחליף:\n\n'
+                topArr[search].forEach(item => {
+                    const { name, count, position, href } = item
+                    const arr = position.split('|')[1]
+                    str += `${name}: ${arr}, ${count} \n`
+                    str += `סטיסטיקות שחקן: ${href}\n\n`
+                })
+
+                botTest.sendMessage(chatId, str);
+            }
+            catch (err) {
+
+            }
         }
 
     });
@@ -4138,13 +5760,20 @@ module.exports.telegramTest = async function () {
         const chatId = msg.chat.id;
         const { text } = msg
         if (text === '/stats') {
-            let str = 'Your Options Are:\n\n/goals - Top Goal Scorer \n/assists - Top Assists \n/attempts - Top Attempt on Goal \n/passes - Top Accurate Passes \n/owngoals - Top Own Goals \n/red - Top Red Cards \n/yellow - Top Yellow Cards \n/dribbles - Top Dribbles \n/successfulDribbles - Top Successful Dribbles \n/keypasses - Top Accurate Key Passes \n/penaltymiss - Top Penalty Misses \n/offsides - Top Offsides \n/tackles - Top Successful Tackels \n/lostball - Top Lost Ball'
+            let str = 'סטטיסטיקות מנהלת לכדורגל:\n\n/שערים\n/בישולים\n/איומים_לשער\n/דקות_משחק\n/מסירות_מפתח_ניסיונות\n/מסירות_מפתח_מדוייקות\n/מסירות\n/איומים_מתוך_הרחבה\n/איומים_מחוץ_לרחבה\n/איומים_מחוץ_למסגרת\n/כדורי_רוחב\n/מסירות_מדויקות\n/מאבקי_אוויר\n/מאבקי_אוויר_מוצלחים\n/מאבקי_קרקע\n/מאבקי_קרקע_מוצלחים\n/דריבלים\n/דריבלים_מוצלחים\n/תיקולים\n/תיקולים_מוצלחים\n/חילוצי_כדור\n/חילוצי_כדור_בחצי_היריבה\n/חילוצי_כדור_בחצי_הגנתי\n/איומים_שנבלמו\n/איבודי_כדור\n/איבודי_כדור_בחצי_קבוצתו\n/החמצות_פנדל\n/צהובים\n/אדומים\n/עבירות\n/עבירות_יריבות\n/נבדלים\n/הופעות\n/הוחלף\n/נכנס_כמחליף\n'
             botTest.sendMessage(chatId, str);
 
 
         }
 
     });
+
+    // end - stats
+
+
+
+
+
 
 
 

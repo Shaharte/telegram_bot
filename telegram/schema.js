@@ -9,6 +9,13 @@ const liveGamesSchema = new Schema(
 
     }
 );
+const statsSchema = new Schema(
+    {
+        updateTo: Date,
+        stats: Array,
+
+    }
+);
 const subjectsSchema = new Schema(
     {
         updateTo: Date,
@@ -18,10 +25,12 @@ const subjectsSchema = new Schema(
 );
 const games = mongoose.model('liveGames', liveGamesSchema);
 const wednesdeySubjects = mongoose.model('subjects', subjectsSchema);
+const statistics = mongoose.model('stats', statsSchema);
 
 
 const liveGames = {
     games,
     wednesdeySubjects,
+    statistics
   };
   module.exports = liveGames;
