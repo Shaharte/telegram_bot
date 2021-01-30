@@ -3331,10 +3331,10 @@ module.exports.telegram = async function () {
         }
 
     });
-    botTest.onText(/\/res_card/, async (msg, match) => {
+    botTest.onText(/\/red_card/, async (msg, match) => {
         const chatId = msg.chat.id;
         const { text } = msg
-        if (text === '/res_card') {
+        if (text === '/red_card') {
             const search = 'אדומים'
             try {
                 const arr = await statistics.find({})
