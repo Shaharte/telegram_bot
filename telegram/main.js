@@ -441,7 +441,7 @@ const highlights = {
 }
 
 // SHISHIT BOT
-module.exports.telegram = async function () {
+module.exports.Shishit = async function () {
     const updateTo = moment().utc().format('YYYY[-]MM[-]DD');
     const botTest = new TelegramBot(token, { polling: true });
 
@@ -2630,7 +2630,7 @@ module.exports.telegram = async function () {
 };
 
 // AHANALA BOT
-module.exports.ahanhala = async function () {
+module.exports.Ahanhala = async function () {
     const updateTo = moment().utc().format('YYYY[-]MM[-]DD');
     const botTest = new TelegramBot(elazToken, { polling: true });
 
@@ -2891,7 +2891,7 @@ module.exports.ahanhala = async function () {
 }
 
 // STOK MARKET BOT
-module.exports.stocks = async function () {
+module.exports.Stocks = async function () {
     const updateTo = moment().utc().format('YYYY[/]MM[/]DD');
     const stockBot = new TelegramBot(stockToken, { polling: true });
     const yahooStockAPI = require('yahoo-stock-api');
