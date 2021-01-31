@@ -829,7 +829,7 @@ module.exports.Shishit = async function () {
 
                             } else if (oldGame.score === '-') {
                                 str += `Match Started! ${min}: ${homeTeam} ${score} ${awayTeam}\n`
-                                botTest.sendMessage('404011627', str)
+                                botTest.sendMessage('-471015035', str)
 
                             } else if (oldGame.score !== score) {
                                 if (homeScore > oldHomeScore || awayScore > oldAwayScore) {
@@ -853,7 +853,7 @@ module.exports.Shishit = async function () {
                                     }
 
                                 }
-                                botTest.sendMessage('404011627', str)
+                                botTest.sendMessage('-471015035', str)
 
                             }
                             //  else if (oldGame.lastScorrer.scorer === '' && scorer !== '' || oldGame.lastScorrer.scorer && oldGame.lastScorrer.min !== scorerMin && scorer !== '') {
