@@ -11,7 +11,6 @@ const liveGamesSchema = new Schema(
 );
 const statsSchema = new Schema(
     {
-        updateTo: Date,
         stats: Array,
 
     }

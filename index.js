@@ -24,5 +24,5 @@ app.listen(port, () => {
 
 
 Ahanhala()
-Shishit()
 Stocks()
+Shishit()

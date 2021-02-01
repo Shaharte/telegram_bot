@@ -565,10 +565,6 @@ module.exports.Shishit = async function () {
 
 
 
-
-
-
-
             //     }
             // }
 
@@ -599,88 +595,87 @@ module.exports.Shishit = async function () {
     const scraper2 = async (id) => {
         console.log('starting to run scrapper2')
 
-        const matches = puppeteer
+        const browser = await puppeteer
             .launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
-            .then(async browser => {
 
-                //opening a new page and navigating to Fleshscore
-                const page = await browser.newPage();
-                await page.goto(`https://www.flashscore.com/match/${id}/#match-summary`);
-                await page.waitForSelector('body');
+        try {
+            //opening a new page and navigating to Fleshscore
+            const page = await browser.newPage();
+            await page.goto(`https://www.flashscore.com/match/${id}/#match-summary`);
+            await page.waitForSelector('body');
 
-                //manipulating the page's content
-                let grabMatches = await page.evaluate(() => {
-                    let scorrers = {
-                        scorer: '',
-                        assist: '',
-                        sub: '',
-                        min: '',
-                        bla: ""
-                    };
+            //manipulating the page's content
+            let grabMatches = await page.evaluate(() => {
+                let scorrers = {
+                    scorer: '',
+                    assist: '',
+                    sub: '',
+                    min: '',
+                    bla: ""
+                };
 
-                    let allLiveMatches = document.body.querySelectorAll('.detailMS__incidentRow')
+                let allLiveMatches = document.body.querySelectorAll('.detailMS__incidentRow')
 
-                    //storing the post items in an array then selecting for retrieving content
-                    scrapeItems = [];
+                //storing the post items in an array then selecting for retrieving content
+                scrapeItems = [];
 
-                    allLiveMatches.forEach(async item => {
-                        try {
-                            let goal = item.querySelector('.soccer-ball') ? true : false;
-                            // let red = item.querySelector('.r-card') ? true : false;
-                            if (goal) {
-                                // let yl = item.querySelector('.yr-card') ? true : false;
-                                // if (goal) {
-                                let scorer = item.querySelector('.participant-name').innerText || ''
-                                if (scorer !== '') {
-                                    scorrers = {
-                                        goal,
-                                        scorer,
-                                        assist: item.querySelector('.assist') ? item.querySelector('.assist').innerText : '',
-                                        sub: item.querySelector('.subincident-name') ? item.querySelector('.subincident-name').innerText : '',
-                                        min: item.querySelector('.time-box') ? item.querySelector('.time-box').innerText : '',
-                                        team: item.className,
+                allLiveMatches.forEach(async item => {
+                    try {
+                        let goal = item.querySelector('.soccer-ball') ? true : false;
+                        // let red = item.querySelector('.r-card') ? true : false;
+                        if (goal) {
+                            // let yl = item.querySelector('.yr-card') ? true : false;
+                            // if (goal) {
+                            let scorer = item.querySelector('.participant-name').innerText || ''
+                            if (scorer !== '') {
+                                scorrers = {
+                                    goal,
+                                    scorer,
+                                    assist: item.querySelector('.assist') ? item.querySelector('.assist').innerText : '',
+                                    sub: item.querySelector('.subincident-name') ? item.querySelector('.subincident-name').innerText : '',
+                                    min: item.querySelector('.time-box') ? item.querySelector('.time-box').innerText : '',
+                                    team: item.className,
 
-                                    }
                                 }
-
                             }
-                            // else if (red || yl) {
-                            //     scorrers = {
-                            //         scorer: item.querySelector('.participant-name') ? item.querySelector('.participant-name').innerText : '',
-                            //         red: true,
-                            //         min: item.querySelector('.time-box') ? item.querySelector('.time-box').innerText : '',
-                            //         team: item.className,
-
-                            //     }
-                            // }
-
-
 
                         }
-                        catch (err) {
-                            console.log('err', err)
+                        // else if (red || yl) {
+                        //     scorrers = {
+                        //         scorer: item.querySelector('.participant-name') ? item.querySelector('.participant-name').innerText : '',
+                        //         red: true,
+                        //         min: item.querySelector('.time-box') ? item.querySelector('.time-box').innerText : '',
+                        //         team: item.className,
 
-                        }
-
-
-                    });
-
+                        //     }
+                        // }
 
 
 
-                    return scorrers;
+                    }
+                    catch (err) {
+                        console.log('err', err)
+
+                    }
+
+
                 });
-                //outputting the scraped data
 
-                //closing the browser
-                await browser.close();
-                return grabMatches
-            })
-            //handling any errors
-            .catch(function (err) {
-                console.error(err);
+
+
+
+                return scorrers;
             });
-        return matches
+            //outputting the scraped data
+            await browser.close();
+            return grabMatches
+
+        } catch (err) {
+            console.log('err', err)
+            await browser.close();
+
+        }
+
 
 
     }
@@ -715,14 +710,15 @@ module.exports.Shishit = async function () {
                         let title = item.querySelector('.stats-category-item-title').innerText;
                         let allPlayers = item.querySelectorAll('.player-list-item')
                         allPlayers.forEach(player => {
-                            let count = item.querySelector('.player-list-player-count').innerText;
-                            let name = item.querySelector('.player-list-player-name').innerText;
-                            let position = item.querySelector('.player-list-player-role').innerText;
-
+                            let count = player.querySelector('.player-list-player-count').innerText;
+                            let name = player.querySelector('.player-list-player-name').innerText;
+                            let position = player.querySelector('.player-list-player-role').innerText;
+                            let href = player.querySelector('a').href;
                             arr.push({
                                 name,
                                 count,
-                                position
+                                position,
+                                href
                             })
 
                         })
@@ -730,7 +726,7 @@ module.exports.Shishit = async function () {
                             [title]: arr
                         })
                     } catch (err) {
-
+                        console.log(err)
 
 
                     }
@@ -746,7 +742,7 @@ module.exports.Shishit = async function () {
                 updateTo,
                 stats: allStatss
             }
-            await statistics.findOneAndUpdate({ updateTo }, data, { upsert: true, new: true })
+            await statistics.findOneAndUpdate({}, data, { upsert: true, new: true })
 
             //outputting the scraped data
         } catch (err) {
@@ -769,7 +765,7 @@ module.exports.Shishit = async function () {
         } catch (err) { }
 
     });
-
+    scraperStat()
     //sending a poll
     // nodeSchedule.scheduleJob('00 12 * * 2', () => {
     //     console.log('start sending poll')
