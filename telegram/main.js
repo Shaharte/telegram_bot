@@ -2889,7 +2889,7 @@ module.exports.Ahanhala = async function () {
 // STOK MARKET BOT
 module.exports.Stocks = async function () {
     const updateTo = moment().utc().format('YYYY[/]MM[/]DD');
-    const stockBot = new TelegramBot(stockToken, { polling: true });
+    const stockBot = new TelegramBot(stockBot, { polling: true });
     const yahooStockAPI = require('yahoo-stock-api');
     const yahooStockPrices = require('yahoo-stock-prices')
 
@@ -2898,81 +2898,112 @@ module.exports.Stocks = async function () {
         const chatId = msg.chat.id;
         // console.log('chatId:', chatId)
         const { text } = msg
-        let stock = text.substring(1, text.length).toUpperCase()
-        console.log('stock:', stock)
-        let str = ``
-        try {
-
-            //getting the data from yahoo finance
-            const date = new Date(updateTo);
-            const data = await yahooStockPrices.getCurrentData(stock);
-            // const data2 = await yahooStockAPI.getHistoricalPrices(date, date, stock, '1d');
-            // console.log('data2:', data2)
-            const preData = await yahooStockAPI.getSymbol(stock)
-            // console.log('preData:', preData)
-            // let { response = [] } = data2
-            // let { close } = data2.response[0]
-            let { previousClose, open } = preData.response
-
-            const { price = 0, currency } = data
-            const symbol = currency === 'USD' ? '$' : ''
-            let percentage = ((Number(previousClose) - Number(price)) / Number(previousClose) * 100).toFixed(2).toString()
-            const arrow = price < previousClose ? '-' : (previousClose < price ? '+' : '')
-            percentage = percentage < 0 ? percentage.substring(1, percentage.length) + '%' : percentage + '%'
-
-
-            if (price > 0) {
-                str += `${stock}:\n`
-                str += `Price: ${symbol}${price}, ${arrow} ${percentage}\n`
-                stockBot.sendMessage(chatId, str)
-            }
-
-        } catch (err) {
-            //getting the data from google finance scrapper
-            const browser = await puppeteer
-                .launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
-
-
-            //opening a new page and navigating to Fleshscore
-            const page = await browser.newPage();
-
-            await page.goto(`https://www.google.com/finance/quote/${stock}`);
-            await page.waitForSelector('body');
-
+        let str=``
+        if (text !== '/help') {
+            let stock = text.substring(1, text.length).toUpperCase()
             try {
-                //manipulating the page's content
-                let allStats = await page.evaluate(() => {
-                    let price = document.body.querySelector('.YMlKec.fxKbKc').innerText;
-                    let movment = document.body.querySelector('.NydbP.VOXKNe.tnNmPe') ? document.body.querySelector('.NydbP.VOXKNe.tnNmPe').innerText : '';
-                    const stats = []
-
-                    //storing the post items in an array then selecting for retrieving content
-                    stats.push(price)
-                    stats.push(movment)
-                    return stats;
-                });
-                if (allStats.length) {
-                    const price = allStats[0]
-                    let arr = allStats[1].split('\n')
-                    const arrow = arr[0].includes('down') ? '-' : '+';
-                    const percentage = arr[1] ? arr[1] : '0%';
-                    str += `${stock}:\n`
-                    str += `Price: ${price}, ${arrow} ${percentage}\n`
-                    stockBot.sendMessage(chatId, str)
-
-                    //outputting the scraped data
+                
+                if (stock.includes('.AT')){
+                    stock = stock.replace('.AT','.TA')
                 }
-            }
-            catch (err) {
-                stockBot.sendMessage(chatId, `Cant find your stock..`)
-            }
-            finally {
-                console.log('closing browser - stock')
-                await browser.close();
+
+                //getting the data from yahoo finance
+                const date = new Date(updateTo);
+                const data = await yahooStockPrices.getCurrentData(stock);
+                // const data2 = await yahooStockAPI.getHistoricalPrices(date, date, stock, '1d');
+                // console.log('data2:', data2)
+                const preData = await yahooStockAPI.getSymbol(stock)
+                // console.log('data:', data)
+                // console.log('preData:', preData)
+                // let { response = [] } = data2
+                // let { close } = data2.response[0]
+                let { previousClose, open } = preData.response
+                if (previousClose === null) {
+                    throw 'err'
+                }
+                const { price = 0, currency } = data
+                const symbol = currency === 'USD' ? '$' : ''
+                let percentage = previousClose > 0 ? ((Number(previousClose) - Number(price)) / Number(previousClose) * 100).toFixed(2).toString() : 0
+                const arrow = price < previousClose ? '-' : (previousClose < price ? '+' : '')
+                percentage = percentage < 0 ? percentage.substring(1, percentage.length) + '%' : percentage + '%'
+
+
+                if (price > 0) {
+                    str += `${stock}:\n`
+                    str += `Price: ${symbol}${price}, ${arrow} ${percentage}\n`
+                    stockBot.sendMessage(chatId, str)
+                }
+
+            } catch (err) {
+
+                console.log('err',err)
+
+                //getting the data from google finance scrapper
+                const browser = await puppeteer
+                    .launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
+
+
+                //opening a new page and navigating to Fleshscore
+                const page = await browser.newPage();
+
+                await page.goto(`https://www.google.com/finance/quote/${stock}`);
+                await page.waitForSelector('body');
+
+                try {
+                    //manipulating the page's content
+                    let allStats = await page.evaluate(() => {
+                        let price = document.body.querySelector('.YMlKec.fxKbKc').innerText;
+                        let movment = document.body.querySelector('.NydbP.VOXKNe.tnNmPe') ? document.body.querySelector('.NydbP.VOXKNe.tnNmPe').innerText : '';
+                        const stats = []
+
+                        //storing the post items in an array then selecting for retrieving content
+                        stats.push(price)
+                        stats.push(movment)
+                        return stats;
+                    });
+                    if (allStats.length) {
+                        const price = allStats[0]
+                        let arr = allStats[1].split('\n')
+                        const arrow = arr[0].includes('down') ? '-' : '+';
+                        const percentage = arr[1] ? arr[1] : '0%';
+                        str += `${stock}:\n`
+                        str += `Price: ${price}, ${arrow} ${percentage}\n`
+                        stockBot.sendMessage(chatId, str)
+
+                        //outputting the scraped data
+                    }
+                }
+                catch (e) {
+                    console.log('e',e)
+          
+                    stockBot.sendMessage(chatId,`Cant find your stock..` )
+                }
+                finally {
+                    console.log('closing browser - stock')
+                    await browser.close();
+                }
             }
         }
     });
+    stockBot.onText(/\/help/, (msg, match) => {
+        const chatId = msg.chat.id;
+        console.log(chatId)
+        const { text } = msg
+        console.log(text)
 
+        if (text === '/help') {
+
+
+            let str = 'How to search a stock?:\n\n 1. Write "/stock", for example: "/tsla"\n 2. For TA stock write "/stock.ta", for example: "/lumi.ta"'
+            console.log(str)
+
+
+            stockBot.sendMessage(chatId, str);
+
+
+        }
+
+    });
 
     //checking if stock market is open or close
     const checkifOpen = async () => {
