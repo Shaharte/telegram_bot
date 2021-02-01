@@ -446,7 +446,7 @@ module.exports.Shishit = async function () {
     const botTest = new TelegramBot(token, { polling: true });
 
     // running scrapper on flashscore to get live result pushes
-    nodeSchedule.scheduleJob('* 17-21 * * *', () => {
+    nodeSchedule.scheduleJob('* 16-21 * * *', () => {
         try {
             scraper()
 
@@ -825,7 +825,7 @@ module.exports.Shishit = async function () {
 
                             if (min === 'Finished' && oldGame.min !== min) {
                                 str += `${min}: ${homeTeam} ${score} ${awayTeam}\n`
-                                botTest.sendMessage('404011627', str)
+                                botTest.sendMessage('-471015035', str)
 
                             } else if (oldGame.score === '-') {
                                 str += `Match Started! ${min}: ${homeTeam} ${score} ${awayTeam}\n`
