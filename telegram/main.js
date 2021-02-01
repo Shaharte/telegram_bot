@@ -444,7 +444,7 @@ const highlights = {
 module.exports.Shishit = async function () {
     const updateTo = moment().utc().format('YYYY[-]MM[-]DD');
     const botTest = new TelegramBot(token, { polling: true });
-
+    
     // running scrapper on flashscore to get live result pushes
     nodeSchedule.scheduleJob('* 16-21 * * *', () => {
         try {
@@ -555,18 +555,18 @@ module.exports.Shishit = async function () {
             //outputting the scraped data
 
 
-            // for (const match of grabMatches) {
-            //     const { games } = match
-            //     for (const game of games) {
+            for (const match of grabMatches) {
+                const { games } = match
+                for (const game of games) {
 
-            //         const { id } = game
-            //         const ans = await scraper2(id)
-            //         game.lastScorrer = ans
+                    const { id } = game
+                    const ans = await scraper2(id)
+                    game.lastScorrer = ans
 
 
 
-            //     }
-            // }
+                }
+            }
 
             const data = {
                 updateTo,
@@ -777,6 +777,7 @@ module.exports.Shishit = async function () {
     //         const options = [home, draw, away]
     //         const is_anonymous = false
     //         botTest.sendPoll('-471015035', question, options)
+    // 404011627
     //     })
 
     // });
@@ -850,7 +851,6 @@ module.exports.Shishit = async function () {
 
                                 }
                                 botTest.sendMessage('-471015035', str)
-
                             }
                             //  else if (oldGame.lastScorrer.scorer === '' && scorer !== '' || oldGame.lastScorrer.scorer && oldGame.lastScorrer.min !== scorerMin && scorer !== '') {
                             //     const scoreTeam = team === 'home' ? homeTeam : (team === 'away' ? awayTeam : '')
@@ -912,8 +912,9 @@ module.exports.Shishit = async function () {
                     games.forEach(game => {
                         let date = game.querySelector('.matchDate').innerText;
                         let teams = game.querySelector('.teamNames').innerText;
+                        let score = game.querySelector('.headerScoreLine').innerText;
 
-                        higjlights.push({ teams, date })
+                        higjlights.push({ teams, date, score })
 
                     })
 
@@ -928,9 +929,9 @@ module.exports.Shishit = async function () {
                 // await browser.close();
                 if (allStats.length) {
                     allStats.forEach(stat => {
-                        const { teams = '', date = '' } = stat
+                        const { teams = '', date = '',score='' } = stat
                         str += `תאריך: ${date}\n`
-                        str += `${teams}\n\n`
+                        str += `${teams}: ${score}\n\n`
 
                     })
                     botTest.sendMessage(chatId, str)
