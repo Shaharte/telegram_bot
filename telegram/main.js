@@ -2889,7 +2889,7 @@ module.exports.Ahanhala = async function () {
 // STOK MARKET BOT
 module.exports.Stocks = async function () {
     const updateTo = moment().utc().format('YYYY[/]MM[/]DD');
-    const stockBot = new TelegramBot(stockBot, { polling: true });
+    const stockBot = new TelegramBot(stockToken, { polling: true });
     const yahooStockAPI = require('yahoo-stock-api');
     const yahooStockPrices = require('yahoo-stock-prices')
 
@@ -2995,7 +2995,7 @@ module.exports.Stocks = async function () {
 
 
             let str = 'How to search a stock?:\n\n 1. Write "/stock", for example: "/tsla"\n 2. For TA stock write "/stock.ta", for example: "/lumi.ta"'
-            console.log(str)
+            // console.log(str)
 
 
             stockBot.sendMessage(chatId, str);
