@@ -765,7 +765,7 @@ module.exports.Shishit = async function () {
         } catch (err) { }
 
     });
-    scraperStat()
+    // scraperStat()
     //sending a poll
     // nodeSchedule.scheduleJob('00 12 * * 2', () => {
     //     console.log('start sending poll')
