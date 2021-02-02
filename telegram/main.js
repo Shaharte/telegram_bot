@@ -103,34 +103,6 @@ const teamsIds = [
 ]
 const leagueIds = [
     {
-        name: 'Ligat haAl',
-        id: '2708',
-        country: 'Israel'
-    },
-    {
-        name: 'Liga Alef',
-        id: '2969',
-        country: 'Israel'
-    },
-    {
-        name: 'liga_leumit',
-        id: '2770',
-        country: 'Israel'
-
-    },
-    {
-        name: 'State Cup',
-        id: '2982',
-        country: 'Israel'
-
-    },
-    {
-        name: 'Toto Cup Ligat Al',
-        id: '2676',
-        country: 'Israel'
-
-    },
-    {
         name: 'Premier League',
         id: '2790',
         country: 'England'
@@ -219,6 +191,21 @@ const leagueIds = [
         id: '1422',
         country: 'International'
     },
+
+]
+const leagueIds2 = [
+    {
+        name: "Ligat ha'Al",
+        id: '2708',
+        country: 'Israel'
+    },
+    {
+        name: 'State Cup',
+        id: '2982',
+        country: 'Israel'
+
+    },
+
 
 ]
 const highlights = {
@@ -446,13 +433,13 @@ module.exports.Shishit = async function () {
     const botTest = new TelegramBot(token, { polling: true });
     
     // running scrapper on flashscore to get live result pushes
-    nodeSchedule.scheduleJob('* 16-21 * * *', () => {
-        try {
-            scraper()
+    // nodeSchedule.scheduleJob('* 16-21 * * *', () => {
+    //     try {
+    //         scraper()
 
-        } catch (err) { }
+    //     } catch (err) { }
 
-    });
+    // });
     const scraper = async () => {
         console.log('starting to run scrapper')
         const gamesScrapper = await games.find({ updateTo })
@@ -555,18 +542,16 @@ module.exports.Shishit = async function () {
             //outputting the scraped data
 
 
-            for (const match of grabMatches) {
-                const { games } = match
-                for (const game of games) {
+            // for (const match of grabMatches) {
+            //     const { games } = match
+            //     for (const game of games) {
 
-                    const { id } = game
-                    const ans = await scraper2(id)
-                    game.lastScorrer = ans
+            //         const { id } = game
+            //         const ans = await scraper2(id)
+            //         game.lastScorrer = ans
 
-
-
-                }
-            }
+            //     }
+            // }
 
             const data = {
                 updateTo,
@@ -1360,6 +1345,47 @@ module.exports.Shishit = async function () {
         const chatId = msg.chat.id;
         const { text } = msg
         if (text === '/live') {
+            req.headers(cerdentials);
+
+            req.end(function (res) {
+                if (res.error) throw new Error(res.error);
+                let str = 'Live Results:\n\n'
+                leagueIds2.forEach(league => {
+                    const { id, country, name } = league
+                    const leagueArr = res.body.api.fixtures.filter(o => { return o.league.name === name && o.league.country === country })
+                    if (leagueArr.length) {
+                        str += `${country} - ${name}: \n`
+
+                    }
+                    leagueArr.forEach(game => {
+                        const { goalsAwayTeam, goalsHomeTeam, homeTeam, awayTeam, elapsed, score, league } = game
+                        const { name, country } = league
+                        const { halftime } = score
+                        const { team_name: home } = homeTeam
+                        const { team_name: away } = awayTeam
+                        str += `${elapsed}:  ${home}  ${goalsHomeTeam} - ${goalsAwayTeam}  ${away}  (${halftime ? halftime : ''}) \n\n`
+
+                    })
+
+                })
+                if (str === 'Live Results:\n\n') {
+                    str = 'Live Results: No Results So Far...'
+
+                }
+
+
+                botTest.sendMessage(chatId, str);
+            });
+        }
+
+
+    });
+    // getting live euro results
+    botTest.onText(/\/now/, (msg, match) => {
+        var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/fixtures/live");
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/now') {
             req.headers(cerdentials);
 
             req.end(function (res) {
