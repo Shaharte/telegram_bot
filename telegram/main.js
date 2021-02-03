@@ -833,7 +833,7 @@ module.exports.Shishit = async function () {
 
 
     }
-    nodeSchedule.scheduleJob('00 11 * * *', () => {
+    nodeSchedule.scheduleJob('00 12 * * *', () => {
         try {
             scraperHighlights()
 
@@ -842,7 +842,7 @@ module.exports.Shishit = async function () {
     });
 
 
-    // running scrapper on "sport1" to get news
+    // running scrapper on "sport5" to get news
 
     const scraperNews = async () => {
         console.log('starting to run news scrapper')
@@ -854,23 +854,22 @@ module.exports.Shishit = async function () {
         try {
 
             //opening a new page and navigating to Fleshscore
-            await page.goto('https://sport1.maariv.co.il/israeli-soccer/');
+            await page.goto('https://www.sport5.co.il/liga.aspx?FolderID=44');
             await page.waitForSelector('body');
 
             //manipulating the page's content
             let news = await page.evaluate(() => {
 
-                let allStats = document.body.querySelectorAll('.post-card.col-lg-11.col-12.p-0');
+                let allStats = document.body.querySelector('.mainarticle-league');
                 let highlights = []
                 //storing the post items in an array then selecting for retrieving content
 
 
-                allStats.forEach(item => {
+             
                     let arr = []
                     try {
-                        let title = item.querySelector('.title-post').innerText;
-
-                        let href = item.querySelector('a').href
+                        let title = allStats.querySelector('.title').innerText;
+                        let href = allStats.querySelector('a').href
                         highlights.push({
                             title,
                             href,
@@ -884,7 +883,7 @@ module.exports.Shishit = async function () {
                     }
 
 
-                });
+             
 
 
 
@@ -895,7 +894,7 @@ module.exports.Shishit = async function () {
             });
             // console.log('news', news)
             const lastNews = news[0]
-            const lastNewsDB = await highlightNews.find({}) 
+            let lastNewsDB = await highlightNews.find({}) 
             lastNewsDB = lastNewsDB.length ? lastNewsDB[0] : {}
             if (lastNews.title !== lastNewsDB.title) {
                 const data = {
@@ -904,7 +903,7 @@ module.exports.Shishit = async function () {
                 }
 
                 await highlightNews.findOneAndUpdate({}, data, { upsert: true, new: true })
-                botTest.sendMessage('404011627', lastNews.href)
+                botTest.sendMessage('-471015035', lastNews.href)
 
             }
 
@@ -926,16 +925,98 @@ module.exports.Shishit = async function () {
             await browser.close();
         }
     }
-    // const rule = new nodeSchedule.RecurrenceRule();
-    // rule.minute = 5;
+        // running scrapper on "sport1" to get news
 
-    // nodeSchedule.scheduleJob(rule, () => {
+    // const scraperNews = async () => {
+    //     console.log('starting to run news scrapper')
+    //     // const stats = []
+    //     let str = ''
+    //     const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
+
+    //     const page = await browser.newPage();
     //     try {
-    //         scraperNews()
 
-    //     } catch (err) { }
+    //         //opening a new page and navigating to Fleshscore
+    //         await page.goto('https://sport1.maariv.co.il/israeli-soccer/');
+    //         await page.waitForSelector('body');
 
-    // });
+    //         //manipulating the page's content
+    //         let news = await page.evaluate(() => {
+
+    //             let allStats = document.body.querySelectorAll('.post-card.col-lg-11.col-12.p-0');
+    //             let highlights = []
+    //             //storing the post items in an array then selecting for retrieving content
+
+
+    //             allStats.forEach(item => {
+    //                 let arr = []
+    //                 try {
+    //                     let title = item.querySelector('.title-post').innerText;
+
+    //                     let href = item.querySelector('a').href
+    //                     highlights.push({
+    //                         title,
+    //                         href,
+    //                     })
+
+
+    //                 } catch (err) {
+    //                     console.log(err)
+
+
+    //                 }
+
+
+    //             });
+
+
+
+
+
+
+    //             return highlights;
+    //         });
+    //         // console.log('news', news)
+    //         const lastNews = news[0]
+    //         let lastNewsDB = await highlightNews.find({}) 
+    //         lastNewsDB = lastNewsDB.length ? lastNewsDB[0] : {}
+    //         if (lastNews.title !== lastNewsDB.title) {
+    //             const data = {
+    //                 title: lastNews.title,
+    //                 href: lastNews.href
+    //             }
+
+    //             await highlightNews.findOneAndUpdate({}, data, { upsert: true, new: true })
+    //             botTest.sendMessage('404011627', lastNews.href)
+
+    //         }
+
+    //         // if (allStatss.length) {
+    //         //     const { title = '', video = '' } = allStatss[0]
+    //         //     str += `${title}\n ${video}`
+    //         // }
+    //         // botTest.sendMessage('404011627', str)
+
+    //         //outputting the scraped data
+    //     } catch (err) {
+    //         console.log('err', err)
+
+    //     }
+    //     finally {
+    //         console.log('browser close stats')
+
+    //         //closing the browser
+    //         await browser.close();
+    //     }
+    // }
+
+    nodeSchedule.scheduleJob('*/15 * * * *', () => {
+        try {
+            scraperNews()
+
+        } catch (err) { }
+
+    });
 
 
     // scraperStat()
