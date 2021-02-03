@@ -940,7 +940,7 @@ module.exports.Shishit = async function () {
         try {
 
             //opening a new page and navigating to Fleshscore
-            await page.goto('https://sport1.maariv.co.il/israeli-soccer/');
+            await page.goto('https://sport1.maariv.co.il/israeli-soccer/ligat-haal/');
             await page.waitForSelector('body');
 
             //manipulating the page's content
@@ -981,7 +981,9 @@ module.exports.Shishit = async function () {
 
             let lastNewsDB = await highlightNews.find({site}) 
             lastNewsDB = lastNewsDB.length ? lastNewsDB[0] : {}
-            if (lastNews.title !== lastNewsDB.title) {
+            console.log('lastNewsDB',lastNewsDB)
+            console.log('lastNews',lastNews)
+            if (lastNews.title !== lastNewsDB.title && lastNews.href !== lastNewsDB.href) {
                 const data = {
                     title: lastNews.title,
                     href: lastNews.href
