@@ -906,7 +906,7 @@ module.exports.Shishit = async function () {
                 }
 
                 await highlightNews.findOneAndUpdate({site}, data, { upsert: true, new: true })
-                botTest.sendMessage('404011627', lastNews.href)
+                botTest.sendMessage(chatShisit, lastNews.href)
 
             }
 
@@ -1011,14 +1011,14 @@ module.exports.Shishit = async function () {
         }
     }
 
-    nodeSchedule.scheduleJob('*/12 * * * *', () => {
-        try {
-            scraperNews()
+    // nodeSchedule.scheduleJob('*/12 * * * *', () => {
+    //     try {
+    //         scraperNews()
 
-        } catch (err) { }
+    //     } catch (err) { }
 
-    });
-    nodeSchedule.scheduleJob('*/19 * * * *', () => {
+    // });
+    nodeSchedule.scheduleJob('*/15 * * * *', () => {
         try {
             scraperNews2()
 
