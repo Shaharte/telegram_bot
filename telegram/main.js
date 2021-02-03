@@ -8,6 +8,8 @@ const elazToken = '1523524884:AAFz46CJAiyreUFc58_Gc_3PuPtMbkDlE5g';
 const stockToken = '1602258658:AAG51Ls1qMf6zp8CY3HGzRmQhmAWkv8-4sU';
 var unirest = require("unirest");
 const _ = require('lodash');
+const chatShisit ='-471015035'
+const chatTest ='404011627'
 process.env.NTBA_FIX_319 = 1
 const moment = require('moment');
 const nodeSchedule = require('node-schedule');
@@ -811,7 +813,7 @@ module.exports.Shishit = async function () {
 
                     }
                     await highlightVideo.findOneAndUpdate({}, data, { upsert: true, new: true })
-                    botTest.sendMessage('-471015035', lastNews.href)
+                    botTest.sendMessage(chatShisit, lastNews.href)
 
                 }
             }
@@ -824,7 +826,7 @@ module.exports.Shishit = async function () {
 
         }
         finally {
-            console.log('browser close stats')
+            console.log('browser close Highlights')
 
             //closing the browser
             await browser.close();
@@ -894,7 +896,8 @@ module.exports.Shishit = async function () {
             });
             // console.log('news', news)
             const lastNews = news[0]
-            let lastNewsDB = await highlightNews.find({}) 
+            const site = 'sport5'
+            let lastNewsDB = await highlightNews.find({site}) 
             lastNewsDB = lastNewsDB.length ? lastNewsDB[0] : {}
             if (lastNews.title !== lastNewsDB.title) {
                 const data = {
@@ -902,8 +905,8 @@ module.exports.Shishit = async function () {
                     href: lastNews.href
                 }
 
-                await highlightNews.findOneAndUpdate({}, data, { upsert: true, new: true })
-                botTest.sendMessage('-471015035', lastNews.href)
+                await highlightNews.findOneAndUpdate({site}, data, { upsert: true, new: true })
+                botTest.sendMessage('404011627', lastNews.href)
 
             }
 
@@ -919,7 +922,7 @@ module.exports.Shishit = async function () {
 
         }
         finally {
-            console.log('browser close stats')
+            console.log('browser close news')
 
             //closing the browser
             await browser.close();
@@ -927,92 +930,97 @@ module.exports.Shishit = async function () {
     }
         // running scrapper on "sport1" to get news
 
-    // const scraperNews = async () => {
-    //     console.log('starting to run news scrapper')
-    //     // const stats = []
-    //     let str = ''
-    //     const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
+    const scraperNews2 = async () => {
+        console.log('starting to run news scrapper')
+        // const stats = []
+        let str = ''
+        const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
 
-    //     const page = await browser.newPage();
-    //     try {
+        const page = await browser.newPage();
+        try {
 
-    //         //opening a new page and navigating to Fleshscore
-    //         await page.goto('https://sport1.maariv.co.il/israeli-soccer/');
-    //         await page.waitForSelector('body');
+            //opening a new page and navigating to Fleshscore
+            await page.goto('https://sport1.maariv.co.il/israeli-soccer/');
+            await page.waitForSelector('body');
 
-    //         //manipulating the page's content
-    //         let news = await page.evaluate(() => {
+            //manipulating the page's content
+            let news = await page.evaluate(() => {
 
-    //             let allStats = document.body.querySelectorAll('.post-card.col-lg-11.col-12.p-0');
-    //             let highlights = []
-    //             //storing the post items in an array then selecting for retrieving content
-
-
-    //             allStats.forEach(item => {
-    //                 let arr = []
-    //                 try {
-    //                     let title = item.querySelector('.title-post').innerText;
-
-    //                     let href = item.querySelector('a').href
-    //                     highlights.push({
-    //                         title,
-    //                         href,
-    //                     })
+                let allStats = document.body.querySelectorAll('.post-card.col-lg-11.col-12.p-0');
+                let highlights = []
+                //storing the post items in an array then selecting for retrieving content
 
 
-    //                 } catch (err) {
-    //                     console.log(err)
+                allStats.forEach(item => {
+                    let arr = []
+                    try {
+                        let title = item.querySelector('.title-post').innerText;
+
+                        let href = item.querySelector('a').href
+                        highlights.push({
+                            title,
+                            href,
+                        })
 
 
-    //                 }
+                    } catch (err) {
+                        console.log(err)
 
 
-    //             });
+                    }
 
 
+                });
 
 
+                return highlights;
+            });
+            // console.log('news', news)
+            const lastNews = news[0]
+            const site = 'sport1'
 
+            let lastNewsDB = await highlightNews.find({site}) 
+            lastNewsDB = lastNewsDB.length ? lastNewsDB[0] : {}
+            if (lastNews.title !== lastNewsDB.title) {
+                const data = {
+                    title: lastNews.title,
+                    href: lastNews.href
+                }
 
-    //             return highlights;
-    //         });
-    //         // console.log('news', news)
-    //         const lastNews = news[0]
-    //         let lastNewsDB = await highlightNews.find({}) 
-    //         lastNewsDB = lastNewsDB.length ? lastNewsDB[0] : {}
-    //         if (lastNews.title !== lastNewsDB.title) {
-    //             const data = {
-    //                 title: lastNews.title,
-    //                 href: lastNews.href
-    //             }
+                await highlightNews.findOneAndUpdate({site}, data, { upsert: true, new: true })
+                botTest.sendMessage(chatShisit, lastNews.href)
 
-    //             await highlightNews.findOneAndUpdate({}, data, { upsert: true, new: true })
-    //             botTest.sendMessage('404011627', lastNews.href)
+            }
 
-    //         }
+            // if (allStatss.length) {
+            //     const { title = '', video = '' } = allStatss[0]
+            //     str += `${title}\n ${video}`
+            // }
+            // botTest.sendMessage('404011627', str)
 
-    //         // if (allStatss.length) {
-    //         //     const { title = '', video = '' } = allStatss[0]
-    //         //     str += `${title}\n ${video}`
-    //         // }
-    //         // botTest.sendMessage('404011627', str)
+            //outputting the scraped data
+        } catch (err) {
+            console.log('err', err)
 
-    //         //outputting the scraped data
-    //     } catch (err) {
-    //         console.log('err', err)
+        }
+        finally {
+            console.log('browser close news2')
 
-    //     }
-    //     finally {
-    //         console.log('browser close stats')
+            //closing the browser
+            await browser.close();
+        }
+    }
 
-    //         //closing the browser
-    //         await browser.close();
-    //     }
-    // }
-
-    nodeSchedule.scheduleJob('*/15 * * * *', () => {
+    nodeSchedule.scheduleJob('*/12 * * * *', () => {
         try {
             scraperNews()
+
+        } catch (err) { }
+
+    });
+    nodeSchedule.scheduleJob('*/19 * * * *', () => {
+        try {
+            scraperNews2()
 
         } catch (err) { }
 
@@ -1030,7 +1038,7 @@ module.exports.Shishit = async function () {
     //         const question = `${game}, ${time}`
     //         const options = [home, draw, away]
     //         const is_anonymous = false
-    //         botTest.sendPoll('-471015035', question, options)
+    //         botTest.sendPoll(chatShisit, question, options)
     // 404011627
     //     })
 
@@ -1078,11 +1086,11 @@ module.exports.Shishit = async function () {
 
                             if (min === 'Finished' && oldGame.min !== min) {
                                 str += `${min}: ${homeTeam} ${score} ${awayTeam}\n`
-                                botTest.sendMessage('-471015035', str)
+                                botTest.sendMessage(chatShisit, str)
 
                             } else if (oldGame.score === '-') {
                                 str += `Match Started! ${min}: ${homeTeam} ${score} ${awayTeam}\n`
-                                botTest.sendMessage('-471015035', str)
+                                botTest.sendMessage(chatShisit, str)
 
                             } else if (oldGame.score !== score) {
                                 if (homeScore > oldHomeScore || awayScore > oldAwayScore) {
@@ -1106,7 +1114,7 @@ module.exports.Shishit = async function () {
                                     }
 
                                 }
-                                botTest.sendMessage('-471015035', str)
+                                botTest.sendMessage(chatShisit, str)
                             }
                             //  else if (oldGame.lastScorrer.scorer === '' && scorer !== '' || oldGame.lastScorrer.scorer && oldGame.lastScorrer.min !== scorerMin && scorer !== '') {
                             //     const scoreTeam = team === 'home' ? homeTeam : (team === 'away' ? awayTeam : '')

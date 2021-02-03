@@ -18,6 +18,7 @@ const newsSchema = new Schema(
     {
         title: String,
         href: String,
+        site: String
     }
 );
 const videoSchema = new Schema(
@@ -29,7 +30,7 @@ const videoSchema = new Schema(
 const subjectsSchema = new Schema(
     {
         updateTo: Date,
-        subjects: ['1','2','3'],
+        subjects: ['1', '2', '3'],
 
     }
 );
@@ -46,5 +47,5 @@ const liveGames = {
     statistics,
     highlightNews,
     highlightVideo
-  };
-  module.exports = liveGames;
+};
+module.exports = liveGames;
