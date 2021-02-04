@@ -171,11 +171,14 @@ module.exports.scraperNewsSport1 = async () => {
                 let arr = []
                 try {
                     let title = item.querySelector('.title-post').innerText;
+                    let excerpt = item.querySelector('.excerpt-post').innerText;
 
                     let href = item.querySelector('a').href
                     highlights.push({
                         title,
                         href,
+                        excerpt
+                        
                     })
 
 
@@ -230,11 +233,13 @@ module.exports.scraperNewsHaifa = async () => {
                 let arr = []
                 try {
                     let title = item.querySelector('.title-post').innerText;
+                    let excerpt = item.querySelector('.excerpt-post').innerText;
 
                     let href = item.querySelector('a').href
                     highlights.push({
                         title,
                         href,
+                        excerpt
                     })
 
 
@@ -250,7 +255,7 @@ module.exports.scraperNewsHaifa = async () => {
 
             return highlights;
         });
-        // console.log('news', news)
+        console.log('news', news)
         return news
 
 

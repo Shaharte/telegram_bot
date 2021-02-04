@@ -786,14 +786,14 @@ module.exports.Shishit = async function () {
 
         }
     }
-    nodeSchedule.scheduleJob('*/15 * * * *', () => {
-        try {
-            sendNewsSport1()
+    // nodeSchedule.scheduleJob('*/15 * * * *', () => {
+    //     try {
+    //         sendNewsSport1()
 
-        } catch (err) { }
+    //     } catch (err) { }
 
-    });
-
+    // });
+    // scraperNewsSport1()
  
 
     // checking if there was a goal, the game has started or the game is finish and send a push

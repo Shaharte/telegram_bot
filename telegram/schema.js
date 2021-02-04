@@ -17,7 +17,7 @@ const statsSchema = new Schema(
 const newsSchema = new Schema(
     {
         title: String,
-        href: String,
+        href: Array,
         site: String
     }
 );
