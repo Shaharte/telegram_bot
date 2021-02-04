@@ -789,8 +789,21 @@ module.exports.Shishit = async function () {
                         str += `${excerpt}.\n`
         
                         botTest.sendMessage(chatShisit, str)
-                    }
 
+                        const index = lastNewsDB.findIndex(o => {
+                            return o.href === lastNews.href 
+                        }) 
+                        console.log('index',index)
+                        isThere.title=title
+                        isThere.excerpt=excerpt
+                        lastNewsDB[index] = isThere
+                        const data2 = {
+                            site,
+                            href: lastNewsDB
+                        }
+                        await highlightNews.findOneAndUpdate({ site }, data2, { upsert: true, new: true })
+
+                    }
 
                 } else {
                     botTest.sendMessage(chatShisit, lastNews.href)
@@ -3160,12 +3173,27 @@ module.exports.Maccabi = async function () {
                 })
 
                 if (isThere){
-
                     const { title, excerpt } = lastNews
-                    str += `עדכון - ${title}\n`
-                    str += `${excerpt}\n`
-    
-                    haifaBot.sendMessage(404011627, str)
+                    if (isThere.excerpt !== excerpt && isThere.title !== title){
+
+                        str += `עדכון - ${title}.\n`
+                        str += `${excerpt}.\n`
+        
+                        haifaBot.sendMessage(404011627, str)
+
+                        const index = lastNewsDB.findIndex(o => {
+                            return o.href === lastNews.href 
+                        }) 
+                        isThere.title=title
+                        isThere.excerpt=excerpt
+                        lastNewsDB[index] = isThere
+                        const data2 = {
+                            site,
+                            href: lastNewsDB
+                        }
+                        await highlightNews.findOneAndUpdate({ site }, data2, { upsert: true, new: true })
+
+                    }
 
                 } else {
                     haifaBot.sendMessage(404011627, lastNews.href)

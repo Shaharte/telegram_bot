@@ -23,7 +23,7 @@ app.listen(port, () => {
 });
 
 
-Ahanhala()
-Stocks()
+// Ahanhala()
+// Stocks()
 Shishit()
-Maccabi()
+// Maccabi()
