@@ -1,7 +1,7 @@
 // const { Telegraf } = require('telegraf')
 const axios = require("axios");
 const { games, wednesdeySubjects, statistics, highlightNews, highlightVideo } = require('./schema');
-const { scraperStat, scraperHighlights, scraperNewsSport1,scraperNewsSport5,scraperCalcalist,scraperNewsHaifa } = require('./scrapper');
+const { scraperStat, scraperHighlights, scraperNewsSport1, scraperNewsSport5, scraperCalcalist, scraperNewsHaifa } = require('./scrapper');
 // const pexelKey = process.env.PEXEL_KEY;
 const token = '1557847459:AAGP08OPiRxV2OrCQ0FZhx4CbtOA2Btf7QA';
 const testtoken = '1556993489:AAHrW-PHjchV5A9oTbPUuJiN54PZwF800h0';
@@ -756,45 +756,67 @@ module.exports.Shishit = async function () {
 
         try {
             const news = await scraperNewsSport1()
-            console.log('news', news)
+            // console.log('news', news)
+            // const data = {
+            //     title: lastNews.title,
+            //     href: lastNews.href
+            // }
+            // await highlightNews.findOneAndUpdate({ site }, data, { upsert: true, new: true })
+
             const lastNews = news[0]
+
             const site = 'sport1'
             let lastNewsDB = await highlightNews.find({ site })
-            lastNewsDB = lastNewsDB.length ? lastNewsDB[0] : {}
-            console.log('lastNewsDB', lastNewsDB)
-            console.log('lastNews', lastNews)
-            if (lastNews.title !== lastNewsDB.title && lastNews.href !== lastNewsDB.href) {
-                const data = {
-                    title: lastNews.title,
-                    href: lastNews.href
+            lastNewsDB = lastNewsDB.length ? lastNewsDB[0].href : []
+            // console.log('lastNewsDB', lastNewsDB)
+            // console.log('lastNews', lastNews)
+      
+            const isThereReally = lastNewsDB.find(o => {
+                return o.href === lastNews.href && o.title === lastNews.title
+            }) 
+
+            if (!isThereReally) {
+
+                const isThere = lastNewsDB.find(o => {
+                    return o.href === lastNews.href
+                })
+
+                console.log('isThere', isThere)
+                if (isThere){
+
+                    const { title, excerpt } = lastNews
+                    str += `עדכון - ${title}\n`
+                    str += `${excerpt}\n`
+    
+                    botTest.sendMessage(chatShisit, str)
+
+                } else {
+                    botTest.sendMessage(chatShisit, lastNews.href)
+                    lastNewsDB.unshift(lastNews)
+                    const data = {
+                        site,
+                        href: lastNewsDB
+                    }
+                    await highlightNews.findOneAndUpdate({ site }, data, { upsert: true, new: true })
+    
                 }
-
-                await highlightNews.findOneAndUpdate({ site }, data, { upsert: true, new: true })
-                botTest.sendMessage(chatShisit, lastNews.href)
-
             }
-
-            // if (allStatss.length) {
-            //     const { title = '', video = '' } = allStatss[0]
-            //     str += `${title}\n ${video}`
-            // }
-            // botTest.sendMessage('404011627', str)
-
+         
             //outputting the scraped data
         } catch (err) {
             console.log('err', err)
 
         }
     }
-    // nodeSchedule.scheduleJob('*/15 * * * *', () => {
-    //     try {
-    //         sendNewsSport1()
+    nodeSchedule.scheduleJob('*/15 * * * *', () => {
+        try {
+            sendNewsSport1()
+        } catch (err) { }
 
-    //     } catch (err) { }
+    });
 
-    // });
-    // scraperNewsSport1()
- 
+    // sendNewsSport1()
+
 
     // checking if there was a goal, the game has started or the game is finish and send a push
     const sendNotification = (newGames, oldGames) => {
@@ -3088,7 +3110,7 @@ module.exports.Maccabi = async function () {
 
     haifaBot.onText(/\/help/, (msg, match) => {
         const chatId = msg.chat.id;
-        console.log('chatId',chatId)
+        console.log('chatId', chatId)
         console.log(chatId)
         const { text } = msg
         if (text === '/help') {
@@ -3104,45 +3126,65 @@ module.exports.Maccabi = async function () {
 
     });
 
-
-    // running scrapper on "sport1" to get Haifa news
     const sendNewsHaifa = async () => {
-        console.log('starting to run Haifa scrapper')
         // const stats = []
         let str = ''
 
         try {
             const news = await scraperNewsHaifa()
-            console.log('news', news)
+            // console.log('news', news)
+            // const data = {
+            //     title: lastNews.title,
+            //     href: lastNews.href
+            // }
+            // await highlightNews.findOneAndUpdate({ site }, data, { upsert: true, new: true })
+
             const lastNews = news[0]
+
             const site = 'haifa'
             let lastNewsDB = await highlightNews.find({ site })
-            lastNewsDB = lastNewsDB.length ? lastNewsDB[0] : {}
-            console.log('lastNewsDB', lastNewsDB)
-            console.log('lastNews', lastNews)
-            if (lastNews.title !== lastNewsDB.title && lastNews.href !== lastNewsDB.href) {
-                const data = {
-                    title: lastNews.title,
-                    href: lastNews.href
+            lastNewsDB = lastNewsDB.length ? lastNewsDB[0].href : []
+            // console.log('lastNewsDB', lastNewsDB)
+            // console.log('lastNews', lastNews)
+      
+            const isThereReally = lastNewsDB.find(o => {
+                return o.href === lastNews.href && o.title === lastNews.title
+            }) 
+
+            if (!isThereReally) {
+
+                const isThere = lastNewsDB.find(o => {
+                    return o.href === lastNews.href
+                })
+
+                if (isThere){
+
+                    const { title, excerpt } = lastNews
+                    str += `עדכון - ${title}\n`
+                    str += `${excerpt}\n`
+    
+                    botTest.sendMessage(404011627, str)
+
+                } else {
+                    botTest.sendMessage(404011627, lastNews.href)
+                    lastNewsDB.unshift(lastNews)
+                    const data = {
+                        site,
+                        href: lastNewsDB
+                    }
+                    await highlightNews.findOneAndUpdate({ site }, data, { upsert: true, new: true })
+    
                 }
-
-                await highlightNews.findOneAndUpdate({ site }, data, { upsert: true, new: true })
-                haifaBot.sendMessage('404011627', lastNews.href)
-
             }
-
-            // if (allStatss.length) {
-            //     const { title = '', video = '' } = allStatss[0]
-            //     str += `${title}\n ${video}`
-            // }
-            // botTest.sendMessage('404011627', str)
-
+         
             //outputting the scraped data
         } catch (err) {
             console.log('err', err)
 
         }
     }
+    // running scrapper on "sport1" to get Haifa news
+
     nodeSchedule.scheduleJob('*/15 * * * *', () => {
         try {
             sendNewsHaifa()

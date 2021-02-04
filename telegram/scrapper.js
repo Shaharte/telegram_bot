@@ -171,7 +171,7 @@ module.exports.scraperNewsSport1 = async () => {
                 let arr = []
                 try {
                     let title = item.querySelector('.title-post').innerText;
-                    let excerpt = item.querySelector('.excerpt-post').innerText;
+                    let excerpt = item.querySelector('p').innerText.trim();
 
                     let href = item.querySelector('a').href
                     highlights.push({
@@ -211,6 +211,8 @@ module.exports.scraperNewsSport1 = async () => {
 }
 module.exports.scraperNewsHaifa = async () => {
     // const stats = []
+    console.log('starting to run Haifa scrapper')
+
     let str = ''
     const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
 
@@ -233,7 +235,7 @@ module.exports.scraperNewsHaifa = async () => {
                 let arr = []
                 try {
                     let title = item.querySelector('.title-post').innerText;
-                    let excerpt = item.querySelector('.excerpt-post').innerText;
+                    let excerpt = item.querySelector('p').innerText.trim();
 
                     let href = item.querySelector('a').href
                     highlights.push({
