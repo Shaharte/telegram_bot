@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express();
-const { Shishit, Ahanhala,Stocks} = require('./telegram/main');
+const { Shishit, Ahanhala,Stocks,Maccabi} = require('./telegram/main');
 
 const port = process.env.PORT || 8000
 
@@ -26,3 +26,4 @@ app.listen(port, () => {
 Ahanhala()
 Stocks()
 Shishit()
+Maccabi()

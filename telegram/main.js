@@ -1,15 +1,17 @@
 // const { Telegraf } = require('telegraf')
 const axios = require("axios");
 const { games, wednesdeySubjects, statistics, highlightNews, highlightVideo } = require('./schema');
+const { scraperStat, scraperHighlights, scraperNewsSport1,scraperNewsSport5,scraperCalcalist,scraperNewsHaifa } = require('./scrapper');
 // const pexelKey = process.env.PEXEL_KEY;
 const token = '1557847459:AAGP08OPiRxV2OrCQ0FZhx4CbtOA2Btf7QA';
 const testtoken = '1556993489:AAHrW-PHjchV5A9oTbPUuJiN54PZwF800h0';
 const elazToken = '1523524884:AAFz46CJAiyreUFc58_Gc_3PuPtMbkDlE5g';
 const stockToken = '1602258658:AAG51Ls1qMf6zp8CY3HGzRmQhmAWkv8-4sU';
+const haifaToken = '1682397940:AAEYhFNefLMF8MF7y6qOBcoCtsKuNtKJ7dI';
 var unirest = require("unirest");
 const _ = require('lodash');
-const chatShisit ='-471015035'
-const chatTest ='404011627'
+const chatShisit = '-471015035'
+const chatTest = '404011627'
 process.env.NTBA_FIX_319 = 1
 const moment = require('moment');
 const nodeSchedule = require('node-schedule');
@@ -20,7 +22,7 @@ const sentensesAdd = ['הוספתי לך את הנושא יא מלך עולם', 
 const sentensesRemove = ['בוזזזזזזזזזז', 'מה אתה קשוררררר, טוב נו', 'לאאאא נו למה.. יאללה בסדר']
 
 const TelegramBot = require('node-telegram-bot-api');
-const { isError } = require("lodash");
+// const { isError } = require("lodash");
 
 const cerdentials = {
     "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
@@ -666,84 +668,9 @@ module.exports.Shishit = async function () {
 
 
     }
+
+
     // running scrapper on "המנהלת" to get live stats every day
-    const scraperStat = async () => {
-        console.log('starting to run statitics scrapper')
-        // const stats = []
-        const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
-
-        const page = await browser.newPage();
-        try {
-
-            //opening a new page and navigating to Fleshscore
-            await page.goto('https://www.football.co.il/stats/');
-            await page.waitForSelector('body');
-
-            //manipulating the page's content
-            let allStatss = await page.evaluate(() => {
-                document.querySelector(".stats-see-more-btn").click();
-                document.querySelector(".stats-see-more-btn").click();
-                document.querySelector(".stats-see-more-btn").click();
-                document.querySelector(".stats-see-more-btn").click();
-                let ststtt = document.body.querySelector('.stats-page');
-                let allStats = ststtt.querySelectorAll('.stats-category-item');
-                let stats = []
-
-                //storing the post items in an array then selecting for retrieving content
-                allStats.forEach(item => {
-                    let arr = []
-                    try {
-                        let title = item.querySelector('.stats-category-item-title').innerText;
-                        let allPlayers = item.querySelectorAll('.player-list-item')
-                        allPlayers.forEach(player => {
-                            let count = player.querySelector('.player-list-player-count').innerText;
-                            let name = player.querySelector('.player-list-player-name').innerText;
-                            let position = player.querySelector('.player-list-player-role').innerText;
-                            let href = player.querySelector('a').href;
-                            arr.push({
-                                name,
-                                count,
-                                position,
-                                href
-                            })
-
-                        })
-                        stats.push({
-                            [title]: arr
-                        })
-                    } catch (err) {
-                        console.log(err)
-
-
-                    }
-
-
-                });
-
-
-                return stats;
-            });
-            console.log(allStatss)
-            const data = {
-                updateTo,
-                stats: allStatss
-            }
-            await statistics.findOneAndUpdate({}, data, { upsert: true, new: true })
-
-            //outputting the scraped data
-        } catch (err) {
-
-        }
-        finally {
-            console.log('browser close stats')
-
-            //closing the browser
-            await browser.close();
-        }
-
-
-
-    }
     nodeSchedule.scheduleJob('00 8-10 * * *', () => {
         try {
             scraperStat()
@@ -754,56 +681,14 @@ module.exports.Shishit = async function () {
 
 
     // running scrapper on "sport1" to get highlights
-
-    const scraperHighlights = async () => {
+    const sendHighlights = async () => {
         console.log('starting to run highlights scrapper')
-        // const stats = []
-        let str = ''
-        const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
-
-        const page = await browser.newPage();
         try {
-
-            //opening a new page and navigating to Fleshscore
-            await page.goto('https://sport1.maariv.co.il/vod/ligat-haal/');
-            await page.waitForSelector('body');
-
-            //manipulating the page's content
-            let allStatss = await page.evaluate(() => {
-
-                let allStats = document.body.querySelectorAll('.video-card');
-                let highlights = []
-
-                //storing the post items in an array then selecting for retrieving content
-                allStats.forEach(item => {
-                    let arr = []
-                    try {
-                        let title = item.querySelector('.title-text').innerText;
-                        if (title.includes('צפו בשערי המחזור ה')) {
-                            let href = item.querySelector('a').href
-                            highlights.push({
-                                title,
-                                href,
-                            })
-
-                        }
-
-                    } catch (err) {
-                        console.log(err)
-
-
-                    }
-
-
-                });
-
-
-                return highlights;
-            });
+            const allStatss = await scraperHighlights()
+            console.log(allStatss)
             if (allStatss.length) {
                 const lastNews = allStatss[0]
-
-                let lastNewsDB = await highlightVideo.find({}) 
+                let lastNewsDB = await highlightVideo.find({})
                 lastNewsDB = lastNewsDB.length ? lastNewsDB[0] : {}
 
                 if (lastNews.title !== lastNewsDB.title) {
@@ -818,86 +703,33 @@ module.exports.Shishit = async function () {
                 }
             }
 
-
-
-
-            //outputting the scraped data
         } catch (err) {
 
         }
-        finally {
-            console.log('browser close Highlights')
-
-            //closing the browser
-            await browser.close();
-        }
-
 
 
     }
     nodeSchedule.scheduleJob('00 12 * * *', () => {
         try {
-            scraperHighlights()
-
+            sendHighlights()
         } catch (err) { }
 
     });
 
 
-    // running scrapper on "sport5" to get news
 
-    const scraperNews = async () => {
+    // running scrapper on "sport5" to get news
+    const sendNewsSport5 = async () => {
         console.log('starting to run news scrapper')
         // const stats = []
         let str = ''
-        const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
 
-        const page = await browser.newPage();
         try {
-
-            //opening a new page and navigating to Fleshscore
-            await page.goto('https://www.sport5.co.il/liga.aspx?FolderID=44');
-            await page.waitForSelector('body');
-
-            //manipulating the page's content
-            let news = await page.evaluate(() => {
-
-                let allStats = document.body.querySelector('.mainarticle-league');
-                let highlights = []
-                //storing the post items in an array then selecting for retrieving content
-
-
-             
-                    let arr = []
-                    try {
-                        let title = allStats.querySelector('.title').innerText;
-                        let href = allStats.querySelector('a').href
-                        highlights.push({
-                            title,
-                            href,
-                        })
-
-
-                    } catch (err) {
-                        console.log(err)
-
-
-                    }
-
-
-             
-
-
-
-
-
-
-                return highlights;
-            });
-            // console.log('news', news)
+            const news = await scraperNewsSport5()
+            console.log('news', news)
             const lastNews = news[0]
             const site = 'sport5'
-            let lastNewsDB = await highlightNews.find({site}) 
+            let lastNewsDB = await highlightNews.find({ site })
             lastNewsDB = lastNewsDB.length ? lastNewsDB[0] : {}
             if (lastNews.title !== lastNewsDB.title) {
                 const data = {
@@ -905,91 +737,39 @@ module.exports.Shishit = async function () {
                     href: lastNews.href
                 }
 
-                await highlightNews.findOneAndUpdate({site}, data, { upsert: true, new: true })
+                await highlightNews.findOneAndUpdate({ site }, data, { upsert: true, new: true })
                 botTest.sendMessage(chatShisit, lastNews.href)
 
             }
-
-            // if (allStatss.length) {
-            //     const { title = '', video = '' } = allStatss[0]
-            //     str += `${title}\n ${video}`
-            // }
-            // botTest.sendMessage('404011627', str)
 
             //outputting the scraped data
         } catch (err) {
             console.log('err', err)
 
         }
-        finally {
-            console.log('browser close news')
 
-            //closing the browser
-            await browser.close();
-        }
     }
-        // running scrapper on "sport1" to get news
-
-    const scraperNews2 = async () => {
-        console.log('starting to run news scrapper')
+    // running scrapper on "sport1" to get news
+    const sendNewsSport1 = async () => {
         // const stats = []
         let str = ''
-        const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
 
-        const page = await browser.newPage();
         try {
-
-            //opening a new page and navigating to Fleshscore
-            await page.goto('https://sport1.maariv.co.il/israeli-soccer/ligat-haal/');
-            await page.waitForSelector('body');
-
-            //manipulating the page's content
-            let news = await page.evaluate(() => {
-
-                let allStats = document.body.querySelectorAll('.post-card.col-lg-11.col-12.p-0');
-                let highlights = []
-                //storing the post items in an array then selecting for retrieving content
-
-
-                allStats.forEach(item => {
-                    let arr = []
-                    try {
-                        let title = item.querySelector('.title-post').innerText;
-
-                        let href = item.querySelector('a').href
-                        highlights.push({
-                            title,
-                            href,
-                        })
-
-
-                    } catch (err) {
-                        console.log(err)
-
-
-                    }
-
-
-                });
-
-
-                return highlights;
-            });
-            // console.log('news', news)
+            const news = await scraperNewsSport1()
+            console.log('news', news)
             const lastNews = news[0]
             const site = 'sport1'
-
-            let lastNewsDB = await highlightNews.find({site}) 
+            let lastNewsDB = await highlightNews.find({ site })
             lastNewsDB = lastNewsDB.length ? lastNewsDB[0] : {}
-            console.log('lastNewsDB',lastNewsDB)
-            console.log('lastNews',lastNews)
+            console.log('lastNewsDB', lastNewsDB)
+            console.log('lastNews', lastNews)
             if (lastNews.title !== lastNewsDB.title && lastNews.href !== lastNewsDB.href) {
                 const data = {
                     title: lastNews.title,
                     href: lastNews.href
                 }
 
-                await highlightNews.findOneAndUpdate({site}, data, { upsert: true, new: true })
+                await highlightNews.findOneAndUpdate({ site }, data, { upsert: true, new: true })
                 botTest.sendMessage(chatShisit, lastNews.href)
 
             }
@@ -1005,49 +785,16 @@ module.exports.Shishit = async function () {
             console.log('err', err)
 
         }
-        finally {
-            console.log('browser close news2')
-
-            //closing the browser
-            await browser.close();
-        }
     }
-
-    // nodeSchedule.scheduleJob('*/12 * * * *', () => {
-    //     try {
-    //         scraperNews()
-
-    //     } catch (err) { }
-
-    // });
     nodeSchedule.scheduleJob('*/15 * * * *', () => {
         try {
-            scraperNews2()
+            sendNewsSport1()
 
         } catch (err) { }
 
     });
 
-
-    // scraperStat()
-    //sending a poll
-    // nodeSchedule.scheduleJob('00 12 * * 2', () => {
-    //     console.log('start sending poll')
-    //     nextMatch.forEach(match => {
-    //         console.log('match', match)
-
-    //         const { game, home, draw, away, time } = match
-    //         const question = `${game}, ${time}`
-    //         const options = [home, draw, away]
-    //         const is_anonymous = false
-    //         botTest.sendPoll(chatShisit, question, options)
-    // 404011627
-    //     })
-
-    // });
-
-
-
+ 
 
     // checking if there was a goal, the game has started or the game is finish and send a push
     const sendNotification = (newGames, oldGames) => {
@@ -1138,7 +885,7 @@ module.exports.Shishit = async function () {
 
     }
 
-
+    // const newss = await scraperCalcalist()
     // getting next fixtsure - ligat HaAl
     botTest.onText(/\/next/, async (msg, match) => {
         const chatId = msg.chat.id;
@@ -1221,7 +968,6 @@ module.exports.Shishit = async function () {
 
         }
     });
-
     // getting all the ligyoners data
     botTest.onText(/\/ligyoners/, (msg, match) => {
 
@@ -1462,7 +1208,6 @@ module.exports.Shishit = async function () {
 
 
     });
-
 
 
     // getting all the games
@@ -3335,5 +3080,75 @@ module.exports.Stocks = async function () {
 
     }
 }
+module.exports.Maccabi = async function () {
+    const updateTo = moment().utc().format('YYYY[/]MM[/]DD');
+    const haifaBot = new TelegramBot(haifaToken, { polling: true });
 
 
+
+    haifaBot.onText(/\/help/, (msg, match) => {
+        const chatId = msg.chat.id;
+        console.log('chatId',chatId)
+        console.log(chatId)
+        const { text } = msg
+        if (text === '/help') {
+
+
+            let str = 'I am Maccabi Haifa News Bot\n '
+
+
+            haifaBot.sendMessage(chatId, str);
+
+
+        }
+
+    });
+
+
+    // running scrapper on "sport1" to get Haifa news
+    const sendNewsHaifa = async () => {
+        console.log('starting to run Haifa scrapper')
+        // const stats = []
+        let str = ''
+
+        try {
+            const news = await scraperNewsHaifa()
+            console.log('news', news)
+            const lastNews = news[0]
+            const site = 'haifa'
+            let lastNewsDB = await highlightNews.find({ site })
+            lastNewsDB = lastNewsDB.length ? lastNewsDB[0] : {}
+            console.log('lastNewsDB', lastNewsDB)
+            console.log('lastNews', lastNews)
+            if (lastNews.title !== lastNewsDB.title && lastNews.href !== lastNewsDB.href) {
+                const data = {
+                    title: lastNews.title,
+                    href: lastNews.href
+                }
+
+                await highlightNews.findOneAndUpdate({ site }, data, { upsert: true, new: true })
+                haifaBot.sendMessage('404011627', lastNews.href)
+
+            }
+
+            // if (allStatss.length) {
+            //     const { title = '', video = '' } = allStatss[0]
+            //     str += `${title}\n ${video}`
+            // }
+            // botTest.sendMessage('404011627', str)
+
+            //outputting the scraped data
+        } catch (err) {
+            console.log('err', err)
+
+        }
+    }
+    nodeSchedule.scheduleJob('*/15 * * * *', () => {
+        try {
+            sendNewsHaifa()
+
+        } catch (err) { }
+
+    });
+
+}
