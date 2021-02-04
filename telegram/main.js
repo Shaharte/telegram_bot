@@ -781,14 +781,16 @@ module.exports.Shishit = async function () {
                     return o.href === lastNews.href
                 })
 
-                console.log('isThere', isThere)
                 if (isThere){
-
                     const { title, excerpt } = lastNews
-                    str += `עדכון - ${title}\n`
-                    str += `${excerpt}\n`
-    
-                    botTest.sendMessage(chatShisit, str)
+                    if (isThere.excerpt !== excerpt && isThere.title !== title){
+
+                        str += `עדכון - ${title}.\n`
+                        str += `${excerpt}.\n`
+        
+                        botTest.sendMessage(chatShisit, str)
+                    }
+
 
                 } else {
                     botTest.sendMessage(chatShisit, lastNews.href)
