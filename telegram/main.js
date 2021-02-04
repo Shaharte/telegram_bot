@@ -3163,10 +3163,10 @@ module.exports.Maccabi = async function () {
                     str += `עדכון - ${title}\n`
                     str += `${excerpt}\n`
     
-                    botTest.sendMessage(404011627, str)
+                    haifaBot.sendMessage(404011627, str)
 
                 } else {
-                    botTest.sendMessage(404011627, lastNews.href)
+                    haifaBot.sendMessage(404011627, lastNews.href)
                     lastNewsDB.unshift(lastNews)
                     const data = {
                         site,
