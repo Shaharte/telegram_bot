@@ -770,56 +770,61 @@ module.exports.Shishit = async function () {
             lastNewsDB = lastNewsDB.length ? lastNewsDB[0].href : []
             // console.log('lastNewsDB', lastNewsDB)
             console.log('lastNews', lastNews)
-      
-            const isThereReally = lastNewsDB.find(o => {
-                return o.href === lastNews.href && o.title === lastNews.title
-            }) 
-            console.log('isThereReally', isThereReally)
+            const isPushable = checkIfPush(lastNews)
+            console.log('isPushable', isPushable)
 
-            if (!isThereReally) {
-
-                const isThere = lastNewsDB.find(o => {
-                    return o.href === lastNews.href
+            if (isPushable) {
+                const isThereReally = lastNewsDB.find(o => {
+                    return o.href === lastNews.href && o.title === lastNews.title
                 })
-                console.log('isThere', isThere)
+                console.log('isThereReally', isThereReally)
 
-                if (isThere){
-                    const { title, excerpt } = lastNews
-                    if (isThere.excerpt !== excerpt && isThere.title !== title){
-                        console.log('isThere2', isThere)
+                if (!isThereReally) {
 
-                        str += `עדכון - ${title}.\n`
-                        str += `${excerpt}.\n`
-        
-                        botTest.sendMessage(chatShisit, str)
+                    const isThere = lastNewsDB.find(o => {
+                        return o.href === lastNews.href
+                    })
+                    console.log('isThere', isThere)
 
-                        const index = lastNewsDB.findIndex(o => {
-                            return o.href === lastNews.href 
-                        }) 
-                        console.log('index',index)
-                        isThere.title=title
-                        isThere.excerpt=excerpt
-                        lastNewsDB[index] = isThere
-                        const data2 = {
+                    if (isThere) {
+                        const { title, excerpt } = lastNews
+                        if (isThere.excerpt !== excerpt && isThere.title !== title) {
+                            console.log('isThere2', isThere)
+
+                            str += `עדכון - ${title}.\n`
+                            str += `${excerpt}.\n`
+
+                            botTest.sendMessage(chatShisit, str)
+
+                            const index = lastNewsDB.findIndex(o => {
+                                return o.href === lastNews.href
+                            })
+                            console.log('index', index)
+                            isThere.title = title
+                            isThere.excerpt = excerpt
+                            lastNewsDB[index] = isThere
+                            const data2 = {
+                                site,
+                                href: lastNewsDB
+                            }
+                            await highlightNews.findOneAndUpdate({ site }, data2, { upsert: true, new: true })
+
+                        }
+
+                    } else {
+                        botTest.sendMessage(chatShisit, lastNews.href)
+                        lastNewsDB.unshift(lastNews)
+                        const data = {
                             site,
                             href: lastNewsDB
                         }
-                        await highlightNews.findOneAndUpdate({ site }, data2, { upsert: true, new: true })
+                        await highlightNews.findOneAndUpdate({ site }, data, { upsert: true, new: true })
 
                     }
-
-                } else {
-                    botTest.sendMessage(chatShisit, lastNews.href)
-                    lastNewsDB.unshift(lastNews)
-                    const data = {
-                        site,
-                        href: lastNewsDB
-                    }
-                    await highlightNews.findOneAndUpdate({ site }, data, { upsert: true, new: true })
-    
                 }
+
             }
-         
+
             //outputting the scraped data
         } catch (err) {
             console.log('err', err)
@@ -832,6 +837,17 @@ module.exports.Shishit = async function () {
         } catch (err) { }
 
     });
+
+    const checkIfPush = (news) => {
+        let ans = true
+        const { title, excerpt } = news
+        if (excerpt.includes('בראיון') || excerpt.includes('ספורט1') || excerpt.includes('ספורט4') || excerpt.includes('ספורט3') || excerpt.includes('ספורט2') || (excerpt.includes(')') && excerpt.includes('('))) {
+            ans = false
+        }
+        return ans
+
+    }
+
 
     // sendNewsSport1()
 
@@ -3164,10 +3180,10 @@ module.exports.Maccabi = async function () {
             lastNewsDB = lastNewsDB.length ? lastNewsDB[0].href : []
             // console.log('lastNewsDB', lastNewsDB)
             // console.log('lastNews', lastNews)
-      
+
             const isThereReally = lastNewsDB.find(o => {
                 return o.href === lastNews.href && o.title === lastNews.title
-            }) 
+            })
 
             if (!isThereReally) {
 
@@ -3175,20 +3191,20 @@ module.exports.Maccabi = async function () {
                     return o.href === lastNews.href
                 })
 
-                if (isThere){
+                if (isThere) {
                     const { title, excerpt } = lastNews
-                    if (isThere.excerpt !== excerpt && isThere.title !== title){
+                    if (isThere.excerpt !== excerpt && isThere.title !== title) {
 
                         str += `עדכון - ${title}.\n`
                         str += `${excerpt}.\n`
-        
+
                         haifaBot.sendMessage(404011627, str)
 
                         const index = lastNewsDB.findIndex(o => {
-                            return o.href === lastNews.href 
-                        }) 
-                        isThere.title=title
-                        isThere.excerpt=excerpt
+                            return o.href === lastNews.href
+                        })
+                        isThere.title = title
+                        isThere.excerpt = excerpt
                         lastNewsDB[index] = isThere
                         const data2 = {
                             site,
@@ -3206,10 +3222,10 @@ module.exports.Maccabi = async function () {
                         href: lastNewsDB
                     }
                     await highlightNews.findOneAndUpdate({ site }, data, { upsert: true, new: true })
-    
+
                 }
             }
-         
+
             //outputting the scraped data
         } catch (err) {
             console.log('err', err)
