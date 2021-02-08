@@ -55,12 +55,14 @@ module.exports.scraperStat = async () => {
 
             return stats;
         });
-        console.log(allStatss)
-        const data = {
-            updateTo,
-            stats: allStatss
+        if (allStatss.length){
+            // console.log(allStatss)
+
+            const data = {
+                stats: allStatss
+            }
+            await statistics.findOneAndUpdate({},data , { upsert: true })
         }
-        await statistics.findOneAndUpdate({}, data, { upsert: true, new: true })
 
         //outputting the scraped data
     } catch (err) {

@@ -685,7 +685,7 @@ module.exports.Shishit = async function () {
 
     });
 
-
+    // scraperStat()
     // running scrapper on "sport1" to get highlights
     const sendHighlights = async () => {
         console.log('starting to run highlights scrapper')
@@ -1279,7 +1279,7 @@ module.exports.Shishit = async function () {
         const chatId = msg.chat.id;
         const { text } = msg
         if (text === '/mahzorim') {
-            let str = 'Your Options Are:\n\n/mahzor1\n/mahzor2\n/mahzor3\n/mahzor4\n/mahzor5\n/mahzor6\n/mahzor7\n/mahzor8\n/mahzor9\n/mahzor10\n/mahzor11\n/mahzor12\n/mahzor13\n/mahzor14\n/mahzor15\n/mahzor16\n/next\n'
+            let str = 'Your Options Are:\n\n/mahzor1\n/mahzor2\n/mahzor3\n/mahzor4\n/mahzor5\n/mahzor6\n/mahzor7\n/mahzor8\n/mahzor9\n/mahzor10\n/mahzor11\n/mahzor12\n/mahzor13\n/mahzor14\n/mahzor15\n/mahzor17\n/mahzor18\n/mahzor19\n/next\n'
             botTest.sendMessage(chatId, str);
 
 
@@ -3247,5 +3247,112 @@ module.exports.Maccabi = async function () {
         } catch (err) { }
 
     });
+
+}
+module.exports.mccann = async function () {
+    // const updateTo = moment().utc().format('YYYY[/]MM[/]DD');
+    // const haifaBot = new TelegramBot(haifaToken, { polling: true });
+
+
+
+    // haifaBot.onText(/\/help/, (msg, match) => {
+    //     const chatId = msg.chat.id;
+    //     console.log('chatId', chatId)
+    //     console.log(chatId)
+    //     const { text } = msg
+    //     if (text === '/help') {
+
+
+    //         let str = 'I am Maccabi Haifa News Bot\n '
+
+
+    //         haifaBot.sendMessage(chatId, str);
+
+
+    //     }
+
+    // });
+
+    // const sendNewsHaifa = async () => {
+    //     // const stats = []
+    //     let str = ''
+
+    //     try {
+    //         const news = await scraperNewsHaifa()
+    //         // console.log('news', news)
+    //         // const data = {
+    //         //     title: lastNews.title,
+    //         //     href: lastNews.href
+    //         // }
+    //         // await highlightNews.findOneAndUpdate({ site }, data, { upsert: true, new: true })
+
+    //         const lastNews = news[0]
+
+    //         const site = 'haifa'
+    //         let lastNewsDB = await highlightNews.find({ site })
+    //         lastNewsDB = lastNewsDB.length ? lastNewsDB[0].href : []
+    //         // console.log('lastNewsDB', lastNewsDB)
+    //         // console.log('lastNews', lastNews)
+
+    //         const isThereReally = lastNewsDB.find(o => {
+    //             return o.href === lastNews.href && o.title === lastNews.title
+    //         })
+
+    //         if (!isThereReally) {
+
+    //             const isThere = lastNewsDB.find(o => {
+    //                 return o.href === lastNews.href
+    //             })
+
+    //             if (isThere) {
+    //                 const { title, excerpt } = lastNews
+    //                 if (isThere.excerpt !== excerpt && isThere.title !== title) {
+
+    //                     str += `עדכון - ${title}.\n`
+    //                     str += `${excerpt}.\n`
+
+    //                     haifaBot.sendMessage(404011627, str)
+
+    //                     const index = lastNewsDB.findIndex(o => {
+    //                         return o.href === lastNews.href
+    //                     })
+    //                     isThere.title = title
+    //                     isThere.excerpt = excerpt
+    //                     lastNewsDB[index] = isThere
+    //                     const data2 = {
+    //                         site,
+    //                         href: lastNewsDB
+    //                     }
+    //                     await highlightNews.findOneAndUpdate({ site }, data2, { upsert: true, new: true })
+
+    //                 }
+
+    //             } else {
+    //                 haifaBot.sendMessage(404011627, lastNews.href)
+    //                 lastNewsDB.unshift(lastNews)
+    //                 const data = {
+    //                     site,
+    //                     href: lastNewsDB
+    //                 }
+    //                 await highlightNews.findOneAndUpdate({ site }, data, { upsert: true, new: true })
+
+    //             }
+    //         }
+
+    //         //outputting the scraped data
+    //     } catch (err) {
+    //         console.log('err', err)
+
+    //     }
+    // }
+    // // running scrapper on "sport1" to get Haifa news
+
+    // nodeSchedule.scheduleJob('*/15 * * * *', () => {
+    //     try {
+    //         sendNewsHaifa()
+
+    //     } catch (err) { }
+
+    // });
 
 }
