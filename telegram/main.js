@@ -1,6 +1,6 @@
 // const { Telegraf } = require('telegraf')
 const axios = require("axios");
-const { games, wednesdeySubjects, statistics, highlightNews, highlightVideo } = require('./schema');
+const { games, wednesdeySubjects, statistics, highlightNews, highlightVideo, stockStatistics } = require('./schema');
 const { scraperStat, scraperHighlights, scraperNewsSport1, scraperNewsSport5, scraperCalcalist, scraperNewsHaifa } = require('./scrapper');
 // const pexelKey = process.env.PEXEL_KEY;
 const token = '1557847459:AAGP08OPiRxV2OrCQ0FZhx4CbtOA2Btf7QA';
@@ -3047,6 +3047,25 @@ module.exports.Stocks = async function () {
                     str += `${stock}:\n`
                     str += `Price: ${symbol}${price}, ${arrow} ${percentage}\n`
                     stockBot.sendMessage(chatId, str)
+                    const arr = await stockStatistics.find({})
+                    const stats = arr.length ? arr[0].stats : []
+                    const isStats = stats.find(o => {
+                        return o.stock === stock
+                    })
+                    if (isStats) {
+                        isStats.count++
+                    } else {
+                        stats.push({
+                            stock,
+                            count: 1
+
+                        })
+                    }
+                    const data = {
+                        stats,
+                    }
+                    await stockStatistics.findOneAndUpdate({}, data, { upsert: true, new: true });
+
                 }
 
             } catch (err) {

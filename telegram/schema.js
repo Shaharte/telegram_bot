@@ -14,6 +14,11 @@ const statsSchema = new Schema(
         stats: Array,
     }
 );
+const stockStatsSchema = new Schema(
+    {
+        stats: Array,
+    }
+);
 const newsSchema = new Schema(
     {
         href: Array,
@@ -36,6 +41,7 @@ const subjectsSchema = new Schema(
 const games = mongoose.model('liveGames', liveGamesSchema);
 const wednesdeySubjects = mongoose.model('subjects', subjectsSchema);
 const statistics = mongoose.model('stats', statsSchema);
+const stockStatistics = mongoose.model('stockStats', stockStatsSchema);
 const highlightNews = mongoose.model('news', newsSchema);
 const highlightVideo = mongoose.model('video', videoSchema);
 
@@ -45,6 +51,7 @@ const liveGames = {
     wednesdeySubjects,
     statistics,
     highlightNews,
-    highlightVideo
+    highlightVideo,
+    stockStatistics
 };
 module.exports = liveGames;
