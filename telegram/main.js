@@ -847,7 +847,7 @@ module.exports.Shishit = async function () {
     const checkIfPush = (news) => {
         let ans = true
         const { title, excerpt } = news
-        if (excerpt.includes('הצביעו') || excerpt.includes('בראיון') || excerpt.includes('ספורט1') || excerpt.includes('ספורט4') || excerpt.includes('ספורט3') || excerpt.includes('ספורט2') || (excerpt.includes(')') && excerpt.includes('('))) {
+        if (excerpt.includes('הצביעו') || excerpt.includes('103') || excerpt.includes('נשים') || excerpt.includes('בראיון') || excerpt.includes('ספורט1') || excerpt.includes('ספורט4') || excerpt.includes('ספורט3') || excerpt.includes('ספורט2') || (excerpt.includes(')') && excerpt.includes('('))) {
             ans = false
         }
         return ans
@@ -1006,7 +1006,7 @@ module.exports.Shishit = async function () {
                     allStats.forEach(stat => {
                         const { teams = '', date = '', score = '' } = stat
                         str += `תאריך: ${date}\n`
-                        str += `${teams}: ${score}\n\n`
+                        str += `${teams} ${score}\n\n`
 
                     })
                     botTest.sendMessage(chatId, str)
