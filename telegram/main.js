@@ -561,7 +561,6 @@ module.exports.Shishit = async function () {
                 updateTo,
                 games: grabMatches,
             }
-
             await games.findOneAndUpdate({ updateTo }, data, { upsert: true, new: true });
             sendNotification(grabMatches, oldGames)
             //closing the browser
@@ -595,13 +594,7 @@ module.exports.Shishit = async function () {
 
             //manipulating the page's content
             let grabMatches = await page.evaluate(() => {
-                let scorrers = {
-                    scorer: '',
-                    assist: '',
-                    sub: '',
-                    min: '',
-                    bla: ""
-                };
+                let events = [];
 
                 let allLiveMatches = document.body.querySelectorAll('.detailMS__incidentRow')
 
@@ -617,7 +610,8 @@ module.exports.Shishit = async function () {
                             // if (goal) {
                             let scorer = item.querySelector('.participant-name').innerText || ''
                             if (scorer !== '') {
-                                scorrers = {
+
+                                const scorrer = {
                                     goal,
                                     scorer,
                                     assist: item.querySelector('.assist') ? item.querySelector('.assist').innerText : '',
@@ -626,6 +620,7 @@ module.exports.Shishit = async function () {
                                     team: item.className,
 
                                 }
+                                events.push(scorrer)
                             }
 
                         }
@@ -653,7 +648,7 @@ module.exports.Shishit = async function () {
 
 
 
-                return scorrers;
+                return events;
             });
             //outputting the scraped data
             await browser.close();
@@ -859,7 +854,7 @@ module.exports.Shishit = async function () {
 
 
     // checking if there was a goal, the game has started or the game is finish and send a push
-    const sendNotification = (newGames, oldGames) => {
+    const sendNotification = async (newGames, oldGames) => {
         let str = ``
         newGames.forEach(league => {
             const { name, country, games = [] } = league
@@ -867,8 +862,8 @@ module.exports.Shishit = async function () {
             const findOld = oldGames.find(old => { return old.name === name && old.country === country })
             if (findOld) {
 
-                games.forEach(game => {
-                    const { score, time, min, homeTeam, awayTeam, lastScorrer } = game
+                games.forEach(async game => {
+                    const { score, time, min, homeTeam, awayTeam, lastScorrer, id } = game
                     let scorer = '';
                     let assist = '';
                     let sub = '';
@@ -896,7 +891,20 @@ module.exports.Shishit = async function () {
                             str += `${country} - ${name}: \n`
 
                             if (min === 'Finished' && oldGame.min !== min) {
+                                const stat = await scraper2(id)
+                                // console.log('stat', stat)
                                 str += `${min}: ${homeTeam} ${score} ${awayTeam}\n`
+                                if (stat.length){
+                                    str += `Match Highlights:\n`
+                                    stat.forEach(sta => {
+                                        const { goal, scorer, assist, sub, min, team } = sta
+                                        if(goal){
+                                            let goalteam = team.includes('home') ? homeTeam : awayTeam
+                                            str += `${min}: ${goalteam}, ${scorer} ${assist ? (assist) : ''}\n`
+                                        }
+                                    })
+
+                                }
                                 botTest.sendMessage(chatShisit, str)
 
                             } else if (oldGame.score === '-') {
