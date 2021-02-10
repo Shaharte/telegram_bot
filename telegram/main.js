@@ -2763,6 +2763,29 @@ module.exports.Ahanhala = async function () {
         }
         await wednesdeySubjects.findOneAndUpdate({}, data, { upsert: true, new: true })
     })
+    nodeSchedule.scheduleJob('00 18 * * 3', async () => {
+        const subjectsarray = await wednesdeySubjects.find({})
+        const { subjects = [] } = subjectsarray[0]
+        str += ` יאללה הנוהל מתחיל נשמות.. אלו הנושאים: \n`
+        for (let i = 1; i <= subjects.length; i++) {
+            str += `${i}: ${subjects[i - 1]}\n`
+        }
+        str += `שיהיה כמעט חמישי שמח!`
+
+        botTest.sendMessage(chatId, str);
+
+    })
+    nodeSchedule.scheduleJob('00 4 * * 3', async () => {
+        const subjectsarray = await wednesdeySubjects.find({})
+        const { subjects = [] } = subjectsarray[0]
+        str += `בוקר אור לכולם :) אלו הנושאים: \n`
+        for (let i = 1; i <= subjects.length; i++) {
+            str += `${i}: ${subjects[i - 1]}\n`
+        }
+
+        botTest.sendMessage(chatId, str);
+
+    })
 
 
     // adding a subject
