@@ -90,7 +90,7 @@ module.exports.scraperHighlights = async () => {
     try {
 
         //opening a new page and navigating to Fleshscore
-        await page.goto('https://sport1.maariv.co.il/vod/ligat-haal/');
+        await page.goto('https://sport1.maariv.co.il/israeli-soccer/ligat-haal/?tab=video');
         await page.waitForSelector('body');
 
         //manipulating the page's content
