@@ -55,13 +55,13 @@ module.exports.scraperStat = async () => {
 
             return stats;
         });
-        if (allStatss.length){
+        if (allStatss.length) {
             // console.log(allStatss)
 
             const data = {
                 stats: allStatss
             }
-            await statistics.findOneAndUpdate({},data , { upsert: true })
+            await statistics.findOneAndUpdate({}, data, { upsert: true })
         }
 
         //outputting the scraped data
@@ -97,31 +97,32 @@ module.exports.scraperHighlights = async () => {
         //manipulating the page's content
         let allStatss = await page.evaluate(() => {
 
-            let allStats = document.body.querySelectorAll('.video-card');
+            let video = document.body.querySelector('.video-card.col-12');
             let highlights = []
 
             //storing the post items in an array then selecting for retrieving content
-            allStats.forEach(item => {
-                let arr = []
-                try {
-                    let title = item.querySelector('.title-text').innerText;
-                    if (title.includes('צפו בשערי המחזור ה')) {
-                        let href = item.querySelector('a').href
-                        highlights.push({
-                            title,
-                            href,
-                        })
 
-                    }
-
-                } catch (err) {
-                    console.log(err)
-
+            let arr = []
+            try {
+                let title = video.querySelector('.title-text').innerText;
+                const isHighlight = checkIfHighlight(title)
+                if (isHighlight) {
+                    let href = item.querySelector('a').href
+                    highlights.push({
+                        title,
+                        href,
+                    })
 
                 }
 
+            } catch (err) {
+                console.log(err)
 
-            });
+
+            }
+
+
+
 
 
             return highlights;
@@ -147,6 +148,13 @@ module.exports.scraperHighlights = async () => {
 }
 
 // running scrapper on "sport1" to get news
+
+const checkIfHighlight = (title) => {
+    const scores = ['0:0', '1:1', '2:2', '3:3', '4:4', '5:5', '1:0', '2:0', '3:0', '4:0', '5:0', '2:1', '3:1', '3:2', '4:1', '4:2', '4:3', '5:1', '5:2', '5:3', '5:4', '0:1', '0:2', '0:3', '0:4', '0:5', '1:2', '1:3', '2:3', '1:4', '2:4', '3:4', '1:5', '2:5', '3:5', '4:5']
+    const isThere = scores.find(o => { return title.includes(o) })
+    ans = isThere ? true : ans
+    return ans
+}
 
 module.exports.scraperNewsSport1 = async () => {
     console.log('starting to run news scrapper')
@@ -180,7 +188,7 @@ module.exports.scraperNewsSport1 = async () => {
                         title,
                         href,
                         excerpt
-                        
+
                     })
 
 

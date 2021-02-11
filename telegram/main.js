@@ -711,7 +711,7 @@ module.exports.Shishit = async function () {
 
 
     }
-    nodeSchedule.scheduleJob('00 12 * * *', () => {
+    nodeSchedule.scheduleJob('*/25 * * * *', () => {
         try {
             sendHighlights()
         } catch (err) { }
