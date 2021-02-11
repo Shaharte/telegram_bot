@@ -728,7 +728,6 @@ module.exports.Shishit = async function () {
 
         try {
             const news = await scraperNewsSport5()
-            console.log('news', news)
             const lastNews = news[0]
             const site = 'sport5'
             let lastNewsDB = await highlightNews.find({ site })
@@ -3292,13 +3291,7 @@ module.exports.Maccabi = async function () {
     }
     // running scrapper on "sport1" to get Haifa news
 
-    nodeSchedule.scheduleJob('*/15 * * * *', () => {
-        try {
-            sendNewsHaifa()
 
-        } catch (err) { }
-
-    });
 
 }
 module.exports.mccann = async function () {

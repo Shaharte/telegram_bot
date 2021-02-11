@@ -26,4 +26,4 @@ app.listen(port, () => {
 Ahanhala()
 Stocks()
 Shishit()
-Maccabi()
+// Maccabi()

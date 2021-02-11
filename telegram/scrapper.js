@@ -268,7 +268,6 @@ module.exports.scraperNewsHaifa = async () => {
 
             return highlights;
         });
-        console.log('news', news)
         return news
 
 
@@ -394,7 +393,6 @@ module.exports.scraperCalcalist = async () => {
 
             return highlights;
         });
-        console.log('news', news)
         return news
     } catch (err) {
         console.log('err', err)
