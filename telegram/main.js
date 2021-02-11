@@ -12,6 +12,7 @@ var unirest = require("unirest");
 const _ = require('lodash');
 const chatShisit = '-471015035'
 const chatTest = '404011627'
+const chatNohal = '-455084377'
 process.env.NTBA_FIX_319 = 1
 const moment = require('moment');
 const nodeSchedule = require('node-schedule');
@@ -892,7 +893,7 @@ module.exports.Shishit = async function () {
 
                             if (min === 'Finished' && oldGame.min !== min) {
                                 const stat = await scraper2(id)
-                                // console.log('stat', stat)
+                                console.log('stat', stat)
                                 str += `${min}: ${homeTeam} ${score} ${awayTeam}\n`
                                 if (stat.length){
                                     str += `Match Highlights:\n`
@@ -2772,7 +2773,7 @@ module.exports.Ahanhala = async function () {
         }
         str += `שיהיה כמעט חמישי שמח!`
 
-        botTest.sendMessage(chatId, str);
+        botTest.sendMessage(chatNohal, str);
 
     })
     nodeSchedule.scheduleJob('00 4 * * 3', async () => {
@@ -2783,7 +2784,7 @@ module.exports.Ahanhala = async function () {
             str += `${i}: ${subjects[i - 1]}\n`
         }
 
-        botTest.sendMessage(chatId, str);
+        botTest.sendMessage(chatNohal, str);
 
     })
 
