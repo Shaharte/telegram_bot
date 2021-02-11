@@ -771,7 +771,7 @@ module.exports.Shishit = async function () {
             let lastNewsDB = await highlightNews.find({ site })
             lastNewsDB = lastNewsDB.length ? lastNewsDB[0].href : []
             // console.log('lastNewsDB', lastNewsDB)
-            console.log('lastNews', lastNews)
+            console.log('lastNews', lastNews.title)
             const isPushable = checkIfPush(lastNews)
             console.log('isPushable', isPushable)
 
@@ -779,19 +779,16 @@ module.exports.Shishit = async function () {
                 const isThereReally = lastNewsDB.find(o => {
                     return o.href === lastNews.href && o.title === lastNews.title
                 })
-                console.log('isThereReally', isThereReally)
 
                 if (!isThereReally) {
 
                     const isThere = lastNewsDB.find(o => {
                         return o.href === lastNews.href
                     })
-                    console.log('isThere', isThere)
 
                     if (isThere) {
                         const { title, excerpt } = lastNews
                         if (isThere.excerpt !== excerpt && isThere.title !== title) {
-                            console.log('isThere2', isThere)
 
                             str += `עדכון - ${title}.\n`
                             str += `${excerpt}.\n`
@@ -814,7 +811,11 @@ module.exports.Shishit = async function () {
                         }
 
                     } else {
-                        botTest.sendMessage(chatShisit, lastNews.href)
+
+                        str += `עדכון מהתנור - ${lastNews.title}.\n`
+                        str += `${lastNews.excerpt}.\n`
+
+                        botTest.sendMessage(chatShisit, str)
                         lastNewsDB.unshift(lastNews)
                         const data = {
                             site,

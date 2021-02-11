@@ -82,7 +82,6 @@ module.exports.scraperStat = async () => {
 // running scrapper on "sport1" to get highlights
 
 module.exports.scraperHighlights = async () => {
-    console.log('starting to run highlights scrapper')
     // const stats = []
     let str = ''
     const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
@@ -106,6 +105,7 @@ module.exports.scraperHighlights = async () => {
             try {
                 let title = video.querySelector('.title-text').innerText;
                 const isHighlight = checkIfHighlight(title)
+                console.log('isHighlight',isHighlight)
                 if (isHighlight) {
                     let href = item.querySelector('a').href
                     highlights.push({
@@ -150,9 +150,10 @@ module.exports.scraperHighlights = async () => {
 // running scrapper on "sport1" to get news
 
 const checkIfHighlight = (title) => {
+    console.log('checkIfHighlight-title',title)
     const scores = ['0:0', '1:1', '2:2', '3:3', '4:4', '5:5', '1:0', '2:0', '3:0', '4:0', '5:0', '2:1', '3:1', '3:2', '4:1', '4:2', '4:3', '5:1', '5:2', '5:3', '5:4', '0:1', '0:2', '0:3', '0:4', '0:5', '1:2', '1:3', '2:3', '1:4', '2:4', '3:4', '1:5', '2:5', '3:5', '4:5']
     const isThere = scores.find(o => { return title.includes(o) })
-    ans = isThere ? true : ans
+    ans = isThere ? true : false
     return ans
 }
 
