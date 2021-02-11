@@ -90,32 +90,35 @@ module.exports.scraperHighlights = async () => {
     try {
 
         //opening a new page and navigating to Fleshscore
-        await page.goto('https://sport1.maariv.co.il/israeli-soccer/ligat-haal/?tab=video');
+        await page.goto('https://www.youtube.com/channel/UCSeUZUuML3xLzwhglCqICeA');
         await page.waitForSelector('body');
 
         //manipulating the page's content
         let allStatss = await page.evaluate(() => {
 
-            let video = document.body.querySelector('.video-card.col-12');
+            let videos = document.body.querySelectorAll('.style-scope.yt-horizontal-list-renderer');
             let highlights = []
 
             //storing the post items in an array then selecting for retrieving content
 
             let arr = []
             try {
-                let title = video.querySelector('.title-text').innerText;
-                const isHighlight = checkIfHighlight(title)
-                console.log('isHighlight',isHighlight)
-                if (isHighlight) {
-                    let href = item.querySelector('a').href
+                videos.forEach(video => {
+                    let title = video.querySelector('h3').innerText;
+
+                    let href = video.querySelector('a').href
                     highlights.push({
                         title,
                         href,
                     })
 
-                }
+
+
+                })
+
 
             } catch (err) {
+
                 console.log(err)
 
 
@@ -125,7 +128,7 @@ module.exports.scraperHighlights = async () => {
 
 
 
-            return highlights;
+            return highlights.length ? highlights[0] : [];
         });
 
         return allStatss
@@ -150,7 +153,7 @@ module.exports.scraperHighlights = async () => {
 // running scrapper on "sport1" to get news
 
 const checkIfHighlight = (title) => {
-    console.log('checkIfHighlight-title',title)
+    console.log('checkIfHighlight-title', title)
     const scores = ['0:0', '1:1', '2:2', '3:3', '4:4', '5:5', '1:0', '2:0', '3:0', '4:0', '5:0', '2:1', '3:1', '3:2', '4:1', '4:2', '4:3', '5:1', '5:2', '5:3', '5:4', '0:1', '0:2', '0:3', '0:4', '0:5', '1:2', '1:3', '2:3', '1:4', '2:4', '3:4', '1:5', '2:5', '3:5', '4:5']
     const isThere = scores.find(o => { return title.includes(o) })
     ans = isThere ? true : false

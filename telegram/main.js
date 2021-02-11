@@ -687,20 +687,26 @@ module.exports.Shishit = async function () {
         console.log('starting to run highlights scrapper')
         try {
             const allStatss = await scraperHighlights()
-            console.log(allStatss)
+            console.log('allStatss',allStatss)
             if (allStatss.length) {
+
                 const lastNews = allStatss[0]
+
                 let lastNewsDB = await highlightVideo.find({})
                 lastNewsDB = lastNewsDB.length ? lastNewsDB[0] : {}
 
                 if (lastNews.title !== lastNewsDB.title) {
-                    const data = {
-                        title: lastNews.title,
-                        href: lastNews.href
+                    const isPush = checkIfHighlight(lastNews.title)
+                    if(isPush){
+                        const data = {
+                            title: lastNews.title,
+                            href: lastNews.href
+    
+                        }
+                        await highlightVideo.findOneAndUpdate({}, data, { upsert: true, new: true })
+                        botTest.sendMessage(chatTest, lastNews.href)
 
                     }
-                    await highlightVideo.findOneAndUpdate({}, data, { upsert: true, new: true })
-                    botTest.sendMessage(chatShisit, lastNews.href)
 
                 }
             }
@@ -711,14 +717,20 @@ module.exports.Shishit = async function () {
 
 
     }
-    nodeSchedule.scheduleJob('*/25 * * * *', () => {
-        try {
-            sendHighlights()
-        } catch (err) { }
+    // nodeSchedule.scheduleJob('* * * * *', () => {
+    //     try {
+    //         sendHighlights()
+    //     } catch (err) { }
 
-    });
+    // });
 
-
+    const checkIfHighlight = (title) => {
+        console.log('checkIfHighlight-title',title)
+        const scores = ['0:0', '1:1', '2:2', '3:3', '4:4', '5:5', '1:0', '2:0', '3:0', '4:0', '5:0', '2:1', '3:1', '3:2', '4:1', '4:2', '4:3', '5:1', '5:2', '5:3', '5:4', '0:1', '0:2', '0:3', '0:4', '0:5', '1:2', '1:3', '2:3', '1:4', '2:4', '3:4', '1:5', '2:5', '3:5', '4:5']
+        const isThere = scores.find(o => { return title.includes(o) })
+        ans = isThere ? true : false
+        return ans
+    }
 
     // running scrapper on "sport5" to get news
     const sendNewsSport5 = async () => {
@@ -833,7 +845,7 @@ module.exports.Shishit = async function () {
 
         }
     }
-    nodeSchedule.scheduleJob('*/15 * * * *', () => {
+    nodeSchedule.scheduleJob('*/12 * * * *', () => {
         try {
             sendNewsSport1()
         } catch (err) { }
