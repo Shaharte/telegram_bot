@@ -408,5 +408,94 @@ module.exports.scraperCalcalist = async () => {
         await browser.close();
     }
 }
+module.exports.scraperLiveTable = async () => {
+    console.log('starting to run scrapper')
+
+    const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
+
+    try {
+        //opening a new page and navigating to Fleshscore
+        const page = await browser.newPage();
+        await page.goto('https://www.flashscore.com/standings/84nedal4/Ob3RQ3Xr/#live');
+        await page.waitForSelector('body');
+
+        //manipulating the page's content
+        let grabMatches = await page.evaluate(() => {
+            let allTeams = document.body.querySelectorAll('.row___1rtP1QI.row___2EsvbFy');
+
+            //storing the post items in an array then selecting for retrieving content
+           let scrapeItems = [];
+            allTeams.forEach(team => {
+
+                try {
+                    teamName = team.querySelector('.rowCellParticipantName___38vskiN').innerText;
+                    let allStat = team.querySelectorAll('.rowCell____vgDgoa');
+                    let arr = []
+                    allStat.forEach(element => {
+                        arr.push(element.innerText)
+                    });
+                    let tableTeam = {
+                        teamName,
+                        arr,
+                        // match_played: allStat[0],
+                        // wins: allStat[1],
+                        // draws: allStat[2],
+                        // loses: allStat[3],
+                        // goal_diff: allStat[4],
+                        // points: allStat[5]
+                    }
+
+                    scrapeItems.push(tableTeam);
+
+
+                } catch (err) {
+                    console.log(err)
+                }
+
+
+
+
+
+
+
+            });
+
+
+            return scrapeItems;
+        });
+        //outputting the scraped data
+
+
+        const finalTable = grabMatches.map(match=>{
+            const {arr, teamName} = match
+            return {
+                teamName,
+                position:arr[0],
+                isPlaying:arr[1],
+                match_played:arr[2],
+                wins:arr[3],
+                draw:arr[4],
+                loses:arr[5],
+                goal_diff:arr[6],
+                points:arr[7],
+            }
+        })
+        // console.log('finalTable', finalTable)
+        return finalTable
+
+    } catch (err) {
+
+    }
+    finally {
+        console.log('closing browser - scrapper')
+        await browser.close();
+
+    }
+
+    //handling any errors
+
+
+
+}
 
 

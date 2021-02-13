@@ -1,7 +1,7 @@
 // const { Telegraf } = require('telegraf')
 const axios = require("axios");
 const { games, wednesdeySubjects, statistics, highlightNews, highlightVideo, stockStatistics } = require('./schema');
-const { scraperStat, scraperHighlights, scraperNewsSport1, scraperNewsSport5, scraperCalcalist, scraperNewsHaifa } = require('./scrapper');
+const { scraperStat, scraperHighlights, scraperNewsSport1, scraperNewsSport5, scraperCalcalist, scraperNewsHaifa, scraperLiveTable } = require('./scrapper');
 // const pexelKey = process.env.PEXEL_KEY;
 const token = '1557847459:AAGP08OPiRxV2OrCQ0FZhx4CbtOA2Btf7QA';
 const testtoken = '1556993489:AAHrW-PHjchV5A9oTbPUuJiN54PZwF800h0';
@@ -14,6 +14,7 @@ const chatShisit = '-471015035'
 const chatTest = '404011627'
 const chatNohal = '-455084377'
 process.env.NTBA_FIX_319 = 1
+const stringTable = require('string-table');
 const moment = require('moment');
 const nodeSchedule = require('node-schedule');
 const puppeteer = require('puppeteer');
@@ -21,6 +22,7 @@ require('events').EventEmitter.defaultMaxListeners = 15;
 const subjectArr = ['1', '2', '3']
 const sentensesAdd = ['הוספתי לך את הנושא יא מלך עולם', 'פששש נושא מפחיד', 'חזקקקק, יאללה רשמתי']
 const sentensesRemove = ['בוזזזזזזזזזז', 'מה אתה קשוררררר, טוב נו', 'לאאאא נו למה.. יאללה בסדר']
+let table = require("simple-string-table");
 
 const TelegramBot = require('node-telegram-bot-api');
 // const { isError } = require("lodash");
@@ -672,7 +674,7 @@ module.exports.Shishit = async function () {
     });
 
 
-    // running scrapper on "המנהלת" to get live stats every day
+    // // running scrapper on "המנהלת" to get live stats every day
     nodeSchedule.scheduleJob('00 8-10 * * *', () => {
         try {
             scraperStat()
@@ -687,7 +689,7 @@ module.exports.Shishit = async function () {
         console.log('starting to run highlights scrapper')
         try {
             const allStatss = await scraperHighlights()
-            console.log('allStatss',allStatss)
+            console.log('allStatss', allStatss)
             if (allStatss.length) {
 
                 const lastNews = allStatss[0]
@@ -697,11 +699,11 @@ module.exports.Shishit = async function () {
 
                 if (lastNews.title !== lastNewsDB.title) {
                     const isPush = checkIfHighlight(lastNews.title)
-                    if(isPush){
+                    if (isPush) {
                         const data = {
                             title: lastNews.title,
                             href: lastNews.href
-    
+
                         }
                         await highlightVideo.findOneAndUpdate({}, data, { upsert: true, new: true })
                         botTest.sendMessage(chatTest, lastNews.href)
@@ -725,7 +727,7 @@ module.exports.Shishit = async function () {
     // });
 
     const checkIfHighlight = (title) => {
-        console.log('checkIfHighlight-title',title)
+        console.log('checkIfHighlight-title', title)
         const scores = ['0:0', '1:1', '2:2', '3:3', '4:4', '5:5', '1:0', '2:0', '3:0', '4:0', '5:0', '2:1', '3:1', '3:2', '4:1', '4:2', '4:3', '5:1', '5:2', '5:3', '5:4', '0:1', '0:2', '0:3', '0:4', '0:5', '1:2', '1:3', '2:3', '1:4', '2:4', '3:4', '1:5', '2:5', '3:5', '4:5']
         const isThere = scores.find(o => { return title.includes(o) })
         ans = isThere ? true : false
@@ -855,7 +857,7 @@ module.exports.Shishit = async function () {
     const checkIfPush = (news) => {
         let ans = true
         const { title, excerpt } = news
-        if (excerpt.includes('הצביעו') || excerpt.includes('103') || excerpt.includes('נשים') || excerpt.includes('בראיון') || excerpt.includes('ספורט1') || excerpt.includes('ספורט4') || excerpt.includes('ספורט3') || excerpt.includes('ספורט2') || (excerpt.includes(')') && excerpt.includes('('))) {
+        if (title.includes('הצביעו') || excerpt.includes('הצביעו') || excerpt.includes('103') || excerpt.includes('נשים') || excerpt.includes('בראיון') || excerpt.includes('ספורט1') || excerpt.includes('ספורט4') || excerpt.includes('ספורט3') || excerpt.includes('ספורט2') || (excerpt.includes(')') && excerpt.includes('('))) {
             ans = false
         }
         return ans
@@ -907,11 +909,11 @@ module.exports.Shishit = async function () {
                                 const stat = await scraper2(id)
                                 console.log('stat', stat)
                                 str += `${min}: ${homeTeam} ${score} ${awayTeam}\n`
-                                if (stat.length){
+                                if (stat.length) {
                                     str += `Match Highlights:\n`
                                     stat.forEach(sta => {
                                         const { goal, scorer, assist, sub, min, team } = sta
-                                        if(goal){
+                                        if (goal) {
                                             let goalteam = team.includes('home') ? homeTeam : awayTeam
                                             str += `${min}: ${goalteam}, ${scorer} ${assist ? (assist) : ''}\n`
                                         }
@@ -1416,33 +1418,59 @@ module.exports.Shishit = async function () {
 
 
     // getting the table
-    botTest.onText(/\/table/, (msg, match) => {
+    // botTest.onText(/\/table/, (msg, match) => {
 
 
-        var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2708");
+    //     var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2708");
+    //     const chatId = msg.chat.id;
+    //     const { text } = msg
+    //     if (text === '/table') {
+    //         req.headers(cerdentials);
+
+    //         req.end(function (res) {
+    //             if (res.error) throw new Error(res.error);
+    //             let str = `P:   Team                 Played  Points\n`
+    //             res.body.api.standings[0].forEach(team => {
+    //                 let { teamName, rank, points, all, goalsDiff } = team
+    //                 const { matchsPlayed, goalsFor, goalsAgainst } = all
+
+    //                 for (let i = teamName.length; i < 21; i++) {
+    //                     teamName += ' '
+    //                 }
+
+
+    //                 //${goalsFor}-${goalsAgainst}
+    //                 str += `${rank}:  ${teamName}  ${matchsPlayed}    ${points} \n`
+
+    //             })
+    //             botTest.sendMessage(chatId, str);
+    //         });
+    //     }
+
+
+    // });
+    botTest.onText(/\/table/, async (msg, match) => {
+
+
         const chatId = msg.chat.id;
         const { text } = msg
         if (text === '/table') {
-            req.headers(cerdentials);
+            const teams = await scraperLiveTable()
 
-            req.end(function (res) {
-                if (res.error) throw new Error(res.error);
-                let str = `P:   Team                 Played  Points\n`
-                res.body.api.standings[0].forEach(team => {
-                    let { teamName, rank, points, all, goalsDiff } = team
-                    const { matchsPlayed, goalsFor, goalsAgainst } = all
+            let str = `P:  Team                             P     Diff     Points\n`
+            teams.forEach(team => {
+                let { position, isPlaying, points, match_played, teamName, goal_diff, wins, draw, loses } = team
 
-                    for (let i = teamName.length; i < 21; i++) {
-                        teamName += ' '
-                    }
+                // teamName = teamName.padEnd(22)
+                str += `${position.padEnd(3)} ${teamName.padEnd(22)}  ${isPlaying === '' ? '' : (isPlaying)}   ${match_played}     ${goal_diff}     ${points} \n`
 
+            })
+            // let example = table(teams);
+            // const table = stringTable.create(teams)
+            // console.log(str)
+            // console.log(table)
+            botTest.sendMessage(chatId, str);
 
-                    //${goalsFor}-${goalsAgainst}
-                    str += `${rank}:  ${teamName}  ${matchsPlayed}    ${points} \n`
-
-                })
-                botTest.sendMessage(chatId, str);
-            });
         }
 
 
