@@ -664,7 +664,7 @@ module.exports.Shishit = async function () {
 
 
     }
-    nodeSchedule.scheduleJob('* 15-21 * * *', () => {
+    nodeSchedule.scheduleJob('* 12-21 * * *', () => {
         try {
             scraper()
         } catch (err) { }
