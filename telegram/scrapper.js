@@ -480,7 +480,7 @@ module.exports.scraperLiveTable = async () => {
                 points:arr[7],
             }
         })
-        // console.log('finalTable', finalTable)
+        console.log('finalTable', finalTable)
         return finalTable
 
     } catch (err) {

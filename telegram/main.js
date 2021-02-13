@@ -1462,7 +1462,7 @@ module.exports.Shishit = async function () {
                 let { position, isPlaying, points, match_played, teamName, goal_diff, wins, draw, loses } = team
 
                 // teamName = teamName.padEnd(22)
-                str += `${position.padEnd(3)} ${teamName.padEnd(22)}  ${isPlaying === '' ? '' : `(${isPlaying})`}   ${match_played}     ${goal_diff}     ${points} \n`
+                str += `${position.padEnd(3)} ${teamName.padEnd(22)}  ${isPlaying}   ${match_played}     ${goal_diff}     ${points} \n`
 
             })
             // let example = table(teams);
