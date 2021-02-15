@@ -14,7 +14,6 @@ const chatShisit = '-471015035'
 const chatTest = '404011627'
 const chatNohal = '-455084377'
 process.env.NTBA_FIX_319 = 1
-const stringTable = require('string-table');
 const moment = require('moment');
 const nodeSchedule = require('node-schedule');
 const puppeteer = require('puppeteer');
@@ -22,7 +21,6 @@ require('events').EventEmitter.defaultMaxListeners = 15;
 const subjectArr = ['1', '2', '3']
 const sentensesAdd = ['הוספתי לך את הנושא יא מלך עולם', 'פששש נושא מפחיד', 'חזקקקק, יאללה רשמתי']
 const sentensesRemove = ['בוזזזזזזזזזז', 'מה אתה קשוררררר, טוב נו', 'לאאאא נו למה.. יאללה בסדר']
-let table = require("simple-string-table");
 
 const TelegramBot = require('node-telegram-bot-api');
 // const { isError } = require("lodash");
