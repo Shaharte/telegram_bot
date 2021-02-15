@@ -1461,7 +1461,7 @@ module.exports.Shishit = async function () {
                 teamName = checkTeamName(teamName)
  
                 // teamName = teamName.padEnd(22)
-                str += `${position.padEnd(3)} ${teamName}    ${match_played}     ${goal_diff}     ${points}   ${isPlaying === '' ? isPlaying : `(${isPlaying})`}\n`
+                str += `${position.padEnd(3)} ${teamName}    ${match_played}    ${goal_diff}    ${points} ${isPlaying === '' ? isPlaying : `(${isPlaying})`} \n`
 
             })
             // str = 'one          1\n two          2\n three          3\n'
@@ -3303,7 +3303,7 @@ module.exports.Maccabi = async function () {
                 teamName = checkTeamName(teamName)
  
                 // teamName = teamName.padEnd(22)
-                str += `${position.padEnd(3)} ${teamName} ${isPlaying === '' ? isPlaying : `(${isPlaying})`}   ${match_played}     ${goal_diff}     ${points} \n`
+                str += `${position.padEnd(3)} ${teamName}    ${match_played}    ${goal_diff}    ${points} ${isPlaying === '' ? isPlaying : `(${isPlaying})`} \n`
 
             })
             // str = 'one          1\n two          2\n three          3\n'
