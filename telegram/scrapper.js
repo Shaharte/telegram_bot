@@ -417,11 +417,12 @@ module.exports.scraperLiveTable = async () => {
         //opening a new page and navigating to Fleshscore
         const page = await browser.newPage();
         await page.goto('https://www.flashscore.com/standings/84nedal4/Ob3RQ3Xr/#live');
+        // await page.goto('https://www.flashscore.com/standings/MDBxURuG/2kzh23iN/#live');
         await page.waitForSelector('body');
 
         //manipulating the page's content
         let grabMatches = await page.evaluate(() => {
-            let allTeams = document.body.querySelectorAll('.row___1rtP1QI.row___2EsvbFy');
+            let allTeams = document.body.querySelectorAll('.row___1rtP1QI');
 
             //storing the post items in an array then selecting for retrieving content
            let scrapeItems = [];
@@ -429,14 +430,20 @@ module.exports.scraperLiveTable = async () => {
 
                 try {
                     teamName = team.querySelector('.rowCellParticipantName___38vskiN').innerText;
-                    let allStat = team.querySelectorAll('.rowCell____vgDgoa');
+                    goal_diff = team.querySelector('.rowCell____vgDgoa.cellScore___2A1RcrA').innerText;
+                    position = team.querySelector('.rowCellRank___25g3H2t').innerText;
+                    isPlaying = team.querySelector('.rowCell____vgDgoa.cellLive___p_aiPRm').innerText;
+                    let allStat = team.querySelectorAll('.rowCell____vgDgoa.cell___4WLG6Yd');
                     let arr = []
                     allStat.forEach(element => {
                         arr.push(element.innerText)
                     });
                     let tableTeam = {
                         teamName,
+                        isPlaying,
                         arr,
+                        goal_diff,
+                        position
                         // match_played: allStat[0],
                         // wins: allStat[1],
                         // draws: allStat[2],
@@ -467,17 +474,17 @@ module.exports.scraperLiveTable = async () => {
 
 
         const finalTable = grabMatches.map(match=>{
-            const {arr, teamName} = match
+            const {arr, teamName,position,goal_diff,isPlaying} = match
             return {
                 teamName,
-                position:arr[0],
-                isPlaying:arr[1],
-                match_played:arr[2],
-                wins:arr[3],
-                draw:arr[4],
-                loses:arr[5],
-                goal_diff:arr[6],
-                points:arr[7],
+                position,
+                isPlaying,
+                match_played:arr[0],
+                wins:arr[1],
+                draw:arr[2],
+                loses:arr[3],
+                goal_diff,
+                points:arr[4],
             }
         })
         console.log('finalTable', finalTable)

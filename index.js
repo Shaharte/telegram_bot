@@ -28,4 +28,18 @@ Ahanhala()
 Stocks()
 Shishit()
 // Maccabi()
-// scraperLiveTable()
+// const testing = async () =>{
+
+//   const teams = await scraperLiveTable()
+  
+//   let str = `P:  Team                             P     Diff     Points\n`
+//   teams.forEach(team => {
+//       let { position, isPlaying, points, match_played, teamName, goal_diff, wins, draw, loses } = team
+  
+//       // teamName = teamName.padEnd(22)
+//       str += `${position.padEnd(3)} ${teamName.padEnd(22)} ${isPlaying ==='' ? isPlaying : `(${isPlaying})`}   ${match_played}     ${goal_diff}     ${points} \n`
+  
+//   })
+//   console.log('str',str)
+// }
+// testing()
