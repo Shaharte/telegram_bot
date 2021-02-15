@@ -1449,7 +1449,7 @@ module.exports.Shishit = async function () {
 
 
     // });
-    botTest.onText(/\/table/, async (msg, match) => {
+    haifaBot.onText(/\/table/, async (msg, match) => {
 
 
         const chatId = msg.chat.id;
@@ -1457,24 +1457,74 @@ module.exports.Shishit = async function () {
         if (text === '/table') {
             const teams = await scraperLiveTable()
 
-            let str = `P:  Team                             P     Diff     Points\n`
+            let str = `P:  Team                               P       Diff        Points\n`
             teams.forEach(team => {
                 let { position, isPlaying, points, match_played, teamName, goal_diff, wins, draw, loses } = team
-            
+                teamName = checkTeamName(teamName)
+ 
                 // teamName = teamName.padEnd(22)
-                str += `${position.padEnd(3)} ${teamName.padEnd(22)} ${isPlaying ==='' ? isPlaying : `(${isPlaying})`}   ${match_played}     ${goal_diff}     ${points} \n`
-            
+                str += `${position.padEnd(3)} ${teamName} ${isPlaying === '' ? isPlaying : `(${isPlaying})`}   ${match_played}     ${goal_diff}     ${points} \n`
+
             })
+            // str = 'one          1\n two          2\n three          3\n'
+
+            botTest.sendMessage(chatId, str, { 'parseMode': 'markdown-style' });
+
             // let example = table(teams);
             // const table = stringTable.create(teams)
             // console.log(str)
             // console.log(table)
-            botTest.sendMessage(chatId, str);
 
         }
 
 
     });
+
+    const checkTeamName = (teamName) =>{
+        if (teamName === 'Ashdod'){
+            teamName =  teamName.padEnd(29)
+        }
+        if (teamName === 'Maccabi Haifa'){
+            teamName =  teamName.padEnd(24)
+        }
+        if (teamName === 'Maccabi Tel Aviv'){
+            teamName =  teamName.padEnd(23)
+        }
+        if (teamName === 'H. Beer Sheva'){
+            teamName =  teamName.padEnd(25)
+        }
+        if (teamName === 'Netanya'){
+            teamName =  teamName.padEnd(29)
+        }
+        if (teamName === 'Maccabi Petah Tikva'){
+            teamName =  teamName.padEnd(19)
+        }
+        if (teamName === 'Kiryat Shmona'){
+            teamName =  teamName.padEnd(24)
+        }
+        if (teamName === 'Hapoel Haifa'){
+            teamName =  teamName.padEnd(26)
+        }
+        if (teamName === 'Beitar Jerusalem'){
+            teamName =  teamName.padEnd(23)
+        }
+        if (teamName === 'Hapoel Kfar Saba'){
+            teamName =  teamName.padEnd(21)
+        }
+        if (teamName === 'Hapoel Hadera'){
+            teamName =  teamName.padEnd(22)
+        }
+        if (teamName === 'Hapoel Tel Aviv'){
+            teamName =  teamName.padEnd(24)
+        }
+        if (teamName === 'Sakhnin'){
+            teamName =  teamName.padEnd(29)
+        }
+        if (teamName === 'Bnei Yehuda'){
+            teamName =  teamName.padEnd(25)
+        }
+        return teamName
+    }
 
     // getting live results
     botTest.onText(/\/live/, (msg, match) => {
@@ -3239,6 +3289,84 @@ module.exports.Maccabi = async function () {
 
 
 
+
+
+    haifaBot.onText(/\/table/, async (msg, match) => {
+
+
+        const chatId = msg.chat.id;
+        const { text } = msg
+        if (text === '/table') {
+            const teams = await scraperLiveTable()
+
+            let str = `P:  Team                               P       Diff        Points\n`
+            teams.forEach(team => {
+                let { position, isPlaying, points, match_played, teamName, goal_diff, wins, draw, loses } = team
+                teamName = checkTeamName(teamName)
+ 
+                // teamName = teamName.padEnd(22)
+                str += `${position.padEnd(3)} ${teamName} ${isPlaying === '' ? isPlaying : `(${isPlaying})`}   ${match_played}     ${goal_diff}     ${points} \n`
+
+            })
+            // str = 'one          1\n two          2\n three          3\n'
+
+            haifaBot.sendMessage(chatId, str, { 'parseMode': 'markdown-style' });
+
+            // let example = table(teams);
+            // const table = stringTable.create(teams)
+            // console.log(str)
+            // console.log(table)
+
+        }
+
+
+    });
+
+    const checkTeamName = (teamName) =>{
+        if (teamName === 'Ashdod'){
+            teamName =  teamName.padEnd(29)
+        }
+        if (teamName === 'Maccabi Haifa'){
+            teamName =  teamName.padEnd(24)
+        }
+        if (teamName === 'Maccabi Tel Aviv'){
+            teamName =  teamName.padEnd(23)
+        }
+        if (teamName === 'H. Beer Sheva'){
+            teamName =  teamName.padEnd(25)
+        }
+        if (teamName === 'Netanya'){
+            teamName =  teamName.padEnd(29)
+        }
+        if (teamName === 'Maccabi Petah Tikva'){
+            teamName =  teamName.padEnd(19)
+        }
+        if (teamName === 'Kiryat Shmona'){
+            teamName =  teamName.padEnd(24)
+        }
+        if (teamName === 'Hapoel Haifa'){
+            teamName =  teamName.padEnd(26)
+        }
+        if (teamName === 'Beitar Jerusalem'){
+            teamName =  teamName.padEnd(23)
+        }
+        if (teamName === 'Hapoel Kfar Saba'){
+            teamName =  teamName.padEnd(21)
+        }
+        if (teamName === 'Hapoel Hadera'){
+            teamName =  teamName.padEnd(22)
+        }
+        if (teamName === 'Hapoel Tel Aviv'){
+            teamName =  teamName.padEnd(24)
+        }
+        if (teamName === 'Sakhnin'){
+            teamName =  teamName.padEnd(29)
+        }
+        if (teamName === 'Bnei Yehuda'){
+            teamName =  teamName.padEnd(25)
+        }
+        return teamName
+    }
     haifaBot.onText(/\/help/, (msg, match) => {
         const chatId = msg.chat.id;
         console.log('chatId', chatId)

@@ -417,7 +417,7 @@ module.exports.scraperLiveTable = async () => {
         //opening a new page and navigating to Fleshscore
         const page = await browser.newPage();
         await page.goto('https://www.flashscore.com/standings/84nedal4/Ob3RQ3Xr/#live');
-        // await page.goto('https://www.flashscore.com/standings/MDBxURuG/2kzh23iN/#live');
+        // await page.goto('https://www.flashscore.com/standings/fJTg1FrO/2DCFLB6o/#live');
         await page.waitForSelector('body');
 
         //manipulating the page's content
@@ -487,7 +487,7 @@ module.exports.scraperLiveTable = async () => {
                 points:arr[4],
             }
         })
-        console.log('finalTable', finalTable)
+        // console.log('finalTable', finalTable)
         return finalTable
 
     } catch (err) {
