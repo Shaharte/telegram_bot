@@ -1449,7 +1449,7 @@ module.exports.Shishit = async function () {
 
 
     // });
-    haifaBot.onText(/\/table/, async (msg, match) => {
+    botTest.onText(/\/table/, async (msg, match) => {
 
 
         const chatId = msg.chat.id;
