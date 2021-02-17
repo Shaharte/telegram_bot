@@ -664,12 +664,12 @@ module.exports.Shishit = async function () {
 
 
     }
-    nodeSchedule.scheduleJob('* 12-21 * * *', () => {
-        try {
-            scraper()
-        } catch (err) { }
+    // nodeSchedule.scheduleJob('* 12-21 * * *', () => {
+    //     try {
+    //         scraper()
+    //     } catch (err) { }
 
-    });
+    // });
 
 
     // // running scrapper on "המנהלת" to get live stats every day
@@ -855,7 +855,7 @@ module.exports.Shishit = async function () {
     const checkIfPush = (news) => {
         let ans = true
         const { title, excerpt } = news
-        if (title.includes('הצביעו') || excerpt.includes('הצביעו') || excerpt.includes('103') || excerpt.includes('נשים') || excerpt.includes('בראיון') || excerpt.includes('ספורט1') || excerpt.includes('ספורט4') || excerpt.includes('ספורט3') || excerpt.includes('ספורט2') || (excerpt.includes(')') && excerpt.includes('('))) {
+        if (excerpt.includes('התראיין') || excerpt.includes('צפו בכתבה') || title.includes('הצביעו') || excerpt.includes('הצביעו') || excerpt.includes('103') || excerpt.includes('נשים') || excerpt.includes('בראיון') || excerpt.includes('ספורט1') || excerpt.includes('ספורט4') || excerpt.includes('ספורט3') || excerpt.includes('ספורט2') || (excerpt.includes(')') && excerpt.includes('('))) {
             ans = false
         }
         return ans
