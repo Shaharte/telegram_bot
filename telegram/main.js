@@ -2853,6 +2853,7 @@ module.exports.Ahanhala = async function () {
         await wednesdeySubjects.findOneAndUpdate({}, data, { upsert: true, new: true })
     })
     nodeSchedule.scheduleJob('00 18 * * 3', async () => {
+        let str = ''
         const subjectsarray = await wednesdeySubjects.find({})
         const { subjects = [] } = subjectsarray[0]
         str += ` יאללה הנוהל מתחיל נשמות.. אלו הנושאים: \n`
@@ -2865,6 +2866,8 @@ module.exports.Ahanhala = async function () {
 
     })
     nodeSchedule.scheduleJob('00 4 * * 3', async () => {
+        let str = ''
+
         const subjectsarray = await wednesdeySubjects.find({})
         const { subjects = [] } = subjectsarray[0]
         str += `בוקר אור לכולם :) אלו הנושאים: \n`
