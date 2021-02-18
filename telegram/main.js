@@ -538,7 +538,7 @@ module.exports.Shishit = async function () {
 
 
                 const finalData = allGames.filter(game => {
-                    return ((game.country === 'ISRAEL' && game.name === "Ligat ha'Al"))
+                    return ((game.country === 'ISRAEL' && (game.name === "Ligat ha'Al" || game.name === "State Cup")))
                 })
 
 
@@ -664,12 +664,12 @@ module.exports.Shishit = async function () {
 
 
     }
-    // nodeSchedule.scheduleJob('* 12-21 * * *', () => {
-    //     try {
-    //         scraper()
-    //     } catch (err) { }
+    nodeSchedule.scheduleJob('* 16-21 * * *', () => {
+        try {
+            scraper()
+        } catch (err) { }
 
-    // });
+    });
 
 
     // // running scrapper on "המנהלת" to get live stats every day

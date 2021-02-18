@@ -90,7 +90,7 @@ module.exports.scraperHighlights = async () => {
     try {
 
         //opening a new page and navigating to Fleshscore
-        await page.goto('https://www.youtube.com/channel/UCSeUZUuML3xLzwhglCqICeA');
+        await page.goto('https://www.youtube.com/playlist?list=PLNrbuxPdngP65UOfxvQ7nu7NkvaAWF8nr');
         await page.waitForSelector('body');
 
         //manipulating the page's content
