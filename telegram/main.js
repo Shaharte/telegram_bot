@@ -8,7 +8,7 @@ const testtoken = '1556993489:AAHrW-PHjchV5A9oTbPUuJiN54PZwF800h0';
 const elazToken = '1523524884:AAFz46CJAiyreUFc58_Gc_3PuPtMbkDlE5g';
 const stockToken = '1602258658:AAG51Ls1qMf6zp8CY3HGzRmQhmAWkv8-4sU';
 const haifaToken = '1682397940:AAEYhFNefLMF8MF7y6qOBcoCtsKuNtKJ7dI';
-var unirest = require("unirest");
+// var unirest = require("unirest");
 const _ = require('lodash');
 const chatShisit = '-471015035'
 const chatTest = '404011627'
@@ -1072,230 +1072,230 @@ module.exports.Shishit = async function () {
 
 
         });
-        botTest.onText(/\/Lior_Refaelov/, (msg, match) => {
+        // botTest.onText(/\/Lior_Refaelov/, (msg, match) => {
 
 
-            const chatId = msg.chat.id;
-            const { text } = msg
-            var unirest = require("unirest");
-            if (text === '/Lior_Refaelov') {
+        //     const chatId = msg.chat.id;
+        //     const { text } = msg
+        //     var unirest = require("unirest");
+        //     if (text === '/Lior_Refaelov') {
 
-                const req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/players/player/8461/2020-2021");
-                const req2 = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2660");
-                req.headers(cerdentials);
-                req2.headers(cerdentials);
-                let str = ''
+        //         const req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/players/player/8461/2020-2021");
+        //         const req2 = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2660");
+        //         req.headers(cerdentials);
+        //         req2.headers(cerdentials);
+        //         let str = ''
 
-                req2.end(function (res2) {
-                    req.end(function (res) {
+        //         req2.end(function (res2) {
+        //             req.end(function (res) {
 
-                        const { firstname, lastname, position, age } = res.body.api.players[0]
-                        str += `${firstname} ${lastname} ${age}, ${position}:\n\n`
-                        res.body.api.players.forEach(player => {
-                            const { league, goals, cards, games } = player
-                            const { total, assists } = goals
-                            const { yellow, red } = cards
-                            const { appearences, lineups } = games
-                            if (appearences > 0) {
+        //                 const { firstname, lastname, position, age } = res.body.api.players[0]
+        //                 str += `${firstname} ${lastname} ${age}, ${position}:\n\n`
+        //                 res.body.api.players.forEach(player => {
+        //                     const { league, goals, cards, games } = player
+        //                     const { total, assists } = goals
+        //                     const { yellow, red } = cards
+        //                     const { appearences, lineups } = games
+        //                     if (appearences > 0) {
 
-                                //${goalsFor}-${goalsAgainst}
-                                str += `league: ${league}\nappearences: ${appearences}, lineups: ${lineups}\ngoals: ${total}\nassists: ${assists}\nyellow cards: ${yellow}\nred cards: ${red}\n\n`
-                            }
-                        })
-                        const team = res2.body.api.standings[0].find(o => { return o.teamName === 'Antwerp' })
+        //                         //${goalsFor}-${goalsAgainst}
+        //                         str += `league: ${league}\nappearences: ${appearences}, lineups: ${lineups}\ngoals: ${total}\nassists: ${assists}\nyellow cards: ${yellow}\nred cards: ${red}\n\n`
+        //                     }
+        //                 })
+        //                 const team = res2.body.api.standings[0].find(o => { return o.teamName === 'Antwerp' })
 
-                        const { teamName, rank, points, all, goalsDiff, forme, logo } = team
+        //                 const { teamName, rank, points, all, goalsDiff, forme, logo } = team
 
-                        const { matchsPlayed, goalsFor, goalsAgainst, win, draw, lose } = all
+        //                 const { matchsPlayed, goalsFor, goalsAgainst, win, draw, lose } = all
 
-                        str += `Team: ${teamName}:  Rank: ${rank}  Points: ${points} \nForm: ${forme} \nWins: ${win} \nDraws: ${draw} \nLoses: ${lose} \nGoals for: ${goalsFor}\nGoals against : ${goalsAgainst} \nGoals diff: ${goalsDiff}\n\n`
-                        str += `highlights:\n https://www.youtube.com/watch?v=7rSwwUaZDNw`
+        //                 str += `Team: ${teamName}:  Rank: ${rank}  Points: ${points} \nForm: ${forme} \nWins: ${win} \nDraws: ${draw} \nLoses: ${lose} \nGoals for: ${goalsFor}\nGoals against : ${goalsAgainst} \nGoals diff: ${goalsDiff}\n\n`
+        //                 str += `highlights:\n https://www.youtube.com/watch?v=7rSwwUaZDNw`
 
-                        botTest.sendMessage(chatId, str);
-                    });
+        //                 botTest.sendMessage(chatId, str);
+        //             });
 
 
 
 
-                });
+        //         });
 
 
-            }
+        //     }
 
 
 
-        });
-        botTest.onText(/\/Eran_Zahavi/, (msg, match) => {
+        // });
+        // botTest.onText(/\/Eran_Zahavi/, (msg, match) => {
 
 
-            const chatId = msg.chat.id;
-            const { text } = msg
-            var unirest = require("unirest");
-            if (text === '/Eran_Zahavi') {
+        //     const chatId = msg.chat.id;
+        //     const { text } = msg
+        //     var unirest = require("unirest");
+        //     if (text === '/Eran_Zahavi') {
 
 
-                var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/players/player/12943/2020-2021");
-                var req2 = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2673");
+        //         var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/players/player/12943/2020-2021");
+        //         var req2 = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2673");
 
-                req.headers(cerdentials);
+        //         req.headers(cerdentials);
 
-                req2.headers(cerdentials);
+        //         req2.headers(cerdentials);
 
-                let str = ''
-                req2.end(function (res2) {
-                    req.end(function (res) {
+        //         let str = ''
+        //         req2.end(function (res2) {
+        //             req.end(function (res) {
 
-                        const { firstname, lastname, position, age } = res.body.api.players[0]
-                        str += `${firstname} ${lastname} ${age}, ${position}:\n\n`
-                        res.body.api.players.forEach(player => {
-                            const { league, goals, cards, games } = player
-                            const { total, assists } = goals
-                            const { yellow, red } = cards
-                            const { appearences, lineups } = games
+        //                 const { firstname, lastname, position, age } = res.body.api.players[0]
+        //                 str += `${firstname} ${lastname} ${age}, ${position}:\n\n`
+        //                 res.body.api.players.forEach(player => {
+        //                     const { league, goals, cards, games } = player
+        //                     const { total, assists } = goals
+        //                     const { yellow, red } = cards
+        //                     const { appearences, lineups } = games
 
-                            //${goalsFor}-${goalsAgainst}
-                            str += `league: ${league}\nappearences: ${appearences}, lineups: ${lineups}\ngoals: ${total}\nassists: ${assists}\nyellow cards: ${yellow}\nred cards: ${red}\n\n`
+        //                     //${goalsFor}-${goalsAgainst}
+        //                     str += `league: ${league}\nappearences: ${appearences}, lineups: ${lineups}\ngoals: ${total}\nassists: ${assists}\nyellow cards: ${yellow}\nred cards: ${red}\n\n`
 
-                        })
-                        const team = res2.body.api.standings[0].find(o => { return o.teamName === 'PSV Eindhoven' })
+        //                 })
+        //                 const team = res2.body.api.standings[0].find(o => { return o.teamName === 'PSV Eindhoven' })
 
-                        const { teamName, rank, points, all, goalsDiff, forme, logo } = team
+        //                 const { teamName, rank, points, all, goalsDiff, forme, logo } = team
 
-                        const { matchsPlayed, goalsFor, goalsAgainst, win, draw, lose } = all
+        //                 const { matchsPlayed, goalsFor, goalsAgainst, win, draw, lose } = all
 
-                        str += `Team: ${teamName}:  Rank: ${rank}  Points: ${points} \nForm: ${forme} \nWins: ${win} \nDraws: ${draw} \nLoses: ${lose} \nGoals for: ${goalsFor}\nGoals against : ${goalsAgainst} \nGoals diff: ${goalsDiff}\n\n`
-                        str += `highlights:\nhttps://www.youtube.com/watch?v=u_xKaGxU_H0\n\n https://www.youtube.com/watch?v=TCfscHHx0Pk&t=7s\n\nhttps://www.youtube.com/watch?v=gNCxwgfLQkc\n\n`
+        //                 str += `Team: ${teamName}:  Rank: ${rank}  Points: ${points} \nForm: ${forme} \nWins: ${win} \nDraws: ${draw} \nLoses: ${lose} \nGoals for: ${goalsFor}\nGoals against : ${goalsAgainst} \nGoals diff: ${goalsDiff}\n\n`
+        //                 str += `highlights:\nhttps://www.youtube.com/watch?v=u_xKaGxU_H0\n\n https://www.youtube.com/watch?v=TCfscHHx0Pk&t=7s\n\nhttps://www.youtube.com/watch?v=gNCxwgfLQkc\n\n`
 
-                        botTest.sendMessage(chatId, str);
-                    });
+        //                 botTest.sendMessage(chatId, str);
+        //             });
 
 
 
 
-                });
+        //         });
 
 
-            }
+        //     }
 
 
 
-        });
-        botTest.onText(/\/Shon_Weissman/, (msg, match) => {
+        // });
+        // botTest.onText(/\/Shon_Weissman/, (msg, match) => {
 
 
-            const chatId = msg.chat.id;
-            const { text } = msg
-            var unirest = require("unirest");
-            if (text === '/Shon_Weissman') {
+        //     const chatId = msg.chat.id;
+        //     const { text } = msg
+        //     var unirest = require("unirest");
+        //     if (text === '/Shon_Weissman') {
 
 
-                var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/players/player/70339/2020-2021");
-                var req2 = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2833");
+        //         var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/players/player/70339/2020-2021");
+        //         var req2 = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2833");
 
-                req.headers(cerdentials);
+        //         req.headers(cerdentials);
 
-                req2.headers(cerdentials);
+        //         req2.headers(cerdentials);
 
-                let str = ''
+        //         let str = ''
 
-                req2.end(function (res2) {
-                    req.end(function (res) {
+        //         req2.end(function (res2) {
+        //             req.end(function (res) {
 
-                        const { firstname, lastname, position, age } = res.body.api.players[0]
-                        str += `${firstname} ${lastname} ${age}, ${position}:\n\n`
-                        res.body.api.players.forEach(player => {
-                            const { league, goals, cards, games } = player
-                            const { total, assists } = goals
-                            const { yellow, red } = cards
-                            const { appearences, lineups } = games
-                            if (appearences > 0) {
+        //                 const { firstname, lastname, position, age } = res.body.api.players[0]
+        //                 str += `${firstname} ${lastname} ${age}, ${position}:\n\n`
+        //                 res.body.api.players.forEach(player => {
+        //                     const { league, goals, cards, games } = player
+        //                     const { total, assists } = goals
+        //                     const { yellow, red } = cards
+        //                     const { appearences, lineups } = games
+        //                     if (appearences > 0) {
 
-                                str += `league: ${league}\nappearences: ${appearences}, lineups: ${lineups}\ngoals: ${total}\nassists: ${assists}\nyellow cards: ${yellow}\nred cards: ${red}\n\n`
-                            }
-                            //${goalsFor}-${goalsAgainst}
+        //                         str += `league: ${league}\nappearences: ${appearences}, lineups: ${lineups}\ngoals: ${total}\nassists: ${assists}\nyellow cards: ${yellow}\nred cards: ${red}\n\n`
+        //                     }
+        //                     //${goalsFor}-${goalsAgainst}
 
-                        })
-                        const team = res2.body.api.standings[0].find(o => { return o.teamName === 'Valladolid' })
+        //                 })
+        //                 const team = res2.body.api.standings[0].find(o => { return o.teamName === 'Valladolid' })
 
-                        const { teamName, rank, points, all, goalsDiff, forme, logo } = team
+        //                 const { teamName, rank, points, all, goalsDiff, forme, logo } = team
 
-                        const { matchsPlayed, goalsFor, goalsAgainst, win, draw, lose } = all
+        //                 const { matchsPlayed, goalsFor, goalsAgainst, win, draw, lose } = all
 
-                        str += `Team: ${teamName}:  Rank: ${rank}  Points: ${points} \nForm: ${forme} \nWins: ${win} \nDraws: ${draw} \nLoses: ${lose} \nGoals for: ${goalsFor}\nGoals against : ${goalsAgainst} \nGoals diff: ${goalsDiff}\n\n`
-                        str += `highlights:\n https://www.youtube.com/watch?v=6DMm7vwRE-M&t=54s\n\nhttps://www.youtube.com/watch?v=0wKN_pzfQhU\n\n`
+        //                 str += `Team: ${teamName}:  Rank: ${rank}  Points: ${points} \nForm: ${forme} \nWins: ${win} \nDraws: ${draw} \nLoses: ${lose} \nGoals for: ${goalsFor}\nGoals against : ${goalsAgainst} \nGoals diff: ${goalsDiff}\n\n`
+        //                 str += `highlights:\n https://www.youtube.com/watch?v=6DMm7vwRE-M&t=54s\n\nhttps://www.youtube.com/watch?v=0wKN_pzfQhU\n\n`
 
-                        botTest.sendMessage(chatId, str);
-                    });
+        //                 botTest.sendMessage(chatId, str);
+        //             });
 
 
 
 
-                });
+        //         });
 
-            }
+        //     }
 
 
 
-        });
-        botTest.onText(/\/Manor_Solomon/, (msg, match) => {
+        // });
+        // botTest.onText(/\/Manor_Solomon/, (msg, match) => {
 
 
-            const chatId = msg.chat.id;
-            const { text } = msg
-            var unirest = require("unirest");
-            if (text === '/Manor_Solomon') {
+        //     const chatId = msg.chat.id;
+        //     const { text } = msg
+        //     var unirest = require("unirest");
+        //     if (text === '/Manor_Solomon') {
 
 
-                var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/players/player/697/2020-2021");
-                var req2 = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2762");
+        //         var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/players/player/697/2020-2021");
+        //         var req2 = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2762");
 
-                req.headers(cerdentials);
+        //         req.headers(cerdentials);
 
-                req2.headers(cerdentials);
+        //         req2.headers(cerdentials);
 
-                let str = ''
-                req2.end(function (res2) {
-                    req.end(function (res) {
+        //         let str = ''
+        //         req2.end(function (res2) {
+        //             req.end(function (res) {
 
-                        const { firstname, lastname, position, age } = res.body.api.players[0]
-                        str += `${firstname} ${lastname} ${age}, ${position}:\n\n`
-                        res.body.api.players.forEach(player => {
-                            const { league, goals, cards, games } = player
-                            const { total, assists } = goals
-                            const { yellow, red } = cards
-                            const { appearences, lineups } = games
-                            if (appearences > 0) {
+        //                 const { firstname, lastname, position, age } = res.body.api.players[0]
+        //                 str += `${firstname} ${lastname} ${age}, ${position}:\n\n`
+        //                 res.body.api.players.forEach(player => {
+        //                     const { league, goals, cards, games } = player
+        //                     const { total, assists } = goals
+        //                     const { yellow, red } = cards
+        //                     const { appearences, lineups } = games
+        //                     if (appearences > 0) {
 
-                                str += `league: ${league}\nappearences: ${appearences}, lineups: ${lineups}\ngoals: ${total}\nassists: ${assists}\nyellow cards: ${yellow}\nred cards: ${red}\n\n`
-                            }
-                            //${goalsFor}-${goalsAgainst}
+        //                         str += `league: ${league}\nappearences: ${appearences}, lineups: ${lineups}\ngoals: ${total}\nassists: ${assists}\nyellow cards: ${yellow}\nred cards: ${red}\n\n`
+        //                     }
+        //                     //${goalsFor}-${goalsAgainst}
 
-                        })
-                        const team = res2.body.api.standings[0].find(o => { return o.teamName === 'Shakhtar Donetsk' })
+        //                 })
+        //                 const team = res2.body.api.standings[0].find(o => { return o.teamName === 'Shakhtar Donetsk' })
 
-                        const { teamName, rank, points, all, goalsDiff, forme, logo } = team
+        //                 const { teamName, rank, points, all, goalsDiff, forme, logo } = team
 
-                        const { matchsPlayed, goalsFor, goalsAgainst, win, draw, lose } = all
+        //                 const { matchsPlayed, goalsFor, goalsAgainst, win, draw, lose } = all
 
-                        str += `Team: ${teamName}:  Rank: ${rank}  Points: ${points} \nForm: ${forme} \nWins: ${win} \nDraws: ${draw} \nLoses: ${lose} \nGoals for: ${goalsFor}\nGoals against : ${goalsAgainst} \nGoals diff: ${goalsDiff}\n\n`
+        //                 str += `Team: ${teamName}:  Rank: ${rank}  Points: ${points} \nForm: ${forme} \nWins: ${win} \nDraws: ${draw} \nLoses: ${lose} \nGoals for: ${goalsFor}\nGoals against : ${goalsAgainst} \nGoals diff: ${goalsDiff}\n\n`
 
 
-                        str += `highlights:\n https://www.youtube.com/watch?v=pGl-6DLZTds\n\n`
+        //                 str += `highlights:\n https://www.youtube.com/watch?v=pGl-6DLZTds\n\n`
 
-                        botTest.sendMessage(chatId, str);
-                    });
+        //                 botTest.sendMessage(chatId, str);
+        //             });
 
 
 
 
-                });
+        //         });
 
 
-            }
+        //     }
 
 
 
-        });
+        // });
 
 
         // getting all the games
@@ -1314,93 +1314,93 @@ module.exports.Shishit = async function () {
 
 
         });
-        botTest.onText(/\/(.+)-(.+)/, (msg, match) => {
+        // botTest.onText(/\/(.+)-(.+)/, (msg, match) => {
 
-            const chatId = msg.chat.id;
+        //     const chatId = msg.chat.id;
 
-            const teamA = match[1].toLowerCase()
-            const teamB = match[2].toLowerCase()
-            const firstTeam = teamsIds.find(o => { return o.key === teamA })
-            const seconesTeam = teamsIds.find(o => { return o.key === teamB })
-            const teamAId = firstTeam ? firstTeam.id : ''
-            const teamAname = firstTeam ? firstTeam.name : ''
-            const teamBId = seconesTeam ? seconesTeam.id : ''
-            const teamBname = seconesTeam ? seconesTeam.name : ''
-            // console.log('firstTeam', firstTeam)
-            // console.log('seconesTeam', seconesTeam)
-            var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/fixtures/h2h/" + teamAId + "/" + teamBId);
-            req.headers({
-                "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "useQueryString": true
-            });
-
-
-            req.end(function (res) {
-                if (res.error) throw new Error(res.error);
-                const { results } = res.body.api
-                if (results > 0) {
-
-                    let str = `Last ${results} Games, ${teamAname} Vs ${teamBname}: \n`
-                    // const games = res.body.api.fixtures.filter(o => { return Number(o.round.substring(o.round.length - 2, o.round.length)) === Number(mahzor) });
-                    console.log('  res.body.api', res.body.api)
-                    res.body.api.fixtures.forEach(game => {
-
-                        const { homeTeam, awayTeam, score, event_date } = game
-                        const date = moment(event_date).format('YYYY-MM-DD')
-                        const { team_name: home } = homeTeam
-                        const { team_name: away } = awayTeam
-                        const { fulltime = 'No Result Yet' } = score
-                        const finalScore = fulltime === null ? 'No Result Yet' : fulltime
-                        str += `${date} : ${home} vs ${away}: ${finalScore}\n`
-
-                    })
-                    botTest.sendMessage(chatId, str);
-                }
-
-            });
+        //     const teamA = match[1].toLowerCase()
+        //     const teamB = match[2].toLowerCase()
+        //     const firstTeam = teamsIds.find(o => { return o.key === teamA })
+        //     const seconesTeam = teamsIds.find(o => { return o.key === teamB })
+        //     const teamAId = firstTeam ? firstTeam.id : ''
+        //     const teamAname = firstTeam ? firstTeam.name : ''
+        //     const teamBId = seconesTeam ? seconesTeam.id : ''
+        //     const teamBname = seconesTeam ? seconesTeam.name : ''
+        //     // console.log('firstTeam', firstTeam)
+        //     // console.log('seconesTeam', seconesTeam)
+        //     var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/fixtures/h2h/" + teamAId + "/" + teamBId);
+        //     req.headers({
+        //         "x-rapidapi-key": "c872dafbecmsh00cd2ec060c0ae4p14f0b8jsn8cb8fc13ef49",
+        //         "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
+        //         "useQueryString": true
+        //     });
 
 
+        //     req.end(function (res) {
+        //         if (res.error) throw new Error(res.error);
+        //         const { results } = res.body.api
+        //         if (results > 0) {
 
-        });
-        botTest.onText(/\/mahzor(.+)/, (msg, match) => {
-            var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/fixtures/league/2708");
-            const mahzor = match[1];
-            const chatId = msg.chat.id;
-            req.headers(cerdentials);
+        //             let str = `Last ${results} Games, ${teamAname} Vs ${teamBname}: \n`
+        //             // const games = res.body.api.fixtures.filter(o => { return Number(o.round.substring(o.round.length - 2, o.round.length)) === Number(mahzor) });
+        //             console.log('  res.body.api', res.body.api)
+        //             res.body.api.fixtures.forEach(game => {
 
-            req.end(function (res) {
-                if (res.error) throw new Error(res.error);
-                let str = `Mahzor ${mahzor}: \n`
-                const games = res.body.api.fixtures.filter(o => { return Number(o.round.substring(o.round.length - 2, o.round.length)) === Number(mahzor) });
-                games.forEach(game => {
-                    const { homeTeam, awayTeam, score } = game
-                    const { team_name: home } = homeTeam
-                    const { team_name: away } = awayTeam
-                    const { fulltime = 'No Result Yet' } = score
-                    const finalScore = fulltime === null ? 'No Result Yet' : fulltime
-                    const id = `${home} vs ${away}`
-                    const takzir = highlights[mahzor] ? highlights[mahzor].find(o => { return o.id === id }) : false
+        //                 const { homeTeam, awayTeam, score, event_date } = game
+        //                 const date = moment(event_date).format('YYYY-MM-DD')
+        //                 const { team_name: home } = homeTeam
+        //                 const { team_name: away } = awayTeam
+        //                 const { fulltime = 'No Result Yet' } = score
+        //                 const finalScore = fulltime === null ? 'No Result Yet' : fulltime
+        //                 str += `${date} : ${home} vs ${away}: ${finalScore}\n`
 
-                    str += `${home} vs ${away}: ${finalScore}\n`
-                    if (takzir) {
-                        str += `Highlights: ${takzir.url}\n\n`
+        //             })
+        //             botTest.sendMessage(chatId, str);
+        //         }
 
-                    } else {
-                        str += `\n`
-
-                    }
-                })
-                // console.log(str)
-                if (mahzor !== 'im') {
-
-                    botTest.sendMessage(chatId, str);
-                }
-            });
+        //     });
 
 
 
-        });
+        // });
+        // botTest.onText(/\/mahzor(.+)/, (msg, match) => {
+        //     var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/fixtures/league/2708");
+        //     const mahzor = match[1];
+        //     const chatId = msg.chat.id;
+        //     req.headers(cerdentials);
+
+        //     req.end(function (res) {
+        //         if (res.error) throw new Error(res.error);
+        //         let str = `Mahzor ${mahzor}: \n`
+        //         const games = res.body.api.fixtures.filter(o => { return Number(o.round.substring(o.round.length - 2, o.round.length)) === Number(mahzor) });
+        //         games.forEach(game => {
+        //             const { homeTeam, awayTeam, score } = game
+        //             const { team_name: home } = homeTeam
+        //             const { team_name: away } = awayTeam
+        //             const { fulltime = 'No Result Yet' } = score
+        //             const finalScore = fulltime === null ? 'No Result Yet' : fulltime
+        //             const id = `${home} vs ${away}`
+        //             const takzir = highlights[mahzor] ? highlights[mahzor].find(o => { return o.id === id }) : false
+
+        //             str += `${home} vs ${away}: ${finalScore}\n`
+        //             if (takzir) {
+        //                 str += `Highlights: ${takzir.url}\n\n`
+
+        //             } else {
+        //                 str += `\n`
+
+        //             }
+        //         })
+        //         // console.log(str)
+        //         if (mahzor !== 'im') {
+
+        //             botTest.sendMessage(chatId, str);
+        //         }
+        //     });
+
+
+
+        // });
         // giving all the options
         try{
             botTest.onText(/\/help/, (msg, match) => {
@@ -1578,135 +1578,135 @@ module.exports.Shishit = async function () {
         }
 
         // getting live results
-        botTest.onText(/\/live/, (msg, match) => {
-            var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/fixtures/live");
-            const chatId = msg.chat.id;
-            const { text } = msg
-            if (text === '/live') {
-                req.headers(cerdentials);
+        // botTest.onText(/\/live/, (msg, match) => {
+        //     var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/fixtures/live");
+        //     const chatId = msg.chat.id;
+        //     const { text } = msg
+        //     if (text === '/live') {
+        //         req.headers(cerdentials);
 
-                req.end(function (res) {
-                    if (res.error) throw new Error(res.error);
-                    let str = 'Live Results:\n\n'
-                    leagueIds2.forEach(league => {
-                        const { id, country, name } = league
-                        const leagueArr = res.body.api.fixtures.filter(o => { return o.league.name === name && o.league.country === country })
-                        if (leagueArr.length) {
-                            str += `${country} - ${name}: \n`
+        //         req.end(function (res) {
+        //             if (res.error) throw new Error(res.error);
+        //             let str = 'Live Results:\n\n'
+        //             leagueIds2.forEach(league => {
+        //                 const { id, country, name } = league
+        //                 const leagueArr = res.body.api.fixtures.filter(o => { return o.league.name === name && o.league.country === country })
+        //                 if (leagueArr.length) {
+        //                     str += `${country} - ${name}: \n`
 
-                        }
-                        leagueArr.forEach(game => {
-                            const { goalsAwayTeam, goalsHomeTeam, homeTeam, awayTeam, elapsed, score, league } = game
-                            const { name, country } = league
-                            const { halftime } = score
-                            const { team_name: home } = homeTeam
-                            const { team_name: away } = awayTeam
-                            str += `${elapsed}:  ${home}  ${goalsHomeTeam} - ${goalsAwayTeam}  ${away}  (${halftime ? halftime : ''}) \n\n`
+        //                 }
+        //                 leagueArr.forEach(game => {
+        //                     const { goalsAwayTeam, goalsHomeTeam, homeTeam, awayTeam, elapsed, score, league } = game
+        //                     const { name, country } = league
+        //                     const { halftime } = score
+        //                     const { team_name: home } = homeTeam
+        //                     const { team_name: away } = awayTeam
+        //                     str += `${elapsed}:  ${home}  ${goalsHomeTeam} - ${goalsAwayTeam}  ${away}  (${halftime ? halftime : ''}) \n\n`
 
-                        })
+        //                 })
 
-                    })
-                    if (str === 'Live Results:\n\n') {
-                        str = 'Live Results: No Results So Far...'
+        //             })
+        //             if (str === 'Live Results:\n\n') {
+        //                 str = 'Live Results: No Results So Far...'
 
-                    }
-
-
-                    botTest.sendMessage(chatId, str);
-                });
-            }
+        //             }
 
 
-        });
-        // getting live euro results
-        botTest.onText(/\/now/, (msg, match) => {
-            var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/fixtures/live");
-            const chatId = msg.chat.id;
-            const { text } = msg
-            if (text === '/now') {
-                req.headers(cerdentials);
-
-                req.end(function (res) {
-                    if (res.error) throw new Error(res.error);
-                    let str = 'Live Results:\n\n'
-                    leagueIds.forEach(league => {
-                        const { id, country, name } = league
-                        const leagueArr = res.body.api.fixtures.filter(o => { return o.league.name === name && o.league.country === country })
-                        if (leagueArr.length) {
-                            str += `${country} - ${name}: \n`
-
-                        }
-                        leagueArr.forEach(game => {
-                            const { goalsAwayTeam, goalsHomeTeam, homeTeam, awayTeam, elapsed, score, league } = game
-                            const { name, country } = league
-                            const { halftime } = score
-                            const { team_name: home } = homeTeam
-                            const { team_name: away } = awayTeam
-                            str += `${elapsed}:  ${home}  ${goalsHomeTeam} - ${goalsAwayTeam}  ${away}  (${halftime ? halftime : ''}) \n\n`
-
-                        })
-
-                    })
-                    if (str === 'Live Results:\n\n') {
-                        str = 'Live Results: No Results So Far...'
-
-                    }
+        //             botTest.sendMessage(chatId, str);
+        //         });
+        //     }
 
 
-                    botTest.sendMessage(chatId, str);
-                });
-            }
+        // });
+        // // getting live euro results
+        // botTest.onText(/\/now/, (msg, match) => {
+        //     var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/fixtures/live");
+        //     const chatId = msg.chat.id;
+        //     const { text } = msg
+        //     if (text === '/now') {
+        //         req.headers(cerdentials);
+
+        //         req.end(function (res) {
+        //             if (res.error) throw new Error(res.error);
+        //             let str = 'Live Results:\n\n'
+        //             leagueIds.forEach(league => {
+        //                 const { id, country, name } = league
+        //                 const leagueArr = res.body.api.fixtures.filter(o => { return o.league.name === name && o.league.country === country })
+        //                 if (leagueArr.length) {
+        //                     str += `${country} - ${name}: \n`
+
+        //                 }
+        //                 leagueArr.forEach(game => {
+        //                     const { goalsAwayTeam, goalsHomeTeam, homeTeam, awayTeam, elapsed, score, league } = game
+        //                     const { name, country } = league
+        //                     const { halftime } = score
+        //                     const { team_name: home } = homeTeam
+        //                     const { team_name: away } = awayTeam
+        //                     str += `${elapsed}:  ${home}  ${goalsHomeTeam} - ${goalsAwayTeam}  ${away}  (${halftime ? halftime : ''}) \n\n`
+
+        //                 })
+
+        //             })
+        //             if (str === 'Live Results:\n\n') {
+        //                 str = 'Live Results: No Results So Far...'
+
+        //             }
 
 
-        });
+        //             botTest.sendMessage(chatId, str);
+        //         });
+        //     }
+
+
+        // });
 
 
         // getting last fixtsure
-        botTest.onText(/\/last/, (msg, match) => {
-            var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/fixtures/league/2708");
-            const mahzor = match[1];
-            const chatId = msg.chat.id;
-            const { text } = msg
-            if (text === '/last') {
-                req.headers(cerdentials);
+        // botTest.onText(/\/last/, (msg, match) => {
+        //     var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/fixtures/league/2708");
+        //     const mahzor = match[1];
+        //     const chatId = msg.chat.id;
+        //     const { text } = msg
+        //     if (text === '/last') {
+        //         req.headers(cerdentials);
 
 
-                req.end(function (res) {
-                    if (res.error) throw new Error(res.error);
-                    let ans = true
-                    let mahzor = 0
-                    let str = ''
-                    while (ans) {
-                        mahzor++
+        //         req.end(function (res) {
+        //             if (res.error) throw new Error(res.error);
+        //             let ans = true
+        //             let mahzor = 0
+        //             let str = ''
+        //             while (ans) {
+        //                 mahzor++
 
-                        const games = res.body.api.fixtures.filter(o => { return Number(o.round.substring(o.round.length - 2, o.round.length)) === Number(mahzor) });
-                        isAllNull = games.find(game => {
-                            return game.score.fulltime !== null
-                        })
-                        if (isAllNull === undefined) {
-                            ans = false
-                        } else {
-                            str = `Mahzor ${mahzor}: \n`
+        //                 const games = res.body.api.fixtures.filter(o => { return Number(o.round.substring(o.round.length - 2, o.round.length)) === Number(mahzor) });
+        //                 isAllNull = games.find(game => {
+        //                     return game.score.fulltime !== null
+        //                 })
+        //                 if (isAllNull === undefined) {
+        //                     ans = false
+        //                 } else {
+        //                     str = `Mahzor ${mahzor}: \n`
 
-                            games.forEach(game => {
-                                const { homeTeam, awayTeam, score } = game
-                                const { team_name: home } = homeTeam
-                                const { team_name: away } = awayTeam
-                                const { fulltime } = score
+        //                     games.forEach(game => {
+        //                         const { homeTeam, awayTeam, score } = game
+        //                         const { team_name: home } = homeTeam
+        //                         const { team_name: away } = awayTeam
+        //                         const { fulltime } = score
 
-                                const finalScore = fulltime === null ? 'No Result Yet' : fulltime
-                                str += `${home} vs ${away}: ${finalScore}\n\n`
+        //                         const finalScore = fulltime === null ? 'No Result Yet' : fulltime
+        //                         str += `${home} vs ${away}: ${finalScore}\n\n`
 
-                            })
-                        }
-                    }
-                    botTest.sendMessage(chatId, str);
+        //                     })
+        //                 }
+        //             }
+        //             botTest.sendMessage(chatId, str);
 
-                });
-            }
+        //         });
+        //     }
 
 
-        });
+        // });
 
         //getting  teams data
         botTest.onText(/\/teams/, (msg, match) => {
@@ -1724,115 +1724,115 @@ module.exports.Shishit = async function () {
             }
 
         });
-        botTest.onText(/\/beitar/, (msg, match) => {
-            var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2708");
-            const chatId = msg.chat.id;
-            const { text } = msg
-            if (text === '/beitar') {
-                req.headers(cerdentials);
+        // botTest.onText(/\/beitar/, (msg, match) => {
+        //     var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2708");
+        //     const chatId = msg.chat.id;
+        //     const { text } = msg
+        //     if (text === '/beitar') {
+        //         req.headers(cerdentials);
 
-                req.end(function (res) {
-                    if (res.error) throw new Error(res.error);
-                    let str = ''
-                    // console.log(' res.body.api', res.body)
-                    const beitar = res.body.api.standings[0].find(o => { return o.teamName === 'Beitar Jerusalem' })
-                    const { teamName, rank, points, all, goalsDiff, forme, logo } = beitar
+        //         req.end(function (res) {
+        //             if (res.error) throw new Error(res.error);
+        //             let str = ''
+        //             // console.log(' res.body.api', res.body)
+        //             const beitar = res.body.api.standings[0].find(o => { return o.teamName === 'Beitar Jerusalem' })
+        //             const { teamName, rank, points, all, goalsDiff, forme, logo } = beitar
 
-                    const { matchsPlayed, goalsFor, goalsAgainst, win, draw, lose } = all
+        //             const { matchsPlayed, goalsFor, goalsAgainst, win, draw, lose } = all
 
-                    str += `${teamName}:  Rank: ${rank}  Points: ${points} \nForm: ${forme} \nWins: ${win} \nDraws: ${draw} \nLoses: ${lose} \nGoals for: ${goalsFor}\nGoals against : ${goalsAgainst} \nGoals diff: ${goalsDiff}\n ${logo}
-                `
-
-
-                    botTest.sendMessage(chatId, str);
-                });
-
-            }
-
-        });
-        botTest.onText(/\/ashdod/, (msg, match) => {
-            var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2708");
-            const chatId = msg.chat.id;
-            const { text } = msg
-            if (text === '/ashdod') {
-                req.headers(cerdentials);
-
-                req.end(function (res) {
-                    if (res.error) throw new Error(res.error);
-                    let str = ''
-                    // console.log(' res.body.api', res.body)
-                    const team = res.body.api.standings[0].find(o => { return o.teamName === 'Ashdod' })
-
-                    const { teamName, rank, points, all, goalsDiff, forme, logo } = team
-
-                    const { matchsPlayed, goalsFor, goalsAgainst, win, draw, lose } = all
-
-                    str += `${teamName}:  Rank: ${rank}  Points: ${points} \nForm: ${forme} \nWins: ${win} \nDraws: ${draw} \nLoses: ${lose} \nGoals for: ${goalsFor}\nGoals against : ${goalsAgainst} \nGoals diff: ${goalsDiff}\n ${logo}
-                `
+        //             str += `${teamName}:  Rank: ${rank}  Points: ${points} \nForm: ${forme} \nWins: ${win} \nDraws: ${draw} \nLoses: ${lose} \nGoals for: ${goalsFor}\nGoals against : ${goalsAgainst} \nGoals diff: ${goalsDiff}\n ${logo}
+        //         `
 
 
-                    botTest.sendMessage(chatId, str);
-                });
-            }
+        //             botTest.sendMessage(chatId, str);
+        //         });
+
+        //     }
+
+        // });
+        // botTest.onText(/\/ashdod/, (msg, match) => {
+        //     var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2708");
+        //     const chatId = msg.chat.id;
+        //     const { text } = msg
+        //     if (text === '/ashdod') {
+        //         req.headers(cerdentials);
+
+        //         req.end(function (res) {
+        //             if (res.error) throw new Error(res.error);
+        //             let str = ''
+        //             // console.log(' res.body.api', res.body)
+        //             const team = res.body.api.standings[0].find(o => { return o.teamName === 'Ashdod' })
+
+        //             const { teamName, rank, points, all, goalsDiff, forme, logo } = team
+
+        //             const { matchsPlayed, goalsFor, goalsAgainst, win, draw, lose } = all
+
+        //             str += `${teamName}:  Rank: ${rank}  Points: ${points} \nForm: ${forme} \nWins: ${win} \nDraws: ${draw} \nLoses: ${lose} \nGoals for: ${goalsFor}\nGoals against : ${goalsAgainst} \nGoals diff: ${goalsDiff}\n ${logo}
+        //         `
 
 
-        });
-        botTest.onText(/\/haifa/, (msg, match) => {
-            var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2708");
-            const chatId = msg.chat.id;
-            const { text } = msg
-            if (text === '/haifa') {
-
-                req.headers(cerdentials);
-
-                req.end(function (res) {
-                    if (res.error) throw new Error(res.error);
-                    let str = ''
-                    // console.log(' res.body.api', res.body)
-                    const team = res.body.api.standings[0].find(o => { return o.teamName === 'Maccabi Haifa' })
-
-                    const { teamName, rank, points, all, goalsDiff, forme, logo } = team
-
-                    const { matchsPlayed, goalsFor, goalsAgainst, win, draw, lose } = all
-
-                    str += `${teamName}:  Rank: ${rank}  Points: ${points} \nForm: ${forme} \nWins: ${win} \nDraws: ${draw} \nLoses: ${lose} \nGoals for: ${goalsFor}\nGoals against : ${goalsAgainst} \nGoals diff: ${goalsDiff}\n ${logo}
-                    `
+        //             botTest.sendMessage(chatId, str);
+        //         });
+        //     }
 
 
-                    botTest.sendMessage(chatId, str);
-                });
-            }
+        // });
+        // botTest.onText(/\/haifa/, (msg, match) => {
+        //     var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2708");
+        //     const chatId = msg.chat.id;
+        //     const { text } = msg
+        //     if (text === '/haifa') {
+
+        //         req.headers(cerdentials);
+
+        //         req.end(function (res) {
+        //             if (res.error) throw new Error(res.error);
+        //             let str = ''
+        //             // console.log(' res.body.api', res.body)
+        //             const team = res.body.api.standings[0].find(o => { return o.teamName === 'Maccabi Haifa' })
+
+        //             const { teamName, rank, points, all, goalsDiff, forme, logo } = team
+
+        //             const { matchsPlayed, goalsFor, goalsAgainst, win, draw, lose } = all
+
+        //             str += `${teamName}:  Rank: ${rank}  Points: ${points} \nForm: ${forme} \nWins: ${win} \nDraws: ${draw} \nLoses: ${lose} \nGoals for: ${goalsFor}\nGoals against : ${goalsAgainst} \nGoals diff: ${goalsDiff}\n ${logo}
+        //             `
+
+
+        //             botTest.sendMessage(chatId, str);
+        //         });
+        //     }
 
 
 
-        });
-        botTest.onText(/\/telaviv/, (msg, match) => {
-            var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2708");
-            const chatId = msg.chat.id;
-            const { text } = msg
-            if (text === '/telaviv') {
-                req.headers(cerdentials);
+        // });
+        // botTest.onText(/\/telaviv/, (msg, match) => {
+        //     var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2708");
+        //     const chatId = msg.chat.id;
+        //     const { text } = msg
+        //     if (text === '/telaviv') {
+        //         req.headers(cerdentials);
 
-                req.end(function (res) {
-                    if (res.error) throw new Error(res.error);
-                    let str = ''
-                    // console.log(' res.body.api', res.body)
-                    const team = res.body.api.standings[0].find(o => { return o.teamName === 'Maccabi Tel Aviv' })
+        //         req.end(function (res) {
+        //             if (res.error) throw new Error(res.error);
+        //             let str = ''
+        //             // console.log(' res.body.api', res.body)
+        //             const team = res.body.api.standings[0].find(o => { return o.teamName === 'Maccabi Tel Aviv' })
 
-                    const { teamName, rank, points, all, goalsDiff, forme, logo } = team
+        //             const { teamName, rank, points, all, goalsDiff, forme, logo } = team
 
-                    const { matchsPlayed, goalsFor, goalsAgainst, win, draw, lose } = all
+        //             const { matchsPlayed, goalsFor, goalsAgainst, win, draw, lose } = all
 
-                    str += `${teamName}:  Rank: ${rank}  Points: ${points} \nForm: ${forme} \nWins: ${win} \nDraws: ${draw} \nLoses: ${lose} \nGoals for: ${goalsFor}\nGoals against : ${goalsAgainst} \nGoals diff: ${goalsDiff}\n ${logo}
-                `
+        //             str += `${teamName}:  Rank: ${rank}  Points: ${points} \nForm: ${forme} \nWins: ${win} \nDraws: ${draw} \nLoses: ${lose} \nGoals for: ${goalsFor}\nGoals against : ${goalsAgainst} \nGoals diff: ${goalsDiff}\n ${logo}
+        //         `
 
 
-                    botTest.sendMessage(chatId, str);
-                });
+        //             botTest.sendMessage(chatId, str);
+        //         });
 
-            }
+        //     }
 
-        });
+        // });
 
 
         //stats
