@@ -1439,52 +1439,81 @@ module.exports.Shishit = async function () {
     });
     let lastMsg;
     botTest.onText(/\/trollNews/, (msg, match) => {
-        const chatId = msg.chat.id;
-        const text = match[0]
-        let str = ''
-        if (text === '/trollNews') {
-            let data = msg.text.substring(text.length, msg.text.length)
-            if (data) {
-                str += `עדכון - `
-                str += `${data}.\n`
-                lastMsg  = str
-                const option = {
-                    "parse_mode": "Markdown",
-                    "reply_markup": { "keyboard": [["Amazing! Send it"], ["No i will change it.."]], "one_time_keyboard": true }
-                };
+        try {
+            const chatId = msg.chat.id;
+            const text = match[0]
+            let str = ''
+            if (text === '/trollNews') {
+                let data = msg.text.substring(text.length, msg.text.length)
+                if (data) {
+                    str += `עדכון - `
+                    str += `${data}.\n`
+                    lastMsg = str
+                    const option = {
+                        "parse_mode": "Markdown",
+                        "reply_markup": { "keyboard": [["Amazing! Send it"], ["No i will change it.."]], "one_time_keyboard": true }
+                    };
 
-                botTest.sendMessage(chatId, `Your News:\n ${str}`, option)
+                    botTest.sendMessage(chatId, `Your News:\n ${str}`, option)
+
+
+                    try {
+                        botTest.onText(/\Amazing! Send it/, function (msg2, match) {
+
+                            try { 
+                                if (match[0] === 'Amazing! Send it') {
+                                    console.log('lastMsg', lastMsg)
+                                    botTest.sendMessage(chatShisit, lastMsg);
+                                    throw 'stop';
+    
+                                }
+                            }
+                       
+                            catch (err) {
+                                throw err
+                            }
 
 
 
-                botTest.onText(/\Amazing! Send it/, function (msg2, match) {
-                    if (match[0] === 'Amazing! Send it') {
-                        console.log('lastMsg',lastMsg)
-                        botTest.sendMessage(chatShisit, lastMsg);
-                        throw 'stop';
-
+                        })
+                    } catch (err2) {
+                        console.log('err', err2)
                     }
-                });
+                    try {
+                        botTest.onText(/\No i will change it../, function (msg2, match) {
+                            try {
+                                if (match[0] === 'No i will change it..') {
 
-                botTest.onText(/\No i will change it../, function (msg2, match) {
-                    if (match[0] === 'No i will change it..') {
+                                    botTest.sendMessage(msg.chat.id, "Ok good, I am waiting for you to change it");
+                                    throw 'stop'
 
-                        botTest.sendMessage(msg.chat.id, "Ok good, I am waiting for you to change it");
-                        throw 'stop';
+                                }
+                            }
+                            catch (err) {
+                                throw err
+                            }
 
 
-
+                        })
+                    } catch (err2) {
+                        console.log('err', err2)
                     }
-                });
 
-            } else {
-                botTest.sendMessage(chatId, 'No Text..');
+
+                } else {
+                    botTest.sendMessage(chatId, 'No Text..');
+
+                }
+
+
+
 
             }
-
-
-
         }
+        catch (err) {
+            console.log('err',err)
+        }
+
 
     });
 
