@@ -435,7 +435,7 @@ const highlights = {
 // SHISHIT BOT
 module.exports.Shishit = async function () {
     const updateTo = moment().utc().format('YYYY[-]MM[-]DD');
-    const botTest = new TelegramBot(testtoken, { polling: true });
+    const botTest = new TelegramBot(token, { polling: true });
 
     // running scrapper on flashscore to get live result pushes
     // nodeSchedule.scheduleJob('* 16-21 * * *', () => {
