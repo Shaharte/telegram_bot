@@ -1423,7 +1423,7 @@ module.exports.Shishit = async function () {
     
                     botTest.sendMessage(chatId, str);
     
-                // }
+                }
     
             });
         } catch(error){
