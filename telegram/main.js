@@ -1401,7 +1401,8 @@ module.exports.Shishit = async function () {
         const chatId = msg.chat.id;
         console.log(chatId)
         const { text } = msg
-        if (text === '/help') {
+        
+        if (text === '/help' && chatId === chatShisit) {
 
 
             let str = 'Your Options Are:\n\n/live \n/table \n/stats \n/last \n/teams \n/mahzorim \n/ligyoners'
@@ -1409,6 +1410,12 @@ module.exports.Shishit = async function () {
 
             botTest.sendMessage(chatId, str);
 
+
+        } else{
+            let str = 'Your Options Are:\n\n/live \n/table \n/stats \n/last \n/teams \n/mahzorim \n/ligyoners \n/troll'
+
+
+            botTest.sendMessage(chatId, str);
 
         }
 
