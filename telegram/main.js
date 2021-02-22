@@ -435,7 +435,7 @@ const highlights = {
 // SHISHIT BOT
 module.exports.Shishit = async function () {
     const updateTo = moment().utc().format('YYYY[-]MM[-]DD');
-    const botTest = new TelegramBot(token, { polling: true });
+    const botTest = new TelegramBot(testtoken, { polling: true });
 
     // running scrapper on flashscore to get live result pushes
     // nodeSchedule.scheduleJob('* 16-21 * * *', () => {
@@ -1401,7 +1401,7 @@ module.exports.Shishit = async function () {
         const chatId = msg.chat.id;
         console.log(chatId)
         const { text } = msg
-        
+
         if (text === '/help' && chatId === chatShisit) {
 
 
@@ -1411,7 +1411,7 @@ module.exports.Shishit = async function () {
             botTest.sendMessage(chatId, str);
 
 
-        } else{
+        } else {
             let str = 'Your Options Are:\n\n/live \n/table \n/stats \n/last \n/teams \n/mahzorim \n/ligyoners \n/troll'
 
 
@@ -1420,40 +1420,74 @@ module.exports.Shishit = async function () {
         }
 
     });
+    botTest.onText(/\/troll/, (msg, match) => {
+        const chatId = msg.chat.id;
+        // console.log(chatId)
+        const { text } = msg
+
+        if (text === '/troll') {
 
 
-    // getting the table
-    // botTest.onText(/\/table/, (msg, match) => {
+            let str = 'Congratulations!\nYou found the secret option :) you can now troll your friends with fake news!\nAll you need is to type: /trollNews "Your news" and see what happend'
+
+            botTest.sendMessage(chatId, str);
+        }
 
 
-    //     var req = unirest("GET", "https://api-football-v1.p.rapidapi.com/v2/leagueTable/2708");
-    //     const chatId = msg.chat.id;
-    //     const { text } = msg
-    //     if (text === '/table') {
-    //         req.headers(cerdentials);
+    });
+    let lastMsg;
+    botTest.onText(/\/trollNews/, (msg, match) => {
+        const chatId = msg.chat.id;
+        const text = match[0]
+        let str = ''
+        if (text === '/trollNews') {
+            let data = msg.text.substring(text.length, msg.text.length)
+            if (data) {
+                str += `עדכון טרול - `
+                str += `${data}.\n`
+                lastMsg  = str
+                const option = {
+                    "parse_mode": "Markdown",
+                    "reply_markup": { "keyboard": [["Amazing! Send it"], ["No i will change it.."]], "one_time_keyboard": true }
+                };
 
-    //         req.end(function (res) {
-    //             if (res.error) throw new Error(res.error);
-    //             let str = `P:   Team                 Played  Points\n`
-    //             res.body.api.standings[0].forEach(team => {
-    //                 let { teamName, rank, points, all, goalsDiff } = team
-    //                 const { matchsPlayed, goalsFor, goalsAgainst } = all
-
-    //                 for (let i = teamName.length; i < 21; i++) {
-    //                     teamName += ' '
-    //                 }
-
-
-    //                 //${goalsFor}-${goalsAgainst}
-    //                 str += `${rank}:  ${teamName}  ${matchsPlayed}    ${points} \n`
-
-    //             })
-    //             botTest.sendMessage(chatId, str);
-    //         });
-    //     }
+                botTest.sendMessage(chatId, `Your News:\n ${str}`, option)
 
 
-    // });
+
+                botTest.onText(/\Amazing! Send it/, function (msg2, match) {
+                    if (match[0] === 'Amazing! Send it') {
+                        console.log('lastMsg',lastMsg)
+                        botTest.sendMessage(chatShisit, lastMsg);
+                        throw 'stop';
+
+                    }
+                });
+
+                botTest.onText(/\No i will change it../, function (msg2, match) {
+                    if (match[0] === 'No i will change it..') {
+
+                        botTest.sendMessage(msg.chat.id, "Ok good, I am wating for you to change it");
+                        throw 'stop';
+
+
+
+                    }
+                });
+
+            } else {
+                botTest.sendMessage(chatId, 'No Text..');
+
+            }
+
+
+
+        }
+
+    });
+
+
+
     botTest.onText(/\/table/, async (msg, match) => {
 
 
@@ -1466,7 +1500,7 @@ module.exports.Shishit = async function () {
             teams.forEach(team => {
                 let { position, isPlaying, points, match_played, teamName, goal_diff, wins, draw, loses } = team
                 teamName = checkTeamName(teamName)
- 
+
                 // teamName = teamName.padEnd(22)
                 str += `${position.padEnd(3)} ${teamName}    ${match_played}    ${goal_diff}    ${points} ${isPlaying === '' ? isPlaying : `(${isPlaying})`} \n`
 
@@ -1485,48 +1519,48 @@ module.exports.Shishit = async function () {
 
     });
 
-    const checkTeamName = (teamName) =>{
-        if (teamName === 'Ashdod'){
-            teamName =  teamName.padEnd(29)
+    const checkTeamName = (teamName) => {
+        if (teamName === 'Ashdod') {
+            teamName = teamName.padEnd(29)
         }
-        if (teamName === 'Maccabi Haifa'){
-            teamName =  teamName.padEnd(24)
+        if (teamName === 'Maccabi Haifa') {
+            teamName = teamName.padEnd(24)
         }
-        if (teamName === 'Maccabi Tel Aviv'){
-            teamName =  teamName.padEnd(23)
+        if (teamName === 'Maccabi Tel Aviv') {
+            teamName = teamName.padEnd(23)
         }
-        if (teamName === 'H. Beer Sheva'){
-            teamName =  teamName.padEnd(25)
+        if (teamName === 'H. Beer Sheva') {
+            teamName = teamName.padEnd(25)
         }
-        if (teamName === 'Netanya'){
-            teamName =  teamName.padEnd(29)
+        if (teamName === 'Netanya') {
+            teamName = teamName.padEnd(29)
         }
-        if (teamName === 'Maccabi Petah Tikva'){
-            teamName =  teamName.padEnd(19)
+        if (teamName === 'Maccabi Petah Tikva') {
+            teamName = teamName.padEnd(19)
         }
-        if (teamName === 'Kiryat Shmona'){
-            teamName =  teamName.padEnd(24)
+        if (teamName === 'Kiryat Shmona') {
+            teamName = teamName.padEnd(24)
         }
-        if (teamName === 'Hapoel Haifa'){
-            teamName =  teamName.padEnd(26)
+        if (teamName === 'Hapoel Haifa') {
+            teamName = teamName.padEnd(26)
         }
-        if (teamName === 'Beitar Jerusalem'){
-            teamName =  teamName.padEnd(23)
+        if (teamName === 'Beitar Jerusalem') {
+            teamName = teamName.padEnd(23)
         }
-        if (teamName === 'Hapoel Kfar Saba'){
-            teamName =  teamName.padEnd(21)
+        if (teamName === 'Hapoel Kfar Saba') {
+            teamName = teamName.padEnd(21)
         }
-        if (teamName === 'Hapoel Hadera'){
-            teamName =  teamName.padEnd(22)
+        if (teamName === 'Hapoel Hadera') {
+            teamName = teamName.padEnd(22)
         }
-        if (teamName === 'Hapoel Tel Aviv'){
-            teamName =  teamName.padEnd(24)
+        if (teamName === 'Hapoel Tel Aviv') {
+            teamName = teamName.padEnd(24)
         }
-        if (teamName === 'Sakhnin'){
-            teamName =  teamName.padEnd(29)
+        if (teamName === 'Sakhnin') {
+            teamName = teamName.padEnd(29)
         }
-        if (teamName === 'Bnei Yehuda'){
-            teamName =  teamName.padEnd(25)
+        if (teamName === 'Bnei Yehuda') {
+            teamName = teamName.padEnd(25)
         }
         return teamName
     }
@@ -3311,7 +3345,7 @@ module.exports.Maccabi = async function () {
             teams.forEach(team => {
                 let { position, isPlaying, points, match_played, teamName, goal_diff, wins, draw, loses } = team
                 teamName = checkTeamName(teamName)
- 
+
                 // teamName = teamName.padEnd(22)
                 str += `${position.padEnd(3)} ${teamName}    ${match_played}    ${goal_diff}    ${points} ${isPlaying === '' ? isPlaying : `(${isPlaying})`} \n`
 
@@ -3330,48 +3364,48 @@ module.exports.Maccabi = async function () {
 
     });
 
-    const checkTeamName = (teamName) =>{
-        if (teamName === 'Ashdod'){
-            teamName =  teamName.padEnd(29)
+    const checkTeamName = (teamName) => {
+        if (teamName === 'Ashdod') {
+            teamName = teamName.padEnd(29)
         }
-        if (teamName === 'Maccabi Haifa'){
-            teamName =  teamName.padEnd(24)
+        if (teamName === 'Maccabi Haifa') {
+            teamName = teamName.padEnd(24)
         }
-        if (teamName === 'Maccabi Tel Aviv'){
-            teamName =  teamName.padEnd(23)
+        if (teamName === 'Maccabi Tel Aviv') {
+            teamName = teamName.padEnd(23)
         }
-        if (teamName === 'H. Beer Sheva'){
-            teamName =  teamName.padEnd(25)
+        if (teamName === 'H. Beer Sheva') {
+            teamName = teamName.padEnd(25)
         }
-        if (teamName === 'Netanya'){
-            teamName =  teamName.padEnd(29)
+        if (teamName === 'Netanya') {
+            teamName = teamName.padEnd(29)
         }
-        if (teamName === 'Maccabi Petah Tikva'){
-            teamName =  teamName.padEnd(19)
+        if (teamName === 'Maccabi Petah Tikva') {
+            teamName = teamName.padEnd(19)
         }
-        if (teamName === 'Kiryat Shmona'){
-            teamName =  teamName.padEnd(24)
+        if (teamName === 'Kiryat Shmona') {
+            teamName = teamName.padEnd(24)
         }
-        if (teamName === 'Hapoel Haifa'){
-            teamName =  teamName.padEnd(26)
+        if (teamName === 'Hapoel Haifa') {
+            teamName = teamName.padEnd(26)
         }
-        if (teamName === 'Beitar Jerusalem'){
-            teamName =  teamName.padEnd(23)
+        if (teamName === 'Beitar Jerusalem') {
+            teamName = teamName.padEnd(23)
         }
-        if (teamName === 'Hapoel Kfar Saba'){
-            teamName =  teamName.padEnd(21)
+        if (teamName === 'Hapoel Kfar Saba') {
+            teamName = teamName.padEnd(21)
         }
-        if (teamName === 'Hapoel Hadera'){
-            teamName =  teamName.padEnd(22)
+        if (teamName === 'Hapoel Hadera') {
+            teamName = teamName.padEnd(22)
         }
-        if (teamName === 'Hapoel Tel Aviv'){
-            teamName =  teamName.padEnd(24)
+        if (teamName === 'Hapoel Tel Aviv') {
+            teamName = teamName.padEnd(24)
         }
-        if (teamName === 'Sakhnin'){
-            teamName =  teamName.padEnd(29)
+        if (teamName === 'Sakhnin') {
+            teamName = teamName.padEnd(29)
         }
-        if (teamName === 'Bnei Yehuda'){
-            teamName =  teamName.padEnd(25)
+        if (teamName === 'Bnei Yehuda') {
+            teamName = teamName.padEnd(25)
         }
         return teamName
     }
