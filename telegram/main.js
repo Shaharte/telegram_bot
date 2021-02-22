@@ -1439,44 +1439,32 @@ module.exports.Shishit = async function () {
     });
     let lastMsg;
     botTest.onText(/\/trollNews/, (msg, match) => {
-        try {
-            const chatId = msg.chat.id;
-            const text = match[0]
-            let str = ''
-            if (text === '/trollNews') {
-                let data = msg.text.substring(text.length, msg.text.length)
-                if (data) {
-                    str += `עדכון - `
-                    str += `${data}.\n`
-                    lastMsg = str
-                    const option = {
-                        "parse_mode": "Markdown",
-                        "reply_markup": { "keyboard": [["Amazing! Send it"], ["No i will change it.."]], "one_time_keyboard": true }
-                    };
 
-                    botTest.sendMessage(chatId, `Your News:\n ${str}`, option)
+        const chatId = msg.chat.id;
+        const text = match[0]
+        let str = ''
+        if (text === '/trollNews') {
+            let data = msg.text.substring(text.length, msg.text.length)
+            if (data) {
+                str += `עדכון - `
+                str += `${data}.\n`
+                lastMsg = str
+                const option = {
+                    "parse_mode": "Markdown",
+                    "reply_markup": { "keyboard": [["Amazing! Send it"], ["No i will change it.."]], "one_time_keyboard": true }
+                };
 
+                botTest.sendMessage(chatId, `Your News:\n ${str}`, option)
 
-
-
-
-                } else {
-                    botTest.sendMessage(chatId, 'No Text..');
-
-                }
-
-
-
+            } else {
+                botTest.sendMessage(chatId, 'No Text..');
 
             }
-        }
-        catch (err) {
-            console.log('err', err)
-        }
 
+        }
 
     });
-    botTest.onText(/\Amazing! Send it/, function (msg2, match) {
+    botTest.onText(/\Amazing! Send it/,  (msg, match) => {
 
 
         if (match[0] === 'Amazing! Send it') {
@@ -1492,7 +1480,6 @@ module.exports.Shishit = async function () {
 
 
     })
-
 
     botTest.onText(/\No i will change it../, function (msg, match) {
 
