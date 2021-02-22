@@ -1445,7 +1445,7 @@ module.exports.Shishit = async function () {
 
 
         });
-        let lastMsg;
+        let lastMsg = '';
         botTest.onText(/\/trollNews/, (msg, match) => {
 
             const chatId = msg.chat.id;
@@ -1477,8 +1477,7 @@ module.exports.Shishit = async function () {
 
             if (match[0] === 'Amazing! Send it') {
                 console.log('lastMsg', lastMsg)
-                botTest.sendMessage(chatShisit, lastMsg);
-                // throw 'stop';
+                botTest.sendMessage(msg.chat.id, lastMsg);
 
             }
 
