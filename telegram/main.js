@@ -1457,47 +1457,7 @@ module.exports.Shishit = async function () {
                     botTest.sendMessage(chatId, `Your News:\n ${str}`, option)
 
 
-                    try {
-                        botTest.onText(/\Amazing! Send it/, function (msg2, match) {
 
-                            try { 
-                                if (match[0] === 'Amazing! Send it') {
-                                    console.log('lastMsg', lastMsg)
-                                    botTest.sendMessage(chatShisit, lastMsg);
-                                    throw 'stop';
-    
-                                }
-                            }
-                       
-                            catch (err) {
-                                throw err
-                            }
-
-
-
-                        })
-                    } catch (err2) {
-                        console.log('err', err2)
-                    }
-                    try {
-                        botTest.onText(/\No i will change it../, function (msg2, match) {
-                            try {
-                                if (match[0] === 'No i will change it..') {
-
-                                    botTest.sendMessage(msg.chat.id, "Ok good, I am waiting for you to change it");
-                                    throw 'stop'
-
-                                }
-                            }
-                            catch (err) {
-                                throw err
-                            }
-
-
-                        })
-                    } catch (err2) {
-                        console.log('err', err2)
-                    }
 
 
                 } else {
@@ -1511,13 +1471,40 @@ module.exports.Shishit = async function () {
             }
         }
         catch (err) {
-            console.log('err',err)
+            console.log('err', err)
         }
 
 
     });
+    botTest.onText(/\Amazing! Send it/, function (msg2, match) {
 
 
+        if (match[0] === 'Amazing! Send it') {
+            console.log('lastMsg', lastMsg)
+            botTest.sendMessage(chatShisit, lastMsg);
+            // throw 'stop';
+
+        }
+
+
+
+
+
+
+    })
+
+
+    botTest.onText(/\No i will change it../, function (msg, match) {
+
+        if (match[0] === 'No i will change it..') {
+
+            botTest.sendMessage(msg.chat.id, "Ok good, I am waiting for you to change it");
+
+        }
+
+
+
+    })
 
     botTest.onText(/\/table/, async (msg, match) => {
 
