@@ -790,12 +790,14 @@ module.exports.Shishit = async function () {
                 const isThereReally = lastNewsDB.find(o => {
                     return o.href === lastNews.href && o.title === lastNews.title
                 })
+                console.log('isThereReally', isThereReally)
 
                 if (!isThereReally) {
 
                     const isThere = lastNewsDB.find(o => {
                         return o.href === lastNews.href
                     })
+                    console.log('isThere', isThere)
 
                     if (isThere) {
                         const { title, excerpt } = lastNews
@@ -1443,7 +1445,7 @@ module.exports.Shishit = async function () {
         if (text === '/trollNews') {
             let data = msg.text.substring(text.length, msg.text.length)
             if (data) {
-                str += `עדכון טרול - `
+                str += `עדכון - `
                 str += `${data}.\n`
                 lastMsg  = str
                 const option = {
@@ -1467,7 +1469,7 @@ module.exports.Shishit = async function () {
                 botTest.onText(/\No i will change it../, function (msg2, match) {
                     if (match[0] === 'No i will change it..') {
 
-                        botTest.sendMessage(msg.chat.id, "Ok good, I am wating for you to change it");
+                        botTest.sendMessage(msg.chat.id, "Ok good, I am waiting for you to change it");
                         throw 'stop';
 
 
