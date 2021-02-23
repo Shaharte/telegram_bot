@@ -1420,21 +1420,21 @@ module.exports.Shishit = async function () {
             console.log('error', error)
         }
 
-        // botTest.onText(/\/troll/, (msg, match) => {
-        //     const chatId = msg.chat.id;
-        //     // console.log(chatId)
-        //     const { text } = msg
+        botTest.onText(/\/troll/, (msg, match) => {
+            const chatId = msg.chat.id;
+            // console.log(chatId)
+            const { text } = msg
 
-        //     if (text === '/troll') {
-
-
-        //         let str = 'Congratulations!\nYou found the secret option :) you can now troll your friends with fake news!\nAll you need is to type: /trollNews "Your news" and see what happend'
-
-        //         botTest.sendMessage(chatId, str);
-        //     }
+            if (text === '/troll') {
 
 
-        // });
+                let str = 'Congratulations!\nYou found the secret option :) you can now troll your friends with fake news!\nAll you need is to type: /trollNews "Your news" and see what happend'
+
+                botTest.sendMessage(chatId, str);
+            }
+
+
+        });
         // let lastMsg = '';
         // botTest.onText(/\/trollNews/, (msg, match) => {
 
