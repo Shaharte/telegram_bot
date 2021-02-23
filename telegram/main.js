@@ -1472,11 +1472,7 @@ module.exports.Shishit = async function () {
             }
 
 
-
-
-
-
-        // })
+        })
 
         botTest.onText(/\No i will change it../,  (msg, match) => {
 
