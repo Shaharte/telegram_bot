@@ -1467,7 +1467,7 @@ module.exports.Shishit = async function () {
 
             if (match[0] === 'Amazing! Send it') {
                 console.log('lastMsg', lastMsg)
-                botTest.sendMessage(msg.chat.id, lastMsg);
+                botTest.sendMessage(chatShisit, lastMsg);
 
             }
 
