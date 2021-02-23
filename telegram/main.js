@@ -1402,32 +1402,22 @@ module.exports.Shishit = async function () {
 
         // });
         // giving all the options
-        try{
+        try {
             botTest.onText(/\/help/, (msg, match) => {
                 const chatId = msg.chat.id;
                 console.log(chatId)
                 const { text } = msg
-    
-                if (text === '/help' ) {
-    
-    
-                    let str = 'Your Options Are:\n\n/live \n/table \n/stats \n/last \n/teams \n/mahzorim \n/ligyoners'
-    
-    
-                //     botTest.sendMessage(chatId, str);
-    
-    
-                // } else {
-                    // let str = 'Your Options Are:\n\n/live \n/table \n/stats \n/last \n/teams \n/mahzorim \n/ligyoners \n/troll'
-    
-    
-                    botTest.sendMessage(chatId, str);
-    
+                let str = ``
+                if (text === '/help' && chatId === chatShisit) {
+                    str = 'Your Options Are:\n\n/live \n/table \n/stats \n/last \n/teams \n/mahzorim \n/ligyoners'
+                } else {
+                    str = 'Your Options Are:\n\n/live \n/table \n/stats \n/last \n/teams \n/mahzorim \n/ligyoners \n/troll'
                 }
-    
+                botTest.sendMessage(chatId, str);
+
             });
-        } catch(error){
-            console.log('error',error)
+        } catch (error) {
+            console.log('error', error)
         }
 
         // botTest.onText(/\/troll/, (msg, match) => {
