@@ -1435,60 +1435,60 @@ module.exports.Shishit = async function () {
 
 
         });
-        // let lastMsg = '';
-        // botTest.onText(/\/trollNews/, (msg, match) => {
+        let lastMsg = '';
+        botTest.onText(/\/trollNews/, (msg, match) => {
 
-        //     const chatId = msg.chat.id;
-        //     const text = match[0]
-        //     let str = ''
-        //     if (text === '/trollNews') {
-        //         let data = msg.text.substring(text.length, msg.text.length)
-        //         if (data) {
-        //             str += `עדכון - `
-        //             str += `${data}.\n`
-        //             lastMsg = str
-        //             const option = {
-        //                 "parse_mode": "Markdown",
-        //                 "reply_markup": { "keyboard": [["Amazing! Send it"], ["No i will change it.."]], "one_time_keyboard": true }
-        //             };
+            const chatId = msg.chat.id;
+            const text = match[0]
+            let str = ''
+            if (text === '/trollNews') {
+                let data = msg.text.substring(text.length, msg.text.length)
+                if (data) {
+                    str += `עדכון - `
+                    str += `${data}.\n`
+                    lastMsg = str
+                    const option = {
+                        "parse_mode": "Markdown",
+                        "reply_markup": { "keyboard": [["Amazing! Send it"], ["No i will change it.."]], "one_time_keyboard": true }
+                    };
 
-        //             botTest.sendMessage(chatId, `Your News:\n ${str}`, option)
+                    botTest.sendMessage(chatId, `Your News:\n ${str}`, option)
 
-        //         } else {
-        //             botTest.sendMessage(chatId, 'No Text..');
+                } else {
+                    botTest.sendMessage(chatId, 'No Text..');
 
-        //         }
+                }
 
-        //     }
+            }
 
-        // });
-        // botTest.onText(/\Amazing! Send it/, (msg, match) => {
-
-
-        //     if (match[0] === 'Amazing! Send it') {
-        //         console.log('lastMsg', lastMsg)
-        //         botTest.sendMessage(msg.chat.id, lastMsg);
-
-        //     }
+        });
+        botTest.onText(/\Amazing! Send it/, (msg, match) => {
 
 
+            if (match[0] === 'Amazing! Send it') {
+                console.log('lastMsg', lastMsg)
+                botTest.sendMessage(msg.chat.id, lastMsg);
+
+            }
 
 
 
-
-        // })
-
-        // botTest.onText(/\No i will change it../, function (msg, match) {
-
-        //     if (match[0] === 'No i will change it..') {
-
-        //         botTest.sendMessage(msg.chat.id, "Ok good, I am waiting for you to change it");
-
-        //     }
 
 
 
         // })
+
+        botTest.onText(/\No i will change it../,  (msg, match) => {
+
+            if (match[0] === 'No i will change it..') {
+
+                botTest.sendMessage(msg.chat.id, "Ok good, I am waiting for you to change it");
+
+            }
+
+
+
+        })
 
         botTest.onText(/\/table/, async (msg, match) => {
 
