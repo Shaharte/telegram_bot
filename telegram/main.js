@@ -668,14 +668,14 @@ module.exports.Shishit = async function () {
 
 
         }
-        nodeSchedule.scheduleJob('* 16-21 * * *', () => {
+        nodeSchedule.scheduleJob('* 12-21 * * *', () => {
             try {
                 scraper()
             } catch (err) { }
 
         });
 
-
+        scraperStat()
         // // running scrapper on "המנהלת" to get live stats every day
         nodeSchedule.scheduleJob('00 8-10 * * *', () => {
             try {
