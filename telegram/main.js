@@ -675,7 +675,6 @@ module.exports.Shishit = async function () {
 
         });
 
-        scraperStat()
         // // running scrapper on "המנהלת" to get live stats every day
         nodeSchedule.scheduleJob('00 8-10 * * *', () => {
             try {
@@ -860,7 +859,7 @@ module.exports.Shishit = async function () {
         const checkIfPush = (news) => {
             let ans = true
             const { title, excerpt } = news
-            if (excerpt.includes('התראיין') || excerpt.includes('צפו בכתבה') || title.includes('הצביעו') || title.includes('סיפורו של') || excerpt.includes('כל הפרטים') || excerpt.includes('זכריה מנתח') || excerpt.includes('הצביעו') || excerpt.includes('103') || excerpt.includes('נשים') || excerpt.includes('בראיון') || excerpt.includes('ספורט1') || excerpt.includes('ספורט4') || excerpt.includes('ספורט3') || excerpt.includes('ספורט2') || (excerpt.includes(')') && excerpt.includes('('))) {
+            if (excerpt.includes('התראיין') || excerpt.includes('עמיקם מספר') || excerpt.includes('ראיון מיוחד') || excerpt.includes('מיטב התגובות') ||  excerpt.includes('צפו בכתבה') || title.includes('הצביעו') || title.includes('סיפורו של') || excerpt.includes('כל הפרטים') || excerpt.includes('זכריה מנתח') || excerpt.includes('הצביעו') || excerpt.includes('103') || excerpt.includes('נשים') || excerpt.includes('בראיון') || excerpt.includes('ספורט1') || excerpt.includes('ספורט4') || excerpt.includes('ספורט3') || excerpt.includes('ספורט2') || (excerpt.includes(')') && excerpt.includes('('))) {
                 ans = false
             }
             return ans
@@ -1494,13 +1493,13 @@ module.exports.Shishit = async function () {
             if (text === '/table') {
                 const teams = await scraperLiveTable()
 
-                let str = `P:  Team                               P       Diff        Points  \n`
+                let str = `P:  Team                             P     Diff        Points  \n`
                 teams.forEach(team => {
                     let { position, isPlaying, points, match_played, teamName, goal_diff, wins, draw, loses } = team
                     teamName = checkTeamName(teamName)
 
                     // teamName = teamName.padEnd(22)
-                    str += `${position.padEnd(3)} ${teamName}    ${match_played}    ${goal_diff}    ${points} ${isPlaying === '' ? isPlaying : `(${isPlaying})`} \n`
+                    str += `${position.padEnd(3)} ${teamName}   ${match_played}  ${goal_diff}   ${points} ${isPlaying === '' ? isPlaying : `(${isPlaying})`} \n`
 
                 })
                 // str = 'one          1\n two          2\n three          3\n'

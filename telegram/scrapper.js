@@ -55,6 +55,7 @@ module.exports.scraperStat = async () => {
 
             return stats;
         });
+        console.log('allStatss',allStatss)
         if (allStatss.length) {
             // console.log(allStatss)
 
