@@ -542,7 +542,7 @@ module.exports.Shishit = async function () {
 
 
                     const finalData = allGames.filter(game => {
-                        return ((game.country === 'ISRAEL' && (game.name === "Ligat ha'Al" || game.name === "State Cup")))
+                        return ((game.country === 'ISRAEL' && (game.name === "Ligat ha'Al" )))
                     })
 
 
