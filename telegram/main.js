@@ -2963,6 +2963,49 @@ module.exports.Ahanhala = async function () {
         }
 
     });
+    botTest.onText(/\נושא לחיים:/, async (msg, match) => {
+        console.log('msg', msg)
+        const chatId = msg.chat.id;
+        const text = msg.text.substring(0, 11)
+        let str = ``
+        console.log('text', text)
+
+        if (text === 'נושא לחיים:' && !(msg.text.includes('בטל'))) {
+            let input = msg.text.substring(11, msg.text.length).trim()
+            if (input !== '') {
+                const subjectsarray = await wednesdeySubjects.find({})
+                const { subjects = [] } = subjectsarray[0]
+
+                const isThere = subjects.find(o => { return o.includes(input.trim())})
+                if (isThere) {
+                    str += `יש נושא כזה כבר.. למה אתה משגע אותי`
+                } else {
+                    subjects.push(input + ' 🍻')
+                    const data = {
+                        updateTo,
+                        subjects
+                    }
+                    await wednesdeySubjects.findOneAndUpdate({}, data, { upsert: true, new: true });
+
+                    str = sentensesAdd[Math.floor(Math.random() * sentensesAdd.length)];
+
+                }
+
+            } else {
+                str += `אל תנסה אותי.. תרשום נושא לנושא`
+
+            }
+            botTest.sendMessage(chatId, str);
+
+        }
+        else if (text === 'בטל נ') {
+        } else {
+            str += 'פקודה לא חוקית יא נקניק'
+
+            botTest.sendMessage(chatId, str);
+        }
+
+    });
 
     //Still on work - adding "חדש להתרסה"
     botTest.onText(/(.+)/, async (msg, match) => {
@@ -3104,7 +3147,6 @@ module.exports.Ahanhala = async function () {
         if (text === 'בטל נושא:') {
             let input = msg.text.substring(9, msg.text.length).trim()
             if (input !== "1" && input !== "2" && input !== "3") {
-                console.log('input2', input)
 
 
                 const subjectsarray = await wednesdeySubjects.find({})
