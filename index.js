@@ -25,8 +25,8 @@ app.listen(port, () => {
 
 
 Ahanhala()
-// Stocks()
-// Shishit()
+Stocks()
+Shishit()
 // Maccabi()
 // const testing = async () =>{
 
