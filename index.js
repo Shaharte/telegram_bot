@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express();
 const { Shishit, Ahanhala,Stocks,Maccabi} = require('./telegram/main');
-const { scraperLiveTable} = require('./telegram/scrapper');
+const { scrapperVideo} = require('./telegram/scrapper');
 
 const port = process.env.PORT || 8000
 

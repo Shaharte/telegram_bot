@@ -150,6 +150,75 @@ module.exports.scraperHighlights = async () => {
 
 
 }
+module.exports.scrapperVideo = async () => {
+    // const stats = []
+    let str = ''
+    const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
+
+    const page = await browser.newPage();
+    try {
+
+        //opening a new page and navigating to Fleshscore
+        await page.goto('https://www.youtube.com/channel/UCbC5pro0nYnczsG4_T3ICwg/videos');
+        await page.waitForSelector('body');
+
+        //manipulating the page's content
+        let allStatss = await page.evaluate(() => {
+
+            let videos = document.body.querySelectorAll('.style-scope.ytd-grid-video-renderer');
+            let highlights = []
+
+            //storing the post items in an array then selecting for retrieving content
+
+            let arr = []
+            try {
+              videos.forEach(video =>{
+
+                  let title = video.querySelector('h3').innerText;
+
+                  let href = video.querySelector('a').href
+                  highlights.push({
+                      title,
+                      href,
+                  })
+              })
+
+
+
+              
+
+
+            } catch (err) {
+
+                console.log(err)
+
+
+            }
+
+
+
+
+
+            return highlights.length ? highlights[0] : [];
+        });
+        return allStatss
+
+
+
+        //outputting the scraped data
+    } catch (err) {
+
+    }
+    finally {
+        console.log('browser close Highlights')
+
+        //closing the browser
+        await browser.close();
+    }
+
+
+
+}
 
 // running scrapper on "sport1" to get news
 

@@ -28,6 +28,7 @@ const newsSchema = new Schema(
 const videoSchema = new Schema(
     {
         title: String,
+        site:String,
         href: String,
     }
 );

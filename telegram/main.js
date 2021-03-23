@@ -1,7 +1,7 @@
 // const { Telegraf } = require('telegraf')
 const axios = require("axios");
 const { games, wednesdeySubjects, statistics, highlightNews, highlightVideo, stockStatistics } = require('./schema');
-const { scraperStat, scraperHighlights, scraperNewsSport1, scraperNewsSport5, scraperCalcalist, scraperNewsHaifa, scraperLiveTable } = require('./scrapper');
+const { scraperStat, scraperHighlights, scraperNewsSport1, scraperNewsSport5, scrapperVideo, scraperNewsHaifa, scraperLiveTable } = require('./scrapper');
 // const pexelKey = process.env.PEXEL_KEY;
 const token = '1557847459:AAGP08OPiRxV2OrCQ0FZhx4CbtOA2Btf7QA';
 const testtoken = '1556993489:AAHrW-PHjchV5A9oTbPUuJiN54PZwF800h0';
@@ -542,7 +542,7 @@ module.exports.Shishit = async function () {
 
 
                     const finalData = allGames.filter(game => {
-                        return ((game.country === 'ISRAEL' && (game.name === "Ligat ha'Al" )))
+                        return ((game.country === 'ISRAEL' && (game.name === "Ligat ha'Al")))
                     })
 
 
@@ -804,6 +804,7 @@ module.exports.Shishit = async function () {
                         if (isThere) {
                             const { title, excerpt } = lastNews
                             if (isThere.excerpt !== excerpt && isThere.title !== title) {
+                                // if (title.includes('מחצית ראשונה:') || title.includes('מחצית שניה:'))
 
                                 str += `עדכון - ${title}.\n`
                                 str += `${excerpt}.\n`
@@ -849,9 +850,63 @@ module.exports.Shishit = async function () {
 
             }
         }
-        nodeSchedule.scheduleJob('*/12 * * * *', () => {
+
+        // running scrapper on "youtube" to get highlights
+
+        const sendHighilights = async () => {
+            // const stats = []
+            let str = ''
+
+            try {
+                const hightlights = await scrapperVideo() || {}
+                // console.log('news', news)
+                // const data = {
+                //     title: lastNews.title,
+                //     href: lastNews.href
+                // }
+                // await highlightNews.findOneAndUpdate({ site }, data, { upsert: true, new: true })
+                const { title = '', href = '' } = hightlights
+                console.log('hightlights',hightlights)
+                if (title.includes('ליגת העל') ||  title.includes('גביע המדינה') ) {
+                    let DBHighlight = await highlightVideo.find({ site: 'youtube' }) 
+                    console.log('DBHighlight',DBHighlight)
+
+                    let lastHighlight = DBHighlight.length ? DBHighlight[0] : {}
+                    if (lastHighlight.title !== title) {
+
+                        str += `תקציר - ${title}.\n`
+                        str += `${href}.\n`
+                        console.log('str',str)
+
+                        botTest.sendMessage(chatShisit, str)
+
+
+                        const data = {
+                            site: 'youtube',
+                            href,
+                            title,
+                        }
+                        await highlightVideo.findOneAndUpdate({ site:'yuotube' }, data, { upsert: true, new: true })
+                    }
+
+                }
+
+
+            } catch (err) {
+                console.log('err', err)
+
+            }
+
+        }
+        nodeSchedule.scheduleJob('*/17 * * * *', () => {
             try {
                 sendNewsSport1()
+            } catch (err) { }
+
+        });
+        nodeSchedule.scheduleJob('*/15 * * * *', () => {
+            try {
+                sendHighilights()
             } catch (err) { }
 
         });
@@ -859,7 +914,7 @@ module.exports.Shishit = async function () {
         const checkIfPush = (news) => {
             let ans = true
             const { title, excerpt } = news
-            if (excerpt.includes('התראיין') || excerpt.includes('צפו והחליטו') || excerpt.includes('עמיקם מספר') || excerpt.includes('ראיון מיוחד') || excerpt.includes('מיטב התגובות') ||  excerpt.includes('צפו בכתבה') || title.includes('הצביעו') || title.includes('סיפורו של') || excerpt.includes('כל הפרטים') || excerpt.includes('זכריה מנתח') || excerpt.includes('הצביעו') || excerpt.includes('103') || excerpt.includes('נשים') || excerpt.includes('בראיון') || excerpt.includes('ספורט1') || excerpt.includes('ספורט4') || excerpt.includes('ספורט3') || excerpt.includes('ספורט2') || (excerpt.includes(')') && excerpt.includes('('))) {
+            if (excerpt.includes('התראיין') || excerpt.includes('צפו והחליטו') || excerpt.includes('עמיקם מספר') || excerpt.includes('ראיון מיוחד') || excerpt.includes('מיטב התגובות') || excerpt.includes('צפו בכתבה') || title.includes('הצביעו') || title.includes('סיפורו של') || excerpt.includes('כל הפרטים') || excerpt.includes('זכריה מנתח') || excerpt.includes('הצביעו') || excerpt.includes('103') || excerpt.includes('נשים') || excerpt.includes('בראיון') || excerpt.includes('ספורט1') || excerpt.includes('ספורט4') || excerpt.includes('ספורט3') || excerpt.includes('ספורט2') || (excerpt.includes(')') && excerpt.includes('('))) {
                 ans = false
             }
             return ans
@@ -1473,7 +1528,7 @@ module.exports.Shishit = async function () {
 
         })
 
-        botTest.onText(/\No i will change it../,  (msg, match) => {
+        botTest.onText(/\No i will change it../, (msg, match) => {
 
             if (match[0] === 'No i will change it..') {
 
@@ -2976,7 +3031,7 @@ module.exports.Ahanhala = async function () {
                 const subjectsarray = await wednesdeySubjects.find({})
                 const { subjects = [] } = subjectsarray[0]
 
-                const isThere = subjects.find(o => { return o.includes(input.trim())})
+                const isThere = subjects.find(o => { return o.includes(input.trim()) })
                 if (isThere) {
                     str += `יש נושא כזה כבר.. למה אתה משגע אותי`
                 } else {
