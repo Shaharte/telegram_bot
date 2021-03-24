@@ -914,13 +914,13 @@ module.exports.Shishit = async function () {
         const checkIfPush = (news) => {
             let ans = true
             const { title, excerpt } = news
-            if ( excerpt.includes('התראיין')||  title.includes('ברקת') || excerpt.includes('פורוורד') || excerpt.includes('צפו והחליטו') || excerpt.includes('עמיקם מספר') || excerpt.includes('ראיון מיוחד') || excerpt.includes('מיטב התגובות') || excerpt.includes('צפו בכתבה') || title.includes('הצביעו') || title.includes('סיפורו של') || excerpt.includes('כל הפרטים') || excerpt.includes('זכריה מנתח') || excerpt.includes('הצביעו') || excerpt.includes('103') || excerpt.includes('נשים') || excerpt.includes('בראיון') || excerpt.includes('ספורט1') || excerpt.includes('ספורט4') ||  excerpt.includes('ספורט3') ||  excerpt.includes('קבלו את') || excerpt.includes('ספורט2') || (excerpt.includes(')') && excerpt.includes('('))) {
+            if ( excerpt.includes('התראיין')|| title.includes('הישג יוקרתי') || title.includes('ברקת') || excerpt.includes('פורוורד') || excerpt.includes('צפו והחליטו') || excerpt.includes('עמיקם מספר') || excerpt.includes('ראיון מיוחד') || excerpt.includes('מיטב התגובות') || excerpt.includes('צפו בכתבה') || title.includes('הצביעו') || title.includes('סיפורו של') || excerpt.includes('כל הפרטים') || excerpt.includes('זכריה מנתח') || excerpt.includes('הצביעו') || excerpt.includes('103') || excerpt.includes('נשים') || excerpt.includes('בראיון') || excerpt.includes('ספורט1') || excerpt.includes('ספורט4') ||  excerpt.includes('ספורט3') ||  excerpt.includes('קבלו את') || excerpt.includes('ספורט2') || (excerpt.includes(')') && excerpt.includes('('))) {
                 ans = false
             }
             return ans
 
         }
-
+        
 
         // sendNewsSport1()
 
