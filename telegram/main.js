@@ -914,7 +914,7 @@ module.exports.Shishit = async function () {
             let ans = true
             const { title, excerpt } = news
             if (excerpt.includes('סיפרה') || excerpt.includes('סיפר') || excerpt.includes('ראיון') ||
-                title.includes('?') || title.includes('הלך לעולמו') || excerpt.includes('?') ||
+                title.includes('?') || title.includes('הלך לעולמו') || excerpt.includes('?') || 
                 title.includes('אקס') || excerpt.includes('אקס') || title.includes('יומנים') ||
                 excerpt.includes('התראיין') || title.includes('הישג יוקרתי') ||
                 title.includes('ברקת') || excerpt.includes('פורוורד') ||
