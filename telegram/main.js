@@ -440,7 +440,7 @@ module.exports.Shishit = async function () {
 
         const updateTo = moment().utc().format('YYYY[-]MM[-]DD');
         const botTest = new TelegramBot(token, { polling: true });
- 
+
         // running scrapper on flashscore to get live result pushes
         // nodeSchedule.scheduleJob('* 16-21 * * *', () => {
         //     try {
@@ -866,17 +866,17 @@ module.exports.Shishit = async function () {
                 // }
                 // await highlightNews.findOneAndUpdate({ site }, data, { upsert: true, new: true })
                 const { title = '', href = '' } = hightlights
-                console.log('hightlights',hightlights)
-                if (title.includes('ליגת העל') ||  title.includes('גביע המדינה') ) {
-                    let DBHighlight = await highlightVideo.find({ site: 'youtube' }) 
-                    console.log('DBHighlight',DBHighlight)
+                console.log('hightlights', hightlights)
+                if (title.includes('ליגת העל') || title.includes('גביע המדינה')) {
+                    let DBHighlight = await highlightVideo.find({ site: 'youtube' })
+                    console.log('DBHighlight', DBHighlight)
 
                     let lastHighlight = DBHighlight.length ? DBHighlight[0] : {}
                     if (lastHighlight.title !== title) {
 
                         str += `תקציר - ${title}.\n`
                         str += `${href}.\n`
-                        console.log('str',str)
+                        console.log('str', str)
 
                         botTest.sendMessage(chatShisit, str)
 
@@ -886,7 +886,7 @@ module.exports.Shishit = async function () {
                             href,
                             title,
                         }
-                        await highlightVideo.findOneAndUpdate({ site:'yuotube' }, data, { upsert: true, new: true })
+                        await highlightVideo.findOneAndUpdate({ site: 'yuotube' }, data, { upsert: true, new: true })
                     }
 
                 }
@@ -910,17 +910,29 @@ module.exports.Shishit = async function () {
             } catch (err) { }
 
         });
-       
         const checkIfPush = (news) => {
             let ans = true
             const { title, excerpt } = news
-            if (  excerpt.includes('ראיון') || title.includes('?') || title.includes('הלך לעולמו') ||  title.includes('אקס') || excerpt.includes('אקס') || title.includes('יומנים') || excerpt.includes('?') || excerpt.includes('התראיין') || title.includes('הישג יוקרתי') || title.includes('ברקת') || excerpt.includes('פורוורד') || excerpt.includes('צפו והחליטו') || excerpt.includes('עמיקם מספר') || excerpt.includes('ראיון מיוחד') || excerpt.includes('מיטב התגובות') || excerpt.includes('צפו בכתבה') || title.includes('הצביעו') || title.includes('סיפורו של') || excerpt.includes('כל הפרטים') || excerpt.includes('זכריה מנתח') || excerpt.includes('הצביעו') || excerpt.includes('103') || excerpt.includes('נשים') || excerpt.includes('בראיון') || excerpt.includes('ספורט1') || excerpt.includes('ספורט4') ||  excerpt.includes('ספורט3') ||  excerpt.includes('קבלו את') || excerpt.includes('ספורט2') || (excerpt.includes(')') && excerpt.includes('('))) {
+            if (excerpt.includes('סיפרה') || excerpt.includes('סיפר') || excerpt.includes('ראיון') ||
+                title.includes('?') || title.includes('הלך לעולמו') || excerpt.includes('?') ||
+                title.includes('אקס') || excerpt.includes('אקס') || title.includes('יומנים') ||
+                excerpt.includes('התראיין') || title.includes('הישג יוקרתי') ||
+                title.includes('ברקת') || excerpt.includes('פורוורד') ||
+                excerpt.includes('צפו והחליטו') || excerpt.includes('עמיקם מספר') ||
+                excerpt.includes('ראיון מיוחד') || excerpt.includes('מיטב התגובות') ||
+                excerpt.includes('צפו בכתבה') || title.includes('הצביעו') ||
+                title.includes('סיפורו של') || excerpt.includes('כל הפרטים') ||
+                excerpt.includes('זכריה מנתח') || excerpt.includes('הצביעו') ||
+                excerpt.includes('103') || excerpt.includes('נשים') ||
+                excerpt.includes('בראיון') || excerpt.includes('ספורט1') ||
+                excerpt.includes('ספורט4') || excerpt.includes('ספורט3') || excerpt.includes('קבלו את') ||
+                excerpt.includes('ספורט2') || (excerpt.includes(')') && excerpt.includes('('))) {
                 ans = false
             }
             return ans
 
         }
-        
+
 
         // sendNewsSport1()
 
