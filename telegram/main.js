@@ -1474,11 +1474,9 @@ module.exports.Shishit = async function () {
                 console.log(chatId)
                 const { text } = msg
                 let str = ``
-                if (text === '/help' && chatId === chatShisit) {
-                    str = 'Your Options Are:\n\n/live \n/table \n/stats \n/last \n/teams \n/mahzorim \n/ligyoners'
-                } else {
-                    str = 'Your Options Are:\n\n/live \n/table \n/stats \n/last \n/teams \n/mahzorim \n/ligyoners \n/troll'
-                }
+                if (text === '/help') {
+                    str = 'Your Options Are:\n\n \n/table \n/stats \n/last'
+                } 
                 botTest.sendMessage(chatId, str);
 
             });
