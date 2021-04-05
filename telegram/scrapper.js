@@ -55,7 +55,7 @@ module.exports.scraperStat = async () => {
 
             return stats;
         });
-        console.log('allStatss',allStatss)
+        console.log('allStatss', allStatss)
         if (allStatss.length) {
             // console.log(allStatss)
 
@@ -165,27 +165,30 @@ module.exports.scrapperVideo = async () => {
         //manipulating the page's content
         let allStatss = await page.evaluate(() => {
 
-            let videos = document.body.querySelectorAll('.style-scope.ytd-grid-video-renderer');
+            let videos = document.body.querySelectorAll('.yt-simple-endpoint.style-scope.ytd-grid-video-renderer');
             let highlights = []
-
+     
             //storing the post items in an array then selecting for retrieving content
 
             let arr = []
             try {
-              videos.forEach(video =>{
 
-                  let title = video.querySelector('h3').innerText;
+                for (let video of videos) {
+                    let title = video.innerText || '';
+                    let href = video.href
+                    if (title && title.includes('הפועל חיפה') || title.includes('מכבי חיפה') || title.includes('מכבי תל אביב') || title.includes('הפועל באר שבע') || title.includes('הפועל תל אביב') || title.includes('הפועל חדרה')
+                    || title.includes('ליגת העל') || title.includes('מכבי פתח תקווה') || title.includes('אשדוד') || title.includes('ביתר ירושלים') || title.includes('קירת שמונה') || title.includes('מכבי נתניה') || title.includes('בני יהודה') || title.includes('הפועל כפר סבא') || title.includes('בני סכנין'))
+                        highlights.push({
+                            title,
+                            href,
+                        })
 
-                  let href = video.querySelector('a').href
-                  highlights.push({
-                      title,
-                      href,
-                  })
-              })
+
+                }
 
 
 
-              
+
 
 
             } catch (err) {
@@ -199,7 +202,7 @@ module.exports.scrapperVideo = async () => {
 
 
 
-            return highlights.length ? highlights[0] : [];
+            return highlights;
         });
         return allStatss
 
@@ -207,7 +210,6 @@ module.exports.scrapperVideo = async () => {
 
         //outputting the scraped data
     } catch (err) {
-
     }
     finally {
         console.log('browser close Highlights')
@@ -495,7 +497,7 @@ module.exports.scraperLiveTable = async () => {
             let allTeams = document.body.querySelectorAll('.row___1rtP1QI');
 
             //storing the post items in an array then selecting for retrieving content
-           let scrapeItems = [];
+            let scrapeItems = [];
             allTeams.forEach(team => {
 
                 try {
@@ -543,18 +545,18 @@ module.exports.scraperLiveTable = async () => {
         //outputting the scraped data
 
 
-        const finalTable = grabMatches.map(match=>{
-            const {arr, teamName,position,goal_diff,isPlaying} = match
+        const finalTable = grabMatches.map(match => {
+            const { arr, teamName, position, goal_diff, isPlaying } = match
             return {
                 teamName,
                 position,
                 isPlaying,
-                match_played:arr[0],
-                wins:arr[1],
-                draw:arr[2],
-                loses:arr[3],
+                match_played: arr[0],
+                wins: arr[1],
+                draw: arr[2],
+                loses: arr[3],
                 goal_diff,
-                points:arr[4],
+                points: arr[4],
             }
         })
         // console.log('finalTable', finalTable)

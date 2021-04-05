@@ -23,6 +23,7 @@ const sentensesAdd = ['הוספתי לך את הנושא יא מלך עולם', 
 const sentensesRemove = ['בוזזזזזזזזזז', 'מה אתה קשוררררר, טוב נו', 'לאאאא נו למה.. יאללה בסדר']
 
 const TelegramBot = require('node-telegram-bot-api');
+const { forEach } = require("lodash");
 // const { isError } = require("lodash");
 
 const cerdentials = {
@@ -859,37 +860,53 @@ module.exports.Shishit = async function () {
 
             try {
                 const hightlights = await scrapperVideo() || {}
-                // console.log('news', news)
-                // const data = {
-                //     title: lastNews.title,
-                //     href: lastNews.href
-                // }
-                // await highlightNews.findOneAndUpdate({ site }, data, { upsert: true, new: true })
-                const { title = '', href = '' } = hightlights
-                console.log('hightlights', hightlights)
-                if (title.includes('ליגת העל') || title.includes('גביע המדינה')) {
-                    let DBHighlight = await highlightVideo.find({ site: 'youtube' })
-                    console.log('DBHighlight', DBHighlight)
 
-                    let lastHighlight = DBHighlight.length ? DBHighlight[0] : {}
-                    if (lastHighlight.title !== title) {
+                hightlights.forEach(async high => {
+                    let { title, href } = high
 
-                        str += `תקציר - ${title}.\n`
-                        str += `${href}.\n`
-                        console.log('str', str)
-
-                        botTest.sendMessage(chatShisit, str)
-
-
+                    const isThere = await highlightVideo.find({ title, href })
+                    if (isThere.length === 0) {
                         const data = {
                             site: 'youtube',
                             href,
                             title,
                         }
-                        await highlightVideo.findOneAndUpdate({ site: 'yuotube' }, data, { upsert: true, new: true })
-                    }
+                        await highlightVideo.findOneAndUpdate({ title, href, site: 'youtube' }, data, { upsert: true, new: true })
+                        
+                        str += `תקציר - ${title}.\n`
+                        str += `${href}.\n`
+                        console.log('str', str)
 
-                }
+                        botTest.sendMessage(chatShisit, str)
+                    }
+                    // await highlightNews.findOneAndUpdate({ site }, data, { upsert: true, new: true })
+
+                })
+                // const { title = '', href = '' } = hightlights
+                // console.log('hightlights', hightlights)
+                // if (title.includes('ליגת העל') || title.includes('גביע המדינה')) {
+                //     let DBHighlight = await highlightVideo.find({ site: 'youtube' })
+                //     console.log('DBHighlight', DBHighlight)
+
+                //     let lastHighlight = DBHighlight.length ? DBHighlight[0] : {}
+                //     if (lastHighlight.title !== title) {
+
+                //         str += `תקציר - ${title}.\n`
+                //         str += `${href}.\n`
+                //         console.log('str', str)
+
+                //         botTest.sendMessage(chatShisit, str)
+
+
+                //         const data = {
+                //             site: 'youtube',
+                //             href,
+                //             title,
+                //         }
+                //         await highlightVideo.findOneAndUpdate({ site: 'yuotube' }, data, { upsert: true, new: true })
+                //     }
+
+                // }
 
 
             } catch (err) {
@@ -913,8 +930,8 @@ module.exports.Shishit = async function () {
         const checkIfPush = (news) => {
             let ans = true
             const { title, excerpt } = news
-            if (excerpt.includes('סיפרה') || excerpt.includes('סיפר') || excerpt.includes('ראיון') ||
-                title.includes('?') || title.includes('הלך לעולמו') || excerpt.includes('?') || 
+            if (excerpt.includes('אחותו') || excerpt.includes('אחות') || excerpt.includes('סיפרה') || excerpt.includes('סיפר') || excerpt.includes('ראיון') ||
+                title.includes('?') || title.includes('הלך לעולמו') || excerpt.includes('?') ||
                 title.includes('אקס') || excerpt.includes('אקס') || title.includes('יומנים') ||
                 excerpt.includes('התראיין') || title.includes('הישג יוקרתי') ||
                 title.includes('ברקת') || excerpt.includes('פורוורד') ||
@@ -1476,7 +1493,7 @@ module.exports.Shishit = async function () {
                 let str = ``
                 if (text === '/help') {
                     str = 'Your Options Are:\n\n \n/table \n/stats \n/last'
-                } 
+                }
                 botTest.sendMessage(chatId, str);
 
             });
