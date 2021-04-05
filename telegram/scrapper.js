@@ -166,8 +166,8 @@ module.exports.scrapperVideo = async () => {
         let allStatss = await page.evaluate(() => {
 
             let videos = document.body.querySelectorAll('.yt-simple-endpoint.style-scope.ytd-grid-video-renderer');
-            let highlights = []
-     
+            const highlights = []
+
             //storing the post items in an array then selecting for retrieving content
 
             let arr = []
@@ -175,9 +175,9 @@ module.exports.scrapperVideo = async () => {
 
                 for (let video of videos) {
                     let title = video.innerText || '';
-                    let href = video.href
+                    let href = video.href || ''
                     if (title && title.includes('הפועל חיפה') || title.includes('מכבי חיפה') || title.includes('מכבי תל אביב') || title.includes('הפועל באר שבע') || title.includes('הפועל תל אביב') || title.includes('הפועל חדרה')
-                    || title.includes('ליגת העל') || title.includes('מכבי פתח תקווה') || title.includes('אשדוד') || title.includes('ביתר ירושלים') || title.includes('קירת שמונה') || title.includes('מכבי נתניה') || title.includes('בני יהודה') || title.includes('הפועל כפר סבא') || title.includes('בני סכנין'))
+                        || title.includes('ליגת העל') || title.includes('מכבי פתח תקווה') || title.includes('אשדוד') || title.includes('ביתר ירושלים') || title.includes('קירת שמונה') || title.includes('מכבי נתניה') || title.includes('בני יהודה') || title.includes('הפועל כפר סבא') || title.includes('בני סכנין'))
                         highlights.push({
                             title,
                             href,
@@ -210,7 +210,7 @@ module.exports.scrapperVideo = async () => {
 
         //outputting the scraped data
     } catch (err) {
-        console.log('err Highlights',err)
+        console.log('err Highlights', err)
     }
     finally {
         console.log('browser close Highlights')

@@ -860,7 +860,7 @@ module.exports.Shishit = async function () {
 
             try {
                 const hightlights = await scrapperVideo() || {}
-                console.log('length highlight === ', Highlights.length)
+                console.log('length highlight === ', hightlights.length)
                 hightlights.forEach(async high => {
                     let { title, href } = high
 
