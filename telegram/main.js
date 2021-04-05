@@ -865,6 +865,10 @@ module.exports.Shishit = async function () {
                     let { title, href } = high
 
                     const isThere = await highlightVideo.find({ title, href })
+                    // console.log('title', title)
+                    // console.log('href', href)
+                    // console.log('isThere', isThere)
+
                     if (isThere.length === 0) {
                         const data = {
                             site: 'youtube',
