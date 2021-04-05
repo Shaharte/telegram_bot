@@ -210,6 +210,7 @@ module.exports.scrapperVideo = async () => {
 
         //outputting the scraped data
     } catch (err) {
+        console.log('err Highlights',err)
     }
     finally {
         console.log('browser close Highlights')
