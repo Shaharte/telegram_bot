@@ -919,7 +919,7 @@ module.exports.Shishit = async function () {
             }
 
         }
-        nodeSchedule.scheduleJob('*/17 * * * *', () => {
+        nodeSchedule.scheduleJob('1 * * * *', () => {
             try {
                 sendNewsSport1()
             } catch (err) { }
