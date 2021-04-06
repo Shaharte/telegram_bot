@@ -882,6 +882,7 @@ module.exports.Shishit = async function () {
                         console.log('str', str)
 
                         botTest.sendMessage(chatShisit, str)
+                        str = ''
                     }
                     // await highlightNews.findOneAndUpdate({ site }, data, { upsert: true, new: true })
 
