@@ -919,7 +919,7 @@ module.exports.Shishit = async function () {
             }
 
         }
-        nodeSchedule.scheduleJob('1 * * * *', () => {
+        nodeSchedule.scheduleJob('1 */2 * * *', () => {
             try {
                 sendNewsSport1()
             } catch (err) { }
@@ -935,8 +935,8 @@ module.exports.Shishit = async function () {
             let ans = true
             const { title, excerpt } = news
             if (excerpt.includes('אחותו') || excerpt.includes('אחות') || excerpt.includes('סיפרה') || excerpt.includes('סיפר') || excerpt.includes('ראיון') ||
-                title.includes('?') || title.includes('הלך לעולמו') || excerpt.includes('?') ||
-                title.includes('אקס') || excerpt.includes('אקס') || title.includes('יומנים') ||
+            title.includes('ספורט1') || title.includes('?') || title.includes('הלך לעולמו') || excerpt.includes('?') ||
+            title.includes('שחקן חודש') || title.includes('אתם בחרתם') || title.includes('אקס') || excerpt.includes('אקס') || title.includes('יומנים') ||
                 excerpt.includes('התראיין') || title.includes('הישג יוקרתי') ||
                 title.includes('ברקת') || excerpt.includes('פורוורד') ||
                 excerpt.includes('צפו והחליטו') || excerpt.includes('עמיקם מספר') ||
@@ -945,7 +945,7 @@ module.exports.Shishit = async function () {
                 title.includes('סיפורו של') || excerpt.includes('כל הפרטים') ||
                 excerpt.includes('זכריה מנתח') || excerpt.includes('הצביעו') ||
                 excerpt.includes('103') || excerpt.includes('נשים') ||
-                excerpt.includes('בראיון') || excerpt.includes('ספורט1') ||
+                title.includes('ספורט4') || title.includes('ספורט2') || title.includes('ספורט3') ||  excerpt.includes('בראיון') || excerpt.includes('ספורט1') ||
                 excerpt.includes('ספורט4') || excerpt.includes('ספורט3') || excerpt.includes('קבלו את') ||
                 excerpt.includes('ספורט2') || (excerpt.includes(')') && excerpt.includes('('))) {
                 ans = false
