@@ -2980,7 +2980,7 @@ module.exports.Ahanhala = async function () {
         }
         await wednesdeySubjects.findOneAndUpdate({}, data, { upsert: true, new: true })
     })
-    nodeSchedule.scheduleJob('00 18 * * 3', async () => {
+    nodeSchedule.scheduleJob('00 18 * * 1', async () => {
         let str = ''
         const subjectsarray = await wednesdeySubjects.find({})
         const { subjects = [] } = subjectsarray[0]
