@@ -562,11 +562,14 @@ module.exports.Shishit = async function () {
 
                 //     }
                 // }
+                conosle.log('oldGames',oldGames)
 
+conosle.log('grabMatches',grabMatches)
                 const data = {
                     updateTo,
                     games: grabMatches,
                 }
+
                 await games.findOneAndUpdate({ updateTo }, data, { upsert: true, new: true });
                 sendNotification(grabMatches, oldGames)
                 //closing the browser
