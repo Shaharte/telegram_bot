@@ -556,9 +556,9 @@ module.exports.Shishit = async function () {
 
                 //     }
                 // }
-                conosle.log('oldGames',oldGames)
+                console.log('oldGames',oldGames)
 
-conosle.log('grabMatches',grabMatches)
+console.log('grabMatches',grabMatches)
                 const data = {
                     updateTo,
                     games: grabMatches,
