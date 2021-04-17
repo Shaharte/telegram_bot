@@ -443,13 +443,7 @@ module.exports.Shishit = async function () {
         const botTest = new TelegramBot(token, { polling: true });
 
         // running scrapper on flashscore to get live result pushes
-        nodeSchedule.scheduleJob('* 16-21 * * *', () => {
-            try {
-                scraper()
-
-            } catch (err) { }
-
-        });
+ 
         const scraper = async () => {
             console.log('starting to run scrapper')
             const gamesScrapper = await games.find({ updateTo })
