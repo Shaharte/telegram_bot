@@ -2980,7 +2980,7 @@ module.exports.Ahanhala = async function () {
         }
         await wednesdeySubjects.findOneAndUpdate({}, data, { upsert: true, new: true })
     })
-    nodeSchedule.scheduleJob('00 18 * * 1', async () => {
+    nodeSchedule.scheduleJob('00 17 * * 3', async () => {
         let str = ''
         const subjectsarray = await wednesdeySubjects.find({})
         const { subjects = [] } = subjectsarray[0]
@@ -2993,7 +2993,7 @@ module.exports.Ahanhala = async function () {
         botTest.sendMessage(chatNohal, str);
 
     })
-    nodeSchedule.scheduleJob('00 4 * * 3', async () => {
+    nodeSchedule.scheduleJob('00 3 * * 3', async () => {
         let str = ''
 
         const subjectsarray = await wednesdeySubjects.find({})
