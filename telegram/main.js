@@ -569,7 +569,7 @@ conosle.log('grabMatches',grabMatches)
                 //closing the browser
 
             } catch (err) {
-
+console.log('err',err)
             }
             finally {
                 console.log('closing browser - scrapper')
